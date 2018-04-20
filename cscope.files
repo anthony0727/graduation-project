@@ -1,0 +1,11 @@
+./algorithm_handler.hpp
+./attribute_handler.hpp
+./bitarray_handler.hpp
+./engine.hpp
+./index_handler.hpp
+./information_handler.hpp
+./parameter_handler.hpp
+./test.cpp
+./timer_handler.hpp
+./wiss_all.hpp
+./wiss_handler.hpp
