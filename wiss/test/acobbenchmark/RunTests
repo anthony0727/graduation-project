@@ -1,0 +1,38 @@
+#
+make 
+make disk
+echo "  " > out
+
+echo load database with 10% clustered objects >> out
+
+echo build file A mode 0  - no smear >> out
+echo "  " >> out
+build hp0a fileA 0 10  FALSE >> out
+echo "  " >> out
+
+echo build file B mode 0  - no smear >> out
+echo "  " >> out
+build hp0a fileB 0 10  FALSE >> out
+echo "  " >> out
+
+echo build file C mode 0  - no smear >> out
+echo "  " >> out
+build hp0a fileC 0 10  FALSE >> out
+echo "  " >> out
+
+echo query file A mode 1  - seq scan  >> out
+echo "  " >> out
+queries hp0a fileA 1  FALSE >> out
+
+echo "  " >> out
+
+echo query file B mode 2  - random scan >> out
+echo "  " >> out
+queries hp0a fileB 2  FALSE >> out
+echo "  " >> out
+
+echo query file C mode 4 - random update >> out
+echo "  " >> out
+queries hp0a fileC 4  FALSE >> out
+echo "  " >> out
+

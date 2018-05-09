@@ -1,0 +1,47 @@
+number of attached processes = 1
+process 0 load relation foo with 10000 tuples. transId=1
+Total # of tuples written = 10000
+commit ok
+WISS took 3 seconds to load 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 2
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 load relation foo with 10000 tuples. transId=3
+Total # of tuples written = 10000
+commit ok
+WISS took 2 seconds to load 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 4
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 5
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 6
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 7
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 8
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 9
+commit ok
+WISS took 3 seconds to scan 10000 records
+process 0 scan relation foo, upperlimit = 10001
+new transaction id = 10
+commit ok
+WISS took 2 seconds to scan 10000 records
+process 0 load relation foo with 10000 tuples. transId=11
+Total # of tuples written = 10000
+commit ok
+WISS took 3 seconds to load 10000 records
+number of attached processes at wiss_final = 1
+final completed

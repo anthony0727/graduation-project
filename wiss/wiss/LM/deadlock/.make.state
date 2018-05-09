@@ -1,0 +1,57 @@
+.MAKE_VERSION:	VERSION-1.0
+../deadlock/create.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../SM/testandset.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h 
+	cc -I.. -I../../../wiss -I../..      -sun3 -c  ../deadlock/create.c
+.././deadlock/create.o:
+	cc -I../. -I../.. -I..   -O  -target sun4 -c  .././deadlock/create.c
+/u/futter/LM/deadlock/create.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h /u/futter/LM/LM_macro.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/deadlock/create.c
+/u/futter/LM.old/deadlock/create.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h /u/futter/LM.old/LM_macro.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/deadlock/create.c
+../deadlock/detect.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_error.h 
+	cc -I.. -I../../../wiss -I../..      -sun3 -c  ../deadlock/detect.c
+.././deadlock/detect.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g   -target sun4 -c  .././deadlock/detect.c
+/u/futter/LM/deadlock/detect.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h /u/futter/LM/LM_error.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/deadlock/detect.c
+/u/futter/LM.old/deadlock/detect.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/deadlock/detect.c
+create.o:	../locktype.h /u/o2/systeme/wiss/sem_key.h /usr/include/sys/types.h /usr/include/sys/sysmacros.h /usr/include/sys/ipc.h /usr/include/sys/sem.h /usr/include/stdio.h ../dummy.h /usr/include/strings.h /u/o2/systeme/wiss/mode.h /u/o2/systeme/wiss/LM_error.h ../resource.h /u/o2/systeme/wiss/prio.h ../LM_macro.h 
+	cc -I.. -I/u/o2/systeme/wiss -DUSEPROC -DUPGRADE -DDEBUG -DLM_DEBUG -DLMTRACE  -g   -sun3 -c  create.c
+detect.o:	../locktype.h /u/o2/systeme/wiss/sem_key.h /usr/include/sys/types.h /usr/include/sys/sysmacros.h /usr/include/sys/ipc.h /usr/include/sys/sem.h /usr/include/stdio.h ../dummy.h /usr/include/strings.h /u/o2/systeme/wiss/mode.h /u/o2/systeme/wiss/LM_error.h ../resource.h /u/o2/systeme/wiss/prio.h 
+	cc -I.. -I/u/o2/systeme/wiss -DUSEPROC -DUPGRADE -DDEBUG -DLM_DEBUG -DLMTRACE  -g   -sun3 -c  detect.c
+execs:
+	echo /u/futter/LM/deadlock/alloc_graph.c /u/futter/LM/deadlock/create.c /u/futter/LM/deadlock/detect.c /u/futter/LM/deadlock/init_graph.c /u/futter/LM/deadlock/detect.c >> ../execs
+alloc_graph.o:	../locktype.h /u/o2/systeme/wiss/sem_key.h /usr/include/sys/types.h /usr/include/sys/sysmacros.h /usr/include/sys/ipc.h /usr/include/sys/sem.h /usr/include/stdio.h ../dummy.h /usr/include/strings.h /u/o2/systeme/wiss/mode.h /u/o2/systeme/wiss/LM_error.h ../resource.h /u/o2/systeme/wiss/prio.h 
+	cc -I.. -I/u/o2/systeme/wiss -DUSEPROC -DUPGRADE -DDEBUG -DLM_DEBUG -DLMTRACE  -g   -sun3 -c  alloc_graph.c
+../deadlock/alloc_graph.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h 
+	cc -I.. -I../../../wiss -I../..      -sun3 -c  ../deadlock/alloc_graph.c
+.././deadlock/alloc_graph.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g   -target sun4 -c  .././deadlock/alloc_graph.c
+/u/futter/LM/deadlock/alloc_graph.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/deadlock/alloc_graph.c
+/u/futter/LM.old/deadlock/alloc_graph.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/deadlock/alloc_graph.c
+.BUILT_LAST_MAKE_RUN:
+libWiSSdeadlock.a:
+	rm -f libWiSSdeadlock.a
+	ar rc libWiSSdeadlock.a .././deadlock/alloc_graph.o .././deadlock/creategraph.o .././deadlock/detect.o .././deadlock/init_graph.o
+clean:
+	/bin/rm -f *.o
+DLockDetect.o:
+	ld -r  .././deadlock/alloc_graph.o .././deadlock/create.o .././deadlock/detect.o .././deadlock/init_graph.o -o DLockDetect.o
+init_graph.o:	../locktype.h /u/o2/systeme/wiss/sem_key.h /usr/include/sys/types.h /usr/include/sys/sysmacros.h /usr/include/sys/ipc.h /usr/include/sys/sem.h /usr/include/stdio.h ../dummy.h /usr/include/strings.h /u/o2/systeme/wiss/mode.h /u/o2/systeme/wiss/LM_error.h ../resource.h /u/o2/systeme/wiss/prio.h 
+	cc -I.. -I/u/o2/systeme/wiss -DUSEPROC -DUPGRADE -DDEBUG -DLM_DEBUG -DLMTRACE  -g   -sun3 -c  init_graph.c
+../deadlock/init_graph.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h 
+	cc -I.. -I../../../wiss -I../..      -sun3 -c  ../deadlock/init_graph.c
+.././deadlock/init_graph.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g   -target sun4 -c  .././deadlock/init_graph.c
+/u/futter/LM/deadlock/init_graph.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/deadlock/init_graph.c
+/u/futter/LM.old/deadlock/init_graph.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/deadlock/init_graph.c
+EXECS:
+	echo ./deadlock/alloc_graph.c  ./deadlock/create.c ./deadlock/detect.c ./deadlock/init_graph.c ./deadlock/detect.c >> ../EXECS
+../deadlock/creategraph.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h 
+.BUILT_LAST_MAKE_RUN:
+.././deadlock/creategraph.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g   -target sun4 -c  .././deadlock/creategraph.c

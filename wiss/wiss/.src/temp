@@ -1,0 +1,1332 @@
+1	AM_dumpboolean: int(), <AM_boolean.c 210>
+2		printf: <>
+3		print_data: int(), <data.c 38>
+4			bcopy: <>
+5			printf: 2
+6	IO_Close: int(), <IOmount.c 411>
+7		close: <>
+8	io_clearstat: int(), <IOreadwrite.c 178>
+9	LM_initevent: int(), <LM_event.c 39>
+10	LM_event: int(), <LM_event.c 47>
+11		strcpy: <>
+12	malloc_lock: struct*(), <alloc_graph.c 77>
+13		SetLatch: int(), <latch.c 50>
+14			testandset: <>
+15			ReleaseLatch: int(), <latch.c 150>
+16				testandset: 14
+17				SendSem: int(), <semaphore.c 137>
+18					semop: <>
+19					printf: 2
+20			WaitSem: int(), <semaphore.c 109>
+21				semop: 18
+22				printf: 2
+23		alloc_more_locks: int(), <alloc_graph.c 27>
+24			shmAlloc: char*(), <shmalloc.c 48>
+25			printf: 2
+26			init_lock_node: int(), <init_graph.c 28>
+27		ReleaseLatch: 15
+28	malloc_graph_node: struct*(), <alloc_graph.c 93>
+29		SetLatch: 13
+30		alloc_more_graphnode: int(), <alloc_graph.c 52>
+31			shmAlloc: 24
+32			printf: 2
+33			init_graph_node: int(), <init_graph.c 39>
+34		ReleaseLatch: 15
+35		InitLatch: int(), <latch.c 25>
+36	free_lock_node: int(), <alloc_graph.c 121>
+37		SetLatch: 13
+38		init_lock_node: 26
+39		ReleaseLatch: 15
+40	malloc_waitnode: struct*(), <alloclock.c 130>
+41		SetLatch: 13
+42		alloc_more_waitnode: int(), <alloclock.c 72>
+43			shmAlloc: 24
+44			printf: 2
+45		ReleaseLatch: 15
+46	free_wait_node: int(), <alloclock.c 155>
+47		SetLatch: 13
+48		ReleaseLatch: 15
+49	release_node: int(), <alloclock.c 189>
+50		SetLatch: 13
+51		free_bucket: int(), <alloclock.c 172>
+52		ReleaseLatch: 15
+53	am_closefile: int(), <am_closefile.c 46>
+54		AM_nextscan: int(), <AM_scantable.c 274>
+55		am_closescan: int(), <am_closescan.c 59>
+56			AM_getscan: struct*(), <AM_scantable.c 334>
+57			st_compresslong: int(), <st_compressl.c 67>
+58				st_readrecord: int(), <st_readrec.c 60>
+59					r_getrecord: int(), <r_getrecord.c 130>
+60						lock_page: int(), <locker.c 776>
+61							find_trans: struct*(), <detect.c 33>
+62								SetLatch: 13
+63								ReleaseLatch: 15
+64							printf: 2
+65							is_file_acquired: struct*(), <locker.c 301>
+66							printlock: int(), <locker.c 54>
+67								printf: 2
+68							is_page_acquired: struct*(), <locker.c 378>
+69							lock_file: int(), <locker.c 428>
+70								find_trans: 61
+71								printf: 2
+72								findfile: struct*(), <locker.c 122>
+73									SetLatch: 13
+74									ReleaseLatch: 15
+75								ReleaseLatch: 15
+76								alloc_more_node: int(), <alloclock.c 35>
+77									shmAlloc: 24
+78									printf: 2
+79								SetLatch: 13
+80								InitLatch: 35
+81								alloc_more_locks: 23
+82								is_file_acquired: 65
+83								exit: <>
+84								check_deadlock_u: int(), <detect.c 182>
+85									find_trans: 61
+86									SetLatch: 13
+87									printf: 2
+88									check_deadlock: int(), <detect.c 103>
+89										find_trans: 61
+90										printf: 2
+91										SetLatch: 13
+92										ReleaseLatch: 15
+93										check_deadlock: 88
+94									ReleaseLatch: 15
+95								lm_abort_trans: int(), <release.c 500>
+96									find_trans: 61
+97									printf: 2
+98									lm_committ_trans: int(), <release.c 326>
+99										find_trans: 61
+100										printf: 2
+101										SetLatch: 13
+102										ReleaseLatch: 15
+103										walkfile: int(), <release.c 51>
+104											find_trans: 61
+105											printf: 2
+106											exit: 83
+107											addowner_u: short(), <create.c 168>
+108												printf: 2
+109											set_new_mode: int(), <locker.c 354>
+110												printf: 2
+111												exit: 83
+112											ReleaseLatch: 15
+113											alloc_more_waitnode: 42
+114											SetLatch: 13
+115											alloc_more_locks: 23
+116											SendSem: 17
+117											check_deadlock_u: 84
+118											abort_trans: int(), <trans.c 62>
+119												lm_abort_trans: 95
+120										exit: 83
+121										LM_dumpevent: int(), <LM_event.c 57>
+122											printf: 2
+123										SendSem: 17
+124										terminate: int(), <detect.c 79>
+125											printf: 2
+126											free_graph_node: int(), <alloc_graph.c 136>
+127												SetLatch: 13
+128												ReleaseLatch: 15
+129												init_graph_node: 33
+130												free: <>
+131								addwaitbucket_u: struct*(), <create.c 87>
+132									ReleaseLatch: 15
+133									alloc_more_waitnode: 42
+134									SetLatch: 13
+135								addwaitbucket: struct*(), <create.c 59>
+136									ReleaseLatch: 15
+137									alloc_more_waitnode: 42
+138									SetLatch: 13
+139								WaitSem: 20
+140								addowner_u: 107
+141								walkfile: 103
+142								alloc_more_waitnode: 42
+143							findfile: 72
+144							ReleaseLatch: 15
+145							findpage: struct*(), <locker.c 71>
+146								SetLatch: 13
+147								ReleaseLatch: 15
+148							alloc_more_node: 76
+149							SetLatch: 13
+150							InitLatch: 35
+151							alloc_more_locks: 23
+152							exit: 83
+153							check_deadlock_u: 84
+154							addwaitbucket_u: 131
+155							addwaitbucket: 135
+156							WaitSem: 20
+157							lm_abort_trans: 95
+158							addowner_u: 107
+159							walkfile: 103
+160							alloc_more_waitnode: 42
+161						bf_freebuf: int(), <bffreebuf.c 42>
+162							BF_lock: int(), <BFhash.c 283>
+163								SetLatch: 13
+164								InitLatch: 35
+165								ReleaseLatch: 15
+166								printf: 2
+167							printf: 2
+168							BF_dumpbuftable: int(), <BFdumptables.c 41>
+169								printf: 2
+170							BF_dumpbufpool: int(), <BFdumptables.c 66>
+171								printf: 2
+172							exit: 83
+173							BF_unlock: int(), <BFhash.c 437>
+174								SetLatch: 13
+175								ReleaseLatch: 15
+176								printf: 2
+177								BF_lock_dump: int(), <BFhash.c 546>
+178									printf: 2
+179						bf_readbuf: int(), <bfreadbuf.c 46>
+180							BF_lock: 162
+181							BF_lookup: int(), <BFhash.c 51>
+182								SetLatch: 13
+183								ReleaseLatch: 15
+184							BF_allocbuf: int(), <BFallocbuf.c 47>
+185								BF_dumpbuftable: 168
+186								SetLatch: 13
+187								ReleaseLatch: 15
+188								printf: 2
+189								BF_lock: 162
+190								BF_unlock: 173
+191								BF_delete: int(), <BFhash.c 178>
+192									SetLatch: 13
+193									ReleaseLatch: 15
+194									printf: 2
+195									BF_hash_dump: int(), <BFhash.c 564>
+196										printf: 2
+197									BF_dumpbuftable: 168
+198								io_writepage: int(), <io_writepage.c 54>
+199									printf: 2
+200									IO_WritePage: int(), <IOreadwrite.c 131>
+201										lseek: <>
+202										write: <>
+203							printf: 2
+204							BF_unlock: 173
+205							io_readpage: int(), <io_readpage.c 53>
+206								printf: 2
+207								IO_ReadPage: int(), <IOreadwrite.c 69>
+208									lseek: 201
+209									read: <>
+210							SetLatch: 13
+211							ReleaseLatch: 15
+212							BF_insert: int(), <BFhash.c 114>
+213								SetLatch: 13
+214								ReleaseLatch: 15
+215								printf: 2
+216								BF_dumpbuftable: 168
+217								BF_dumpfixed: int(), <BFdumptables.c 83>
+218									printf: 2
+219					bcopy: 4
+220					bf_freebuf: 161
+221				r_getrecord: 59
+222				bf_freebuf: 161
+223				bcopy: 4
+224				bf_setdirty: int(), <bfsetdirty.c 44>
+225					BF_lock: 162
+226					BF_unlock: 173
+227				compress_directory: int(), <st_compressl.c 184>
+228					r_getslot: int(), <r_getrecord.c 59>
+229						lock_page: 60
+230						bf_readbuf: 179
+231						bf_freebuf: 161
+232					bf_freebuf: 161
+233					st_deleterecord: int(), <st_deleterec.c 57>
+234						lock_page: 60
+235						r_getslot: 228
+236						r_slide: int(), <r_slide.c 63>
+237							lock_page: 60
+238							abs: <>
+239							bcopy: 4
+240						bf_setdirty: 224
+241						bf_freebuf: 161
+242						r_dropout: int(), <r_dropout.c 55>
+243							lock_page: 60
+244							bf_readbuf: 179
+245							bf_discard: int(), <bfdiscard.c 41>
+246								BF_lock: 162
+247								SetLatch: 13
+248								BF_delete: 191
+249								ReleaseLatch: 15
+250								BF_unlock: 173
+251							io_freepage: int(), <io_freepage.c 53>
+252								SetLatch: 13
+253								ReleaseLatch: 15
+254								IO_FreePageInExt: int(), <IOextent.c 256>
+255									checkset: int(), <bit.c 309>
+256									wsetmap: int(), <bit.c 123>
+257									setbit: int(), <bit.c 245>
+258							lock_file: 69
+259							bf_setdirty: 224
+260							bf_freebuf: 161
+261					bf_discard: 245
+262					io_freepage: 251
+263				r_shrinkslice: int(), <r_crumb.c 62>
+264					r_getrecord: 59
+265					bf_freebuf: 161
+266					st_deleterecord: 233
+267					bf_discard: 245
+268					io_freepage: 251
+269					st_appendrecord: int(), <st_appendrec.c 54>
+270						r_addrec: int(), <r_addrec.c 61>
+271							lock_page: 60
+272							bf_freebuf: 161
+273							bf_readbuf: 179
+274							r_slide: 236
+275							printf: 2
+276							bcopy: 4
+277							bf_setdirty: 224
+278						lock_file: 69
+279						r_hookup: int(), <r_hookup.c 55>
+280							io_allocpages: int(), <io_allocp.c 57>
+281								SetLatch: 13
+282								ReleaseLatch: 15
+283								IO_AllocPageInExt: int(), <IOextent.c 192>
+284									countmap: int(), <bit.c 154>
+285									nextset: int(), <bit.c 342>
+286									clearbit: int(), <bit.c 277>
+287									setbit: 257
+288								IO_AllocExtents: int(), <IOextent.c 59>
+289									nextset: 285
+290									checkset: 255
+291									clearbit: 286
+292									setbit: 257
+293									IO_FreePageInExt: 254
+294								setbit: 257
+295							lock_page: 60
+296							bf_readbuf: 179
+297							bf_setdirty: 224
+298							bf_freebuf: 161
+299							bf_getbuf: int(), <bfgetbuf.c 44>
+300								BF_lock: 162
+301								BF_lookup: 181
+302								BF_allocbuf: 184
+303								BF_unlock: 173
+304								BF_insert: 212
+305					r_getslot: 228
+306					bf_setdirty: 224
+307				st_writerecord: int(), <st_writerec.c 60>
+308					r_getslot: 228
+309					r_slide: 236
+310					bcopy: 4
+311					bf_setdirty: 224
+312					r_addrec: 270
+313					r_hookup: 279
+314					bf_freebuf: 161
+315			AM_commit: int(), <AM_commit.c 75>
+316				AM_getscan: 56
+317				lock_file: 69
+318				st_firstfile: int(), <st_firstfile.c 52>
+319					st_nextfile: int(), <st_nextfile.c 65>
+320						lock_page: 60
+321						bf_readbuf: 179
+322						bf_freebuf: 161
+323				st_nextfile: 319
+324				st_readrecord: 58
+325				bcopy: 4
+326				st_insertindex: int(), <stinsertidx.c 63>
+327					bt_traverse: int(), <bttraverse.c 72>
+328						lock_page: 60
+329						m_release_page: int(), <release.c 532>
+330							find_trans: 61
+331							printf: 2
+332							is_page_acquired: 68
+333							SetLatch: 13
+334							pidHashDelete: int(), <locker.c 266>
+335								printf: 2
+336							ReleaseLatch: 15
+337							walkfile: 103
+338							exit: 83
+339						printf: 2
+340						bf_readbuf: 179
+341						bt_binary_search: int(), <btutil1.c 132>
+342							compare_key: int(), <data.c 128>
+343								strncmp: <>
+344								tbitscmp: int(), <data.c 99>
+345						bcopy: 4
+346						bf_freebuf: 161
+347					bcopy: 4
+348					abs: 238
+349					clean_locks: int(), <btutilx.c 44>
+350						m_release_page: 329
+351					bt_split_page: int(), <btutil2.c 171>
+352						abs: 238
+353						bt_allocpage: int(), <btutil1.c 216>
+354							io_allocpages: 280
+355							bf_getbuf: 299
+356						bf_readbuf: 179
+357						bf_freebuf: 161
+358						bf_setdirty: 224
+359						bt_move_entries: int(), <btutil2.c 65>
+360							abs: 238
+361							bt_compress_page: int(), <btutil1.c 59>
+362								bcopy: 4
+363								abs: 238
+364								bf_setdirty: 224
+365							fprintf: <>
+366							bcopy: 4
+367							bf_setdirty: 224
+368					bf_freebuf: 161
+369					bt_addrid: int(), <btleafrids.c 124>
+370						st_createlong: int(), <st_createl.c 50>
+371							st_appendrecord: 269
+372						st_insertframe: int(), <st_insertfrm.c 66>
+373							st_readrecord: 58
+374							st_appendrecord: 269
+375							r_getslot: 228
+376							bf_setdirty: 224
+377							bf_freebuf: 161
+378							st_writerecord: 307
+379							bcopy: 4
+380							r_expandcrumb: int(), <r_crumb.c 151>
+381								r_getrecord: 59
+382								bf_freebuf: 161
+383								io_allocpages: 280
+384								r_initslice: int(), <r_initslice.c 50>
+385									bf_getbuf: 299
+386								bcopy: 4
+387								st_deleterecord: 233
+388							make_room: int(), <st_insertfrm.c 357>
+389								io_allocpages: 280
+390								r_initslice: 384
+391								bf_freebuf: 161
+392							r_shrinkslice: 263
+393						bcopy: 4
+394						abs: 238
+395						bt_compress_page: 361
+396						bf_setdirty: 224
+397					bt_insertentry: int(), <btutil1.c 276>
+398						abs: 238
+399						bt_compress_page: 361
+400						fprintf: 365
+401						bcopy: 4
+402						bf_setdirty: 224
+403					bf_readbuf: 179
+404					bt_insertkey: int(), <btinsertkey.c 72>
+405						bf_readbuf: 179
+406						bt_binary_search: 341
+407						bf_freebuf: 161
+408						bt_prefixkey: int(), <btutilx.c 280>
+409							bcopy: 4
+410							bt_rightmost: int(), <btutilx.c 185>
+411								bf_readbuf: 179
+412								lock_page: 60
+413								m_release_page: 329
+414								bcopy: 4
+415								bf_freebuf: 161
+416							bf_freebuf: 161
+417							m_release_page: 329
+418						bcopy: 4
+419						abs: 238
+420						bt_insertentry: 397
+421						bt_allocpage: 353
+422						bt_move_entries: 359
+423						bt_split_page: 351
+424						bt_insertkey: 404
+425				st_deleteindex: int(), <stdeleteidx.c 68>
+426					bt_traverse: 327
+427					bt_zaprid: int(), <btleafrids.c 277>
+428						bcopy: 4
+429						st_readframe: int(), <st_readfrm.c 55>
+430							r_getrecord: 59
+431							bf_freebuf: 161
+432							bcopy: 4
+433						st_destroylong: int(), <st_destroyl.c 54>
+434							r_getrecord: 59
+435							bf_freebuf: 161
+436							st_deleterecord: 233
+437							bf_discard: 245
+438							io_freepage: 251
+439						abs: 238
+440						st_deleteframe: int(), <st_deletefrm.c 61>
+441							st_readrecord: 58
+442							r_shrinkslice: 263
+443							st_writerecord: 307
+444							st_deleterecord: 233
+445							bcopy: 4
+446							r_expandcrumb: 380
+447							r_getslot: 228
+448							bf_setdirty: 224
+449							bf_freebuf: 161
+450							bf_discard: 245
+451							delete_slices: int(), <st_deletefrm.c 264>
+452								io_freepage: 251
+453						bf_setdirty: 224
+454					bt_reorganize: int(), <stdeleteidx.c 151>
+455						bf_readbuf: 179
+456						bt_binary_search: 341
+457						lock_page: 60
+458						bt_merge_pages: int(), <btutil2.c 323>
+459							bt_move_entries: 359
+460							io_freepage: 251
+461							bf_readbuf: 179
+462							bf_setdirty: 224
+463							bf_freebuf: 161
+464						bt_deleteentry: int(), <btutil1.c 342>
+465							abs: 238
+466							bcopy: 4
+467							bf_setdirty: 224
+468						bt_balance_pages: int(), <btutil2.c 260>
+469							bt_move_entries: 359
+470						bcopy: 4
+471						bf_setdirty: 224
+472						bt_insertkey: 404
+473						bf_freebuf: 161
+474						m_release_page: 329
+475						bt_move_entries: 359
+476						io_freepage: 251
+477					bf_freebuf: 161
+478					clean_locks: 349
+479			suffixname: int(), <suffixname.c 44>
+480			st_volid: int(), <st_volid.c 48>
+481				SetLatch: 13
+482				ReleaseLatch: 15
+483			st_closefile: int(), <st_closefile.c 51>
+484				SetLatch: 13
+485				bf_freebuf: 161
+486				bf_closefile: int(), <bfclosefile.c 39>
+487					BF_lock: 162
+488					BF_lookup: 181
+489					BF_unlock: 173
+490				bf_flushbuf: int(), <bfflushbuf.c 41>
+491					BF_lock: 162
+492					BF_lookup: 181
+493					BF_unlock: 173
+494					io_writepage: 198
+495				ReleaseLatch: 15
+496				ST_accessfiledesc: int(), <d_directory.c 266>
+497					hash: int(), <d_directory.c 481>
+498					io_readpage: 205
+499					strcmp: <>
+500					io_writepage: 198
+501			st_destroyfile: int(), <st_destroyf.c 55>
+502				SetLatch: 13
+503				ST_accessfiledesc: 496
+504				ReleaseLatch: 15
+505				sys_getuser: int(), <sys.c 23>
+506				lock_file: 69
+507				ST_zapfiledesc: int(), <d_directory.c 419>
+508					hash: 497
+509					io_readpage: 205
+510					strcmp: 499
+511					io_writepage: 198
+512					bucket_merge: int(), <d_directory.c 630>
+513						malloc: <>
+514						io_readpage: 205
+515						free: 130
+516						io_writepage: 198
+517						io_freepage: 251
+518					overflow_compress: int(), <d_directory.c 688>
+519						malloc: 513
+520						io_readpage: 205
+521						io_freepage: 251
+522						io_writepage: 198
+523						free: 130
+524						dump_directory: int(), <d_directory.c 736>
+525							malloc: 513
+526							printf: 2
+527							io_readpage: 205
+528							dump_bkpages: int(), <d_directory.c 772>
+529								printf: 2
+530								io_readpage: 205
+531							free: 130
+532				io_destroyfile: int(), <io_destroyf.c 45>
+533					SetLatch: 13
+534					ReleaseLatch: 15
+535					IO_FreeFile: int(), <IOfiman.c 130>
+536						malloc: 513
+537						IO_FreeExtents: int(), <IOextent.c 134>
+538							setbit: 257
+539						free: 130
+540						setbit: 257
+541			AM_commit1: int(), <AM_commit1.c 68>
+542				AM_getscan: 56
+543				st_firstfile: 318
+544				st_nextfile: 319
+545				st_readrecord: 58
+546				bcopy: 4
+547				st_inserthash: int(), <st_inserthash.c 64>
+548					h_inserthash: int(), <st_inserthash.c 108>
+549						lock_page: 60
+550						bf_readbuf: 179
+551						h_hash: int(), <h_util.c 38>
+552						m_release_page: 329
+553						bt_binary_search: 341
+554						bf_freebuf: 161
+555						printf: 2
+556						bcopy: 4
+557						abs: 238
+558						io_allocpages: 280
+559						bf_getbuf: 299
+560						h_initpage: int(), <h_util.c 66>
+561							bf_setdirty: 224
+562						bf_setdirty: 224
+563						bt_insertentry: 397
+564						bt_addrid: 369
+565				st_deletehash: int(), <st_deletehash.c 62>
+566					lock_page: 60
+567					bf_readbuf: 179
+568					h_hash: 551
+569					m_release_page: 329
+570					printf: 2
+571					bt_binary_search: 341
+572					bf_freebuf: 161
+573					bt_zaprid: 427
+574					bt_insertentry: 397
+575					bf_discard: 245
+576					io_freepage: 251
+577					bf_setdirty: 224
+578			AM_removescan: int(), <AM_scantable.c 214>
+579		st_closefile: 483
+580	am_create_volume: int(), <am_createvol.c 48>
+581		IO_Format: int(), <IOmount.c 255>
+582			strcmp: 499
+583			IO_DisMount: int(), <IOmount.c 160>
+584				IO_FlushHeader: int(), <IOmount.c 199>
+585					checkset: 255
+586					IO_WritePage: 200
+587					clearbit: 286
+588				close: 7
+589				shmFree: int(), <shmalloc.c 95>
+590			open: <>
+591			shmAlloc: 24
+592			strcpy: 11
+593			wsetmap: 256
+594			IO_AllocFile: int(), <IOfiman.c 61>
+595				malloc: 513
+596				IO_AllocExtents: 288
+597				free: 130
+598				setbit: 257
+599			malloc: 513
+600			io_allocpages: 280
+601			free: 130
+602			IO_WritePage: 200
+603	am_deletelong: int(), <am_deletel.c 50>
+604		AM_getscan: 56
+605		st_deleteframe: 440
+606		AM_nextscan: 54
+607	am_deletescan: int(), <am_delscan.c 53>
+608		AM_getscan: 56
+609		st_deleterecord: 233
+610		st_readfield: int(), <st_readrec.c 119>
+611			r_getrecord: 59
+612			bcopy: 4
+613			bf_freebuf: 161
+614		st_appendrecord: 269
+615	am_destroy_volume: int(), <am_destroyvol.c 45>
+616		io_volid: int(), <io_volid.c 45>
+617			strcmp: 499
+618		unlink: <>
+619	am_fatalerror: int(), <am_error.c 98>
+620		am_error: int(), <am_error.c 127>
+621			am_errormsg: char*(), <am_error.c 50>
+622				io_error: char*(), <io_error.c 44>
+623				bf_error: char*(), <bferror.c 41>
+624				st_error: char*(), <st_error.c 43>
+625				AM_error: char*(), <AM_error.c 44>
+626			printf: 2
+627		am_final: int(), <am_final.c 46>
+628		exit: 83
+629	am_fetchfirst: int(), <am_fetch1st.c 63>
+630		AM_getscan: 56
+631		st_firstfile: 318
+632		AM_apply: int(), <AM_boolean.c 66>
+633			r_getrecord: 59
+634			bcopy: 4
+635			strncmp: 343
+636			bf_freebuf: 161
+637		st_firstindex: int(), <stfirstindex.c 66>
+638			bt_traverse: 327
+639			bt_leftmost: int(), <btutilx.c 96>
+640				lock_page: 60
+641				m_release_page: 329
+642				bf_readbuf: 179
+643				bcopy: 4
+644				bf_freebuf: 161
+645			bf_freebuf: 161
+646			lock_page: 60
+647			m_release_page: 329
+648			bf_readbuf: 179
+649			bt_getrid: int(), <btleafrids.c 69>
+650				bcopy: 4
+651				st_readframe: 429
+652		st_compare: int(), <st_compare.c 65>
+653			r_getrecord: 59
+654			strncmp: 343
+655			tbitscmp: 344
+656			bf_freebuf: 161
+657		st_gethash: int(), <st_gethash.c 61>
+658			lock_page: 60
+659			bf_readbuf: 179
+660			h_hash: 551
+661			m_release_page: 329
+662			printf: 2
+663			bt_binary_search: 341
+664			bf_freebuf: 161
+665			bt_getrid: 649
+666		am_fetchnext: int(), <am_fetchnext.c 57>
+667			AM_getscan: 56
+668			st_nextfile: 319
+669			AM_apply: 632
+670			st_getadjrid: int(), <stgetadjidx.c 62>
+671				bf_readbuf: 179
+672				bf_freebuf: 161
+673				lock_page: 60
+674				m_release_page: 329
+675				bt_getrid: 649
+676			st_compare: 652
+677			st_nexthash: int(), <st_nexthash.c 56>
+678				bf_readbuf: 179
+679				bf_freebuf: 161
+680				m_release_page: 329
+681				bt_getrid: 649
+682	am_fetchlast: int(), <am_fetchlast.c 61>
+683		AM_getscan: 56
+684		st_lastfile: int(), <st_lastfile.c 52>
+685			st_prevfile: int(), <st_prevfile.c 57>
+686				lock_page: 60
+687				bf_readbuf: 179
+688				bf_freebuf: 161
+689		AM_apply: 632
+690		st_lastindex: int(), <stlastindex.c 68>
+691			bt_traverse: 327
+692			bt_rightmost: 410
+693			lock_page: 60
+694			m_release_page: 329
+695			bf_freebuf: 161
+696			bf_readbuf: 179
+697			bt_getrid: 649
+698		st_compare: 652
+699		am_fetchprev: int(), <am_fetchprev.c 58>
+700			AM_getscan: 56
+701			st_prevfile: 685
+702			AM_apply: 632
+703			st_getadjrid: 670
+704			st_compare: 652
+705	wiss_lock_file: int(), <am_filelocking.c 49>
+706		lock_file: 69
+707	wiss_m_release_file: int(), <am_filelocking.c 71>
+708		m_release_file: int(), <release.c 594>
+709			find_trans: 61
+710			printf: 2
+711			is_file_acquired: 65
+712			m_release_page: 329
+713			SetLatch: 13
+714			fidHashDelete: int(), <locker.c 234>
+715				printf: 2
+716			ReleaseLatch: 15
+717			walkfile: 103
+718			exit: 83
+719	am_openfilescan: int(), <am_filescan.c 59>
+720		lock_file: 69
+721		AM_addscan: int(), <AM_scantable.c 145>
+722			alloc_scanblock: <>
+723			st_accessmode: int(), <st_mode.c 32>
+724				SetLatch: 13
+725				ReleaseLatch: 15
+726		AM_getscan: 56
+727		printf: 2
+728	am_geticursor: int(), <am_geticursor.c 48>
+729		AM_getscan: 56
+730	am_getindexscan: int(), <am_getiscan.c 69>
+731		AM_getscan: 56
+732	am_openhashscan: int(), <am_hashscan.c 67>
+733		AM_addscan: 721
+734		AM_getscan: 56
+735		st_accessmode: 723
+736		lock_file: 69
+737		printf: 2
+738		suffixname: 479
+739		st_volid: 480
+740		st_createfile: int(), <st_createf.c 51>
+741			io_createfile: int(), <io_createf.c 51>
+742				SetLatch: 13
+743				ReleaseLatch: 15
+744				IO_AllocFile: 594
+745			SetLatch: 13
+746			ST_newfiledesc: int(), <d_directory.c 334>
+747				hash: 497
+748				ST_accessfiledesc: 496
+749				io_readpage: 205
+750				bucket_split: int(), <d_directory.c 524>
+751					io_allocpages: 280
+752					malloc: 513
+753					hash: 497
+754					io_writepage: 198
+755					free: 130
+756				overflow_split: int(), <d_directory.c 583>
+757					io_readpage: 205
+758					io_allocpages: 280
+759					io_writepage: 198
+760				strcpy: 11
+761				sys_getuser: 505
+762				io_writepage: 198
+763			printf: 2
+764			io_destroyfile: 532
+765			ReleaseLatch: 15
+766		st_openfile: int(), <st_openfile.c 54>
+767			SetLatch: 13
+768			sys_getuser: 505
+769			ReleaseLatch: 15
+770			strcmp: 499
+771			ST_accessfiledesc: 496
+772			bf_openfile: int(), <bfopenfile.c 41>
+773			InitLatch: 35
+774			bf_closefile: 486
+775	am_insertlong: int(), <am_insertl.c 58>
+776		AM_getscan: 56
+777		st_insertframe: 372
+778		AM_nextscan: 54
+779	am_insertscan: int(), <am_insertscn.c 60>
+780		AM_getscan: 56
+781		st_insertrecord: int(), <st_insertrec.c 58>
+782			st_appendrecord: 269
+783			r_addrec: 270
+784			bf_readbuf: 179
+785			bf_freebuf: 161
+786			r_hookup: 279
+787		bcopy: 4
+788		st_appendrecord: 269
+789	am_writelog: int(), <am_log.c 45>
+790		bcopy: 4
+791		st_appendrecord: 269
+792	am_openlongscan: int(), <am_longscan.c 55>
+793		AM_addscan: 721
+794		AM_getscan: 56
+795	am_newopenindexscan: int(), <am_newindexscan.c 58>
+796		strncpy: <>
+797		convert_lower_bound: int(), <am_newindexscan.c 83>
+798			addone: int(), <am_newindexscan.c 154>
+799			printf: 2
+800		convert_upper_bound: int(), <am_newindexscan.c 119>
+801			subone: int(), <am_newindexscan.c 160>
+802			printf: 2
+803		am_openindexscan: int(), <am_indexscan.c 69>
+804			AM_addscan: 721
+805			AM_getscan: 56
+806			st_accessmode: 723
+807			lock_file: 69
+808			printf: 2
+809			suffixname: 479
+810			st_volid: 480
+811			st_destroyfile: 501
+812			st_createfile: 740
+813			st_openfile: 766
+814	am_openfile: int(), <am_openfile.c 47>
+815		st_openfile: 766
+816	am_openhash: int(), <am_openhash.c 48>
+817		st_openhash: int(), <st_openhash.c 46>
+818			suffixname: 479
+819			st_openfile: 766
+820	am_openindex: int(), <am_openindex.c 48>
+821		st_openbtree: int(), <stopenbtree.c 47>
+822			suffixname: 479
+823			st_openfile: 766
+824	am_readlong: int(), <am_readlong.c 53>
+825		AM_getscan: 56
+826		st_readframe: 429
+827	am_readscan: int(), <am_readscan.c 52>
+828		AM_getscan: 56
+829		st_readrecord: 58
+830	am_setcursor: int(), <am_setcursor.c 58>
+831		AM_getscan: 56
+832		st_readrecord: 58
+833	am_setindexscan: int(), <am_setiscan.c 55>
+834		AM_getscan: 56
+835	am_setscan: int(), <am_setscan.c 55>
+836		AM_getscan: 56
+837	am_updatelong: int(), <am_updlong.c 53>
+838		AM_getscan: 56
+839		st_writeframe: int(), <st_writefrm.c 54>
+840			r_getrecord: 59
+841			bf_freebuf: 161
+842			bcopy: 4
+843			bf_setdirty: 224
+844	am_updatescan: int(), <am_updscan.c 59>
+845		AM_getscan: 56
+846		st_compare: 652
+847		st_readfield: 610
+848		bcopy: 4
+849		st_appendrecord: 269
+850		st_writerecord: 307
+851	bf_allocbuf: int(), <bfallocbuf.c 43>
+852		BF_lock: 162
+853		BF_lookup: 181
+854		BF_allocbuf: 184
+855		BF_unlock: 173
+856		BF_insert: 212
+857	bf_findbuf: int(), <bffindbuf.c 47>
+858		BF_lock: 162
+859		BF_lookup: 181
+860		BF_unlock: 173
+861	bf_pin: int(), <bfpin.c 36>
+862		BF_lock: 162
+863		BF_unlock: 173
+864		printf: 2
+865	bf_unpin: int(), <bfunpin.c 38>
+866		BF_lock: 162
+867		BF_unlock: 173
+868		printf: 2
+869	printmap: int(), <bit.c 60>
+870		printf: 2
+871	mapempty: int(), <bit.c 196>
+872	nextclear: int(), <bit.c 396>
+873	bt_print_levels: int(), <btdump.c 207>
+874		printf: 2
+875		bf_readbuf: 179
+876		bf_freebuf: 161
+877		st_firstfile: 318
+878		bt_print_overflow: int(), <btdump.c 168>
+879			printf: 2
+880			st_readframe: 429
+881		st_nextfile: 319
+882	bt_print_btfile: int(), <btdump.c 271>
+883		printf: 2
+884		bf_readbuf: 179
+885		bt_print_btpage: int(), <btdump.c 118>
+886			printf: 2
+887			print_page: int(), <btdump.c 56>
+888				printf: 2
+889				print_data: 3
+890				bcopy: 4
+891		bf_freebuf: 161
+892		st_firstfile: 318
+893		bt_print_overflow: 878
+894		st_nextfile: 319
+895	bt_print_keyridfile: int(), <btdump.c 333>
+896		printf: 2
+897		st_firstfile: 318
+898		r_getrecord: 59
+899		bcopy: 4
+900		print_data: 3
+901		st_nextfile: 319
+902	addbucket: struct*(), <create.c 36>
+903		malloc_node: struct*(), <alloclock.c 102>
+904			SetLatch: 13
+905			alloc_more_node: 76
+906			InitLatch: 35
+907			ReleaseLatch: 15
+908	addowner: short(), <create.c 108>
+909		ReleaseLatch: 15
+910		alloc_more_waitnode: 42
+911		SetLatch: 13
+912		lock_strength: short(), <release.c 34>
+913	st_listdir: int(), <d_directory.c 809>
+914		SetLatch: 13
+915		malloc: 513
+916		printf: 2
+917		io_readpage: 205
+918		free: 130
+919		ReleaseLatch: 15
+920	d_dumptable: int(), <d_dumptable.c 48>
+921		printf: 2
+922	main: int(), <format.c 65>
+923		wiss_checkflags: int(), <traceflags.c 145>
+924			clearmap: int(), <bit.c 93>
+925			setflags: int(), <traceflags.c 79>
+926				printf: 2
+927				exit: 83
+928				wsetmap: 256
+929				setbit: 257
+930		printf: 2
+931		wiss_init: int(), <sm_init.c 55>
+932			sm_init: int(), <sm_init.c 138>
+933				open: 590
+934				printf: 2
+935				exit: 83
+936				flock: <>
+937				ftok: <>
+938				getpid: <>
+939				shmget: <>
+940				shmat: <>
+941				shmctl: <>
+942				shmAlloc: 24
+943				InitLatch: 35
+944				io_init: int(), <io_init.c 48>
+945					InitLatch: 35
+946				bf_init: int(), <bfinit.c 53>
+947					BF_hashinit: int(), <bfinit.c 81>
+948						shmAlloc: 24
+949						InitLatch: 35
+950					InitLatch: 35
+951				st_init: int(), <st_init.c 54>
+952					ST_filedirinit: int(), <st_init.c 84>
+953					InitLatch: 35
+954				lm_initialize_resources: int(), <initlock.c 87>
+955					init_locktable: int(), <initlock.c 36>
+956						InitLatch: 35
+957					init_waiters: int(), <initlock.c 71>
+958					init_waitfor_graph: int(), <init_graph.c 78>
+959						InitLatch: 35
+960						init_graph: int(), <init_graph.c 64>
+961							init_graph_node: 33
+962						init_lockq: int(), <init_graph.c 51>
+963							init_lock_node: 26
+964					InitLatch: 35
+965				InitSem: int(), <semaphore.c 54>
+966					semget: <>
+967					printf: 2
+968					semctl: <>
+969			am_init: int(), <am_init.c 44>
+970				AM_initscantable: int(), <AM_scantable.c 98>
+971					alloc_scanblock: 722
+972				local_io_init: int(), <io_init.c 85>
+973		Usage: int(), <format.c 100>
+974			printf: 2
+975			exit: 83
+976		Display: int(), <format.c 168>
+977			strcmp: 499
+978			PrintHeader: int(), <format.c 202>
+979				printf: 2
+980			IO_Mount: int(), <IOmount.c 73>
+981				open: 590
+982				shmAlloc: 24
+983				IO_ReadPage: 207
+984				clearmap: 924
+985			io_error: 622
+986			exit: 83
+987			io_final: int(), <io_final.c 44>
+988				SetLatch: 13
+989				IO_DisMount: 583
+990				ReleaseLatch: 15
+991			printf: 2
+992			IO_DisMount: 583
+993		Create: int(), <format.c 107>
+994			printf: 2
+995			getchar: <>
+996			scanf: <>
+997			exit: 83
+998			readln: int(), <format.c 218>
+999				getchar: 995
+1000			IO_Format: 581
+1001		wiss_final: int(), <sm_init.c 61>
+1002			am_final: 627
+1003			getpid: 938
+1004			flock: 936
+1005			printf: 2
+1006			exit: 83
+1007			shmctl: 941
+1008			semctl: 968
+1009			sm_final: int(), <sm_final.c 25>
+1010				st_final: int(), <st_final.c 55>
+1011					ST_filedirfinal: int(), <st_final.c 88>
+1012						shmFree: 589
+1013				bf_final: int(), <bffinal.c 37>
+1014					BF_lock: 162
+1015					io_writepage: 198
+1016					BF_unlock: 173
+1017				io_final: 987
+1018			shmdt: <>
+1019			perror: <>
+1020			close: 7
+1021		exit: 83
+1022	h_dumphashtab: int(), <h_dump.c 46>
+1023		bf_readbuf: 179
+1024		printf: 2
+1025		bf_freebuf: 161
+1026	h_dumpfile: int(), <h_dump.c 83>
+1027		bf_readbuf: 179
+1028		printf: 2
+1029		bf_freebuf: 161
+1030		bt_print_btpage: 885
+1031	trans_state: int(), <info.c 66>
+1032		find_trans: 61
+1033		printf: 2
+1034		print_trans_node: int(), <info.c 35>
+1035			printf: 2
+1036	file_state: int(), <info.c 105>
+1037		findfile: 72
+1038		printf: 2
+1039	page_state: int(), <info.c 151>
+1040		findpage: 145
+1041		printf: 2
+1042	lm_lock_dump: int(), <info.c 188>
+1043		printf: 2
+1044	io_checker: int(), <io_check.c 45>
+1045		SetLatch: 13
+1046		IO_checker: int(), <IOcheck.c 53>
+1047			printf: 2
+1048			countmap: 284
+1049			malloc: 513
+1050			wsetmap: 256
+1051			checkset: 255
+1052			clearbit: 286
+1053			free: 130
+1054		ReleaseLatch: 15
+1055	getlockmode: short(), <locker.c 166>
+1056		findfile: 72
+1057		ReleaseLatch: 15
+1058	error_checking: int(), <locker.c 336>
+1059		find_trans: 61
+1060		printf: 2
+1061		is_file_acquired: 65
+1062	check_for_waiters: int(), <locker.c 1225>
+1063		findpage: 145
+1064		printf: 2
+1065	r_dumpfile: int(), <r_dumpfile.c 39>
+1066		lock_file: 69
+1067		printf: 2
+1068		bf_flushbuf: 490
+1069		io_readpage: 205
+1070	r_dumplong: int(), <r_dumplong.c 54>
+1071		r_getrecord: 59
+1072		printf: 2
+1073		bf_freebuf: 161
+1074	r_dumppage: int(), <r_dumppage.c 58>
+1075		lock_page: 60
+1076		printf: 2
+1077		printslot: int(), <r_dumppage.c 34>
+1078			printf: 2
+1079	release_owner_node: short(), <release.c 245>
+1080		printf: 2
+1081		exit: 83
+1082		ReleaseLatch: 15
+1083		SetLatch: 13
+1084	RmSem: int(), <semaphore.c 83>
+1085		semctl: 968
+1086		printf: 2
+1087	shmCalloc: char*(), <shmalloc.c 104>
+1088		shmAlloc: 24
+1089	shmCfree: int(), <shmalloc.c 119>
+1090		shmFree: 589
+1091	st_appendfile: int(), <st_appendfile.c 57>
+1092		r_addrec: 270
+1093		bf_freebuf: 161
+1094		lock_file: 69
+1095		r_hookup: 279
+1096		bf_readbuf: 179
+1097	st_appendpage: int(), <st_appendpage.c 42>
+1098		SetLatch: 13
+1099		ReleaseLatch: 15
+1100		r_hookup: 279
+1101		bf_readbuf: 179
+1102		bcopy: 4
+1103		bf_setdirty: 224
+1104		bf_freebuf: 161
+1105	st_chmod: int(), <st_chmod.c 35>
+1106		SetLatch: 13
+1107		strcmp: 499
+1108		sys_getuser: 505
+1109		ReleaseLatch: 15
+1110		ST_accessfiledesc: 496
+1111	st_createhash: int(), <st_createhash.c 72>
+1112		st_openfile: 766
+1113		lock_file: 69
+1114		suffixname: 479
+1115		st_createfile: 740
+1116		malloc: 513
+1117		io_allocpages: 280
+1118		bf_getbuf: 299
+1119		bf_freebuf: 161
+1120		h_initpage: 560
+1121		free: 130
+1122		st_firstfile: 318
+1123		st_nextfile: 319
+1124		r_getrecord: 59
+1125		printf: 2
+1126		bcopy: 4
+1127		h_inserthash: 548
+1128		st_closefile: 483
+1129	st_destroyhash: int(), <st_destroyhash.c 48>
+1130		suffixname: 479
+1131		st_destroyfile: 501
+1132	st_devsync: int(), <st_devsync.c 47>
+1133		SetLatch: 13
+1134		io_volid: 616
+1135		ReleaseLatch: 15
+1136		bf_flushbuf: 490
+1137	st_dismount: int(), <st_dismount.c 49>
+1138		SetLatch: 13
+1139		io_volid: 616
+1140		ReleaseLatch: 15
+1141		ST_dismount: int(), <d_directory.c 201>
+1142			shmFree: 589
+1143			st_closefile: 483
+1144			bf_dismount: int(), <bfdismount.c 40>
+1145				BF_lock: 162
+1146				BF_lookup: 181
+1147				BF_unlock: 173
+1148				io_writepage: 198
+1149				BF_delete: 191
+1150			ReleaseLatch: 15
+1151			io_dismount: int(), <io_dismount.c 45>
+1152				SetLatch: 13
+1153				strcmp: 499
+1154				ReleaseLatch: 15
+1155				IO_DisMount: 583
+1156	st_expandrecord: int(), <st_expandrec.c 58>
+1157		r_getslot: 228
+1158		r_slide: 236
+1159		bf_setdirty: 224
+1160		r_addrec: 270
+1161		r_hookup: 279
+1162		bf_freebuf: 161
+1163	st_getrecord: int(), <st_getrec.c 58>
+1164		r_getrecord: 59
+1165	st_mount: int(), <st_mount.c 51>
+1166		SetLatch: 13
+1167		io_mount: int(), <io_mount.c 45>
+1168			SetLatch: 13
+1169			strcmp: 499
+1170			IO_Open: int(), <IOmount.c 382>
+1171				open: 590
+1172			ReleaseLatch: 15
+1173			IO_Mount: 980
+1174			strcpy: 11
+1175		ReleaseLatch: 15
+1176		ST_mount: int(), <d_directory.c 129>
+1177			io_findfiledir: int(), <io_filedir.c 49>
+1178				SetLatch: 13
+1179				ReleaseLatch: 15
+1180			shmAlloc: 24
+1181			create_directory: int(), <d_directory.c 495>
+1182				io_allocpages: 280
+1183				io_writepage: 198
+1184			io_setfiledir: int(), <io_filedir.c 104>
+1185				SetLatch: 13
+1186				ReleaseLatch: 15
+1187				setbit: 257
+1188			io_readpage: 205
+1189		io_dismount: 1151
+1190	st_readlength: int(), <st_readlength.c 65>
+1191		r_getrecord: 59
+1192		bf_freebuf: 161
+1193	st_ridcompare: int(), <st_ridcomp.c 68>
+1194		r_getrecord: 59
+1195		strncmp: 343
+1196		tbitscmp: 344
+1197		bf_freebuf: 161
+1198	st_firstscan: int(), <st_scanfile.c 233>
+1199		st_scanfile: int(), <st_scanfile.c 71>
+1200			lock_page: 60
+1201			bf_freebuf: 161
+1202			bf_readbuf: 179
+1203	st_recordcard: int(), <st_stat.c 59>
+1204		SetLatch: 13
+1205		ST_accessfiledesc: 496
+1206		ReleaseLatch: 15
+1207	st_indexpages: int(), <st_stat.c 80>
+1208		SetLatch: 13
+1209		suffixname: 479
+1210		ST_accessfiledesc: 496
+1211		ReleaseLatch: 15
+1212	st_keycard: int(), <st_stat.c 104>
+1213		SetLatch: 13
+1214		suffixname: 479
+1215		ST_accessfiledesc: 496
+1216		ReleaseLatch: 15
+1217	st_hashpages: int(), <st_stat.c 129>
+1218		SetLatch: 13
+1219		suffixname: 479
+1220		ST_accessfiledesc: 496
+1221		ReleaseLatch: 15
+1222	st_hashcard: int(), <st_stat.c 153>
+1223		SetLatch: 13
+1224		suffixname: 479
+1225		ST_accessfiledesc: 496
+1226		ReleaseLatch: 15
+1227	st_createindex: int(), <stcreateidx.c 98>
+1228		suffixname: 479
+1229		st_destroyfile: 501
+1230		st_createfile: 740
+1231		printf: 2
+1232		st_sort: int(), <stsort.c 124>
+1233			SetLatch: 13
+1234			ST_accessfiledesc: 496
+1235			ReleaseLatch: 15
+1236			sys_getuser: 505
+1237			suffixname: 479
+1238			st_sortinto: int(), <stsort.c 176>
+1239				SetLatch: 13
+1240				ST_accessfiledesc: 496
+1241				ReleaseLatch: 15
+1242				sys_getuser: 505
+1243				st_destroyfile: 501
+1244				st_filepages: int(), <st_stat.c 38>
+1245					SetLatch: 13
+1246					ST_accessfiledesc: 496
+1247					ReleaseLatch: 15
+1248				printf: 2
+1249				st_createfile: 740
+1250				st_openfile: 766
+1251				lock_file: 69
+1252				malloc: 513
+1253				io_allocpages: 280
+1254				bf_invalidate: int(), <bfinvalidate.c 38>
+1255					BF_lock: 162
+1256					BF_lookup: 181
+1257					BF_unlock: 173
+1258					BF_delete: 191
+1259				io_readpage: 205
+1260				q_sort: int(), <stsort.c 635>
+1261					key_compare: int(), <stsort.c 690>
+1262						compare_key: 342
+1263				add_record: int(), <stsort.c 581>
+1264					flush_outpage: int(), <stsort.c 603>
+1265						io_writepage: 198
+1266					bcopy: 4
+1267				flush_outpage: 1264
+1268				free: 130
+1269				io_createfile: 741
+1270				create_heap: int(), <stsort.c 518>
+1271					key_compare: 1261
+1272				heap_top: int(), <stsort.c 559>
+1273					key_compare: 1261
+1274				io_destroyfile: 532
+1275				st_closefile: 483
+1276			printf: 2
+1277			st_destroyfile: 501
+1278			st_rename: int(), <st_rename.c 58>
+1279				SetLatch: 13
+1280				ST_accessfiledesc: 496
+1281				ReleaseLatch: 15
+1282				sys_getuser: 505
+1283				lock_file: 69
+1284				ST_newfiledesc: 746
+1285				strcpy: 11
+1286				ST_zapfiledesc: 507
+1287		extract_key: int(), <stcreateidx.c 261>
+1288			st_openfile: 766
+1289			lock_file: 69
+1290			st_firstfile: 318
+1291			r_getrecord: 59
+1292			bcopy: 4
+1293			bf_freebuf: 161
+1294			st_appendrecord: 269
+1295			st_nextfile: 319
+1296			st_closefile: 483
+1297		st_openfile: 766
+1298		lock_file: 69
+1299		fill_leaf: int(), <stcreateidx.c 360>
+1300			bt_allocpage: 353
+1301			bf_freebuf: 161
+1302			st_firstfile: 318
+1303			r_getrecord: 59
+1304			bcopy: 4
+1305			st_nextfile: 319
+1306			compare_key: 342
+1307			st_createlong: 370
+1308			st_insertframe: 372
+1309			bt_insertkey: 404
+1310			bt_insertentry: 397
+1311		st_closefile: 483
+1312	st_dropbtree: int(), <stdropbtree.c 50>
+1313		suffixname: 479
+1314		st_destroyfile: 501
+1315	st_getindex: int(), <stgetindex.c 74>
+1316		bt_traverse: 327
+1317		bf_freebuf: 161
+1318		clean_locks: 349
+1319		bt_getrid: 649
+1320	set_sortbuf: int(), <stsort.c 105>
+1321		printf: 2
+1322	reset_sortbuf: int(), <stsort.c 112>
+1323	sys_setuser: int(), <sys.c 37>
+1324	sys_time: int(), <sys.c 47>
+1325	begin_trans: int(), <trans.c 30>
+1326		activate: int(), <detect.c 54>
+1327			find_trans: 61
+1328			create_graphnode: <>
+1329			printf: 2
+1330		printf: 2
+1331	commit_trans: int(), <trans.c 50>
+1332		lm_committ_trans: 98

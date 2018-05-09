@@ -1,0 +1,28 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+shmalloc.o:	../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  shmalloc.c
+.BUILT_LAST_MAKE_RUN:
+sys.o:
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  sys.c
+clean:
+	/bin/rm *.o
+.BUILT_LAST_MAKE_RUN:
+bit.o:
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  bit.c
+util.o:
+	ld -r bit.o traceflags.o data.o suffixname.o sys.o shmalloc.o  -o util.o
+	chmod -x util.o
+.BUILT_LAST_MAKE_RUN:
+traceflags.o:
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  traceflags.c
+.BUILT_LAST_MAKE_RUN:
+suffixname.o:
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  suffixname.c
+.BUILT_LAST_MAKE_RUN:
+libWiSSutil.a:
+	rm -f libWiSSutil.a
+	ar rc libWiSSutil.a bit.o traceflags.o data.o suffixname.o sys.o shmalloc.o 
+.BUILT_LAST_MAKE_RUN:
+data.o:
+	cc -O -I..  -DLMTRACE -g   -target sun4 -c  data.c

@@ -1,0 +1,12 @@
+#
+# first make the programs
+make all
+
+make disk
+
+test1 > out
+test2 >> out
+test3 >> out
+test4 >> out
+
+

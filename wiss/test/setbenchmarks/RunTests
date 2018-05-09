@@ -1,0 +1,57 @@
+#
+# first make the programs
+make all
+
+make disk
+
+if (-e out) then
+	mv out old
+endif
+
+# first load a standard 10,000 tuple relation into a wiss file 
+echo "  " > out
+echo "loaddb" >> out
+loaddb foo 10000  TRUE >> out
+
+# next scan the standard 10,000 tuple relation into a wiss file 
+echo "  " >> out
+echo "scan" >> out
+scan foo 10001 1  TRUE >> out
+
+# next load a standard 10,000 tuple relation into an o2 style set
+# with an index on the oid 
+echo "  " >> out
+echo "loaddbsets" >> out
+loaddbsets bar 10000  TRUE >> out
+
+# scan the set just created 
+echo "  " >> out
+echo "scansets" >> out
+scansets bar 10001 1  TRUE >> out
+
+#stick 10000 integers into an o2 style set (b-tree) with IX locking on Btree
+echo "  " >> out
+echo "setindex" >> out
+setindex bar 10000  TRUE >> out
+
+#stick 10000 integers into an o2 style set (b-tree) with X locking on Btree
+echo "  " >> out
+echo "setindex2" >> out
+setindex2 bar 10000  TRUE >> out
+
+#stick 10000 integers into a set using sorting to eliminate duplicates
+echo "  " >> out
+echo "setsort" >> out
+setsort foo 10000  TRUE >> out
+
+#stick 10000 integers into a set using sorting to eliminate duplicates
+#but index is built by insertion and not from the bottom up
+echo "  " >> out
+echo "setsortx" >> out
+setsortx foo 10000  TRUE >> out
+
+#final form of set testt
+
+echo "  " >> out
+echo "setx" >> out
+setx foo 10000  TRUE >> out

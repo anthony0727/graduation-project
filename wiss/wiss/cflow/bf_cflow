@@ -1,0 +1,110 @@
+1	bf_allocbuf: int(), <bfallocbuf.c 43>
+2		BF_lock: int(), <BFhash.c 283>
+3			SetLatch: <>
+4			InitLatch: <>
+5			ReleaseLatch: <>
+6			printf: <>
+7		BF_lookup: int(), <BFhash.c 51>
+8			SetLatch: 3
+9			ReleaseLatch: 5
+10		BF_allocbuf: int(), <BFallocbuf.c 47>
+11			BF_dumpbuftable: int(), <BFdumptables.c 41>
+12				printf: 6
+13			SetLatch: 3
+14			ReleaseLatch: 5
+15			printf: 6
+16			BF_lock: 2
+17			BF_unlock: int(), <BFhash.c 437>
+18				SetLatch: 3
+19				ReleaseLatch: 5
+20				printf: 6
+21				BF_lock_dump: int(), <BFhash.c 546>
+22					printf: 6
+23			BF_delete: int(), <BFhash.c 178>
+24				SetLatch: 3
+25				ReleaseLatch: 5
+26				printf: 6
+27				BF_hash_dump: int(), <BFhash.c 564>
+28					printf: 6
+29				BF_dumpbuftable: 11
+30			io_writepage: <>
+31		BF_unlock: 17
+32		BF_insert: int(), <BFhash.c 114>
+33			SetLatch: 3
+34			ReleaseLatch: 5
+35			printf: 6
+36			BF_dumpbuftable: 11
+37			BF_dumpfixed: int(), <BFdumptables.c 83>
+38				printf: 6
+39	bf_closefile: int(), <bfclosefile.c 39>
+40		BF_lock: 2
+41		BF_lookup: 7
+42		BF_unlock: 17
+43	bf_discard: int(), <bfdiscard.c 41>
+44		BF_lock: 2
+45		SetLatch: 3
+46		BF_delete: 23
+47		ReleaseLatch: 5
+48		BF_unlock: 17
+49	bf_dismount: int(), <bfdismount.c 40>
+50		BF_lock: 2
+51		BF_lookup: 7
+52		BF_unlock: 17
+53		io_writepage: 30
+54		BF_delete: 23
+55	bf_error: char*(), <bferror.c 41>
+56	bf_findbuf: int(), <bffindbuf.c 47>
+57		BF_lock: 2
+58		BF_lookup: 7
+59		BF_unlock: 17
+60	bf_flushbuf: int(), <bfflushbuf.c 41>
+61		BF_lock: 2
+62		BF_lookup: 7
+63		BF_unlock: 17
+64		io_writepage: 30
+65	bf_freebuf: int(), <bffreebuf.c 42>
+66		BF_lock: 2
+67		printf: 6
+68		BF_dumpbuftable: 11
+69		BF_dumpbufpool: int(), <BFdumptables.c 66>
+70			printf: 6
+71		exit: <>
+72		BF_unlock: 17
+73	bf_getbuf: int(), <bfgetbuf.c 44>
+74		BF_lock: 2
+75		BF_lookup: 7
+76		BF_allocbuf: 10
+77		BF_unlock: 17
+78		BF_insert: 32
+79	bf_init: int(), <bfinit.c 53>
+80		BF_hashinit: int(), <bfinit.c 81>
+81			shmAlloc: <>
+82			InitLatch: 4
+83		InitLatch: 4
+84	bf_invalidate: int(), <bfinvalidate.c 38>
+85		BF_lock: 2
+86		BF_lookup: 7
+87		BF_unlock: 17
+88		BF_delete: 23
+89	bf_openfile: int(), <bfopenfile.c 41>
+90	bf_pin: int(), <bfpin.c 36>
+91		BF_lock: 2
+92		BF_unlock: 17
+93		printf: 6
+94	bf_readbuf: int(), <bfreadbuf.c 46>
+95		BF_lock: 2
+96		BF_lookup: 7
+97		BF_allocbuf: 10
+98		printf: 6
+99		BF_unlock: 17
+100		io_readpage: <>
+101		SetLatch: 3
+102		ReleaseLatch: 5
+103		BF_insert: 32
+104	bf_setdirty: int(), <bfsetdirty.c 44>
+105		BF_lock: 2
+106		BF_unlock: 17
+107	bf_unpin: int(), <bfunpin.c 38>
+108		BF_lock: 2
+109		BF_unlock: 17
+110		printf: 6

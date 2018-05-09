@@ -1,0 +1,227 @@
+.ig
+last edited by
+chou	(8/10/84)
+..
+
+.sh 1 "I/O Level Interface and Operations"
+.pp
+Level 0 manages physical disk devices and schedules all I/O activities.
+Since files are a collection of sequential page extents,
+level 0 is responsible for allocating extents to files,
+as well as managing the free space on each volume.
+.pp
+For the preliminary implementation, level 0 will be built on top of the
+UNIX file system.
+When this level is modified to run without a file system underlying it,
+none of the other levels should need to be changed, since the calls
+to this level will remain the same.
+.pp
+In the following, a PID refers to a page identifier, which is basically 
+a RID without the record number.
+The interface to this level consists of the following routines, all of which
+return error codes:
+
+.np
+io_createfile (VolID, NumPages, ExtentFillFactor, NewFile)
+.sp 0
+FID	*NewFile;
+.sp 1
+Creates a new file on the specified volume by adding a file entry
+to the volume header and allocates storage space (at least NumPages worth).
+The ExtentFillFactor gives a limit (in percentage) of space which must be
+available before a page from this extent may be allocated by other than
+a "NearPID" request (see io_allocpages, below).
+Returns an internal identifier created by level 0 through NewFile.
+It contains enough information to find the file's entry in a volume header.
+.sp 1
+.ul
+Implementation:
+Appropriate manipulation of the volume header information.
+.sp
+.np
+io_destroyfile (FileID)
+.sp 0
+FID	*FileID;
+.sp 1
+Destroys the file specified by FileID.
+Its pages are released, and it is removed from the volume header.
+.sp 1
+.ul
+Implementation:
+Appropriate manipulation of the volume header information and volume free
+list.
+.sp
+.np
+io_allocpages (FileID, NearPID, NumPages, AllocatedPages)
+.sp 0
+.nf
+FID	*FileID;
+PID	*NearPID;
+PID	AllocatedPage[];
+.fi
+.sp 1
+Additional storage space is allocated for the file FileID.
+An attempt is made to allocate NumPages worth of sequential storage
+as near as possible to the page identified by NearPID.
+(If NearPID is NULL, the system allocates the pages as it pleases.)
+The Page Identifiers are returned via an array whose first element
+is at AllocatedPage.
+Since pages are linked in logical sequential order,
+the system always has some freedom in allocating physical pages.
+An allocation request should fail only when 
+there is insufficient storage available on a volume.
+.sp 1
+.ul
+Implementation:
+Appropriate manipulation of the volume free list.
+.sp
+.ul
+Note:
+This routine does not link the pages; that is the function of level 2.
+This routine merely notes that pages are reserved; they are not
+initialized in any way.
+.sp
+.np
+io_freepage (FileID, PageID)
+.sp 0
+.nf
+FID	*FileID;
+PID	*PageID;
+.fi
+.sp 1
+The specified page is returned to the set of free pages within its extent. 
+(Io_freepage can be used to return a page to the free list when
+it becomes empty).
+.sp 1
+.ul
+Implementation:
+Appropriate manipulation of the volume free list.
+.sp
+.np
+io_readpage (PID, BufPtr)
+.sp 0
+.nf
+PID	*PageID;
+char	*BufPtr;
+.fi
+.sp 1
+Reads the specified page into a buffer addressed by BufPtr.
+BufPtr may point into the system buffer pool or into user space.
+.sp 1
+.ul
+Implementation:
+Scheduling of raw I/O operations, device handling, other things too ugly to
+mention.
+.sp
+.np
+io_writepage (PID, BufPtr, Type, Flag)
+.sp 0
+.nf
+PID	*PageID;
+char	*BufPtr;
+int	*Flag;
+.fi
+.sp 1
+Writes the specified page from the buffer pointed to by BufPtr onto the
+specified page.
+If Type is SYNCH, then return after the I/O operation has completed.
+If Type is ASYNCH, then return as soon as the I/O operation has been scheduled.
+The variable Flag will be set after the operation completes.
+(For now, both types will be treated as SYNCH.)
+.sp 1
+.ul
+Implementation:
+Scheduling of raw I/O operations, device handling, other things too ugly to
+mention.
+(Asynchronous I/O is particularly useful for writing out several
+pages at the end of a complicated operation: the caller need not worry
+about writing pages out in the most efficient order.)
+.sp
+.np
+io_volid (DeviceName)
+.sp 0
+char	*DeviceName;
+.sp 1
+Return the volume ID of the volume mounted on the named device.
+.sp 1
+.ul
+Implementation:
+Look up DeviceName in device table.
+.sp
+.np
+io_findfiledir (VolID, FirstPage, FileID)
+.sp 0
+.nf
+PID	*FirstPage;
+FID	*FileID;
+.fi
+.sp 1
+Return the file identifier and the identifier of the root page 
+of the file directory \** on this volume.
+This routine is supplied for level 2's use.
+.(f
+\**
+A file directory is a special file that is only visible to the system.
+There is one such file on each WiSS volume.
+.)f
+.sp 1
+.ul
+Implementation:
+Access the data in the volume header.
+.sp
+.np
+io_setfiledir (VolID, FirstPage)
+.sp 0
+PID	*FirstPage;
+.sp 1
+Change the stored identifier of the root page of file directory on this volume.
+This routine is supplied for level 2's use.
+.sp 1
+.ul
+Implementation:
+Update the volume header.
+.sp
+.np
+io_mount (DeviceName)
+.sp 0
+char	*DeviceName;
+.sp 1
+Mount the specified device.
+Return the volume ID of the volume mounted on the named device.
+.sp 1
+.ul
+Implementation:
+Convert DeviceName to physical address; get volume information and put into
+tables in main memory.
+.sp
+.np
+io_dismount (DeviceName)
+.sp 0
+char	*DeviceName;
+.sp 1
+Dismount the specified device.
+.sp 1
+.ul
+Implementation:
+.(l
+Dev <- io_volid(DeviceName)
+Remove volume information (Dev) from table
+.)l
+.np
+io_init ()
+.sp 0
+Initialize all I/O level data structures for system startup.
+.sp 1
+.ul
+Implementation:
+Clear counters, tables.
+.sp
+.np
+io_final ()
+.sp 0
+Finalize (clean up) all I/O level data structures for system shutdown.
+.sp 1
+.ul
+Implementation:
+Flush modified volume headers and dismount all devices.
+

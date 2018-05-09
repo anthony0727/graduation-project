@@ -1,0 +1,5 @@
+.././deadlock/alloc_graph.o-CPP: -I../. -I../.. -I..
+.././deadlock/create.o-CPP: -I../. -I../.. -I..
+.././deadlock/detect.o-CPP: -I../. -I../.. -I..
+.././deadlock/init_graph.o-CPP: -I../. -I../.. -I..
+.././deadlock/creategraph.o-CPP: -I../. -I../.. -I..

@@ -1,0 +1,17 @@
+btinsertkey.o-CPP: -I../.. -I../../LM
+bttraverse.o-CPP: -I../.. -I../../LM
+btdump.o-CPP: -I../.. -I../../LM
+btutil1.o-CPP: -I../.. -I../../LM
+btutil2.o-CPP: -I../.. -I../../LM
+btutilx.o-CPP: -I../.. -I../../LM
+btleafrids.o-CPP: -I../.. -I../../LM
+stcreateidx.o-CPP: -I../.. -I../../LM
+stdropbtree.o-CPP: -I../.. -I../../LM
+stopenbtree.o-CPP: -I../.. -I../../LM
+stfirstindex.o-CPP: -I../.. -I../../LM
+stlastindex.o-CPP: -I../.. -I../../LM
+stgetadjidx.o-CPP: -I../.. -I../../LM
+stgetindex.o-CPP: -I../.. -I../../LM
+stinsertidx.o-CPP: -I../.. -I../../LM
+stdeleteidx.o-CPP: -I../.. -I../../LM
+stsort.o-CPP: -I../.. -I../../LM

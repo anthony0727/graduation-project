@@ -1,0 +1,97 @@
+building sun benchmark with 20000 parts, locking=TRUE
+number of attached processes = 1
+new transaction id = 1
+loaded all the parts, now start making connections
+commit ok
+Size of b-tree index = 90 pages
+Size of part file = 800 pages
+had to expand records 1689 times
+expansion caused 0 records to move to a new page
+	Total running time for build is 103.11 seconds
+number of attached processes at wiss_final = 1
+lookup 1000 parts from sun benchmark database containing 20000 parts
+locking on = TRUE, repeat 10 times
+number of attached processes = 1
+new transaction id = 1
+	Total running time for loop 1 is 2.98 seconds
+	Total running time for loop 2 is 1.40 seconds
+	Total running time for loop 3 is 1.19 seconds
+	Total running time for loop 4 is 1.32 seconds
+	Total running time for loop 5 is 1.11 seconds
+	Total running time for loop 6 is 1.07 seconds
+	Total running time for loop 7 is 1.08 seconds
+	Total running time for loop 8 is 1.07 seconds
+	Total running time for loop 9 is 1.07 seconds
+	Total running time for loop 10 is 1.07 seconds
+			Avg time per warm run:  1.15
+commit ok
+number of attached processes at wiss_final = 1
+traverse to depth 7 in database containing 20000 parts
+locking on = TRUE, repeat 10 times
+number of attached processes = 1
+new transaction id = 1
+in the forward direction first
+	Visited 3280 parts 
+	Total running time for loop 1 is 1.56 seconds
+	Visited 3280 parts 
+	Total running time for loop 2 is 0.84 seconds
+	Visited 3280 parts 
+	Total running time for loop 3 is 0.70 seconds
+	Visited 3280 parts 
+	Total running time for loop 4 is 0.62 seconds
+	Visited 3280 parts 
+	Total running time for loop 5 is 0.60 seconds
+	Visited 3280 parts 
+	Total running time for loop 6 is 0.59 seconds
+	Visited 3280 parts 
+	Total running time for loop 7 is 0.56 seconds
+	Visited 3280 parts 
+	Total running time for loop 8 is 0.56 seconds
+	Visited 3280 parts 
+	Total running time for loop 9 is 0.57 seconds
+	Visited 3280 parts 
+	Total running time for loop 10 is 0.57 seconds
+			Avg time per warm run in the forward direction:  0.62
+in the reverse direction next
+	Visited 874 parts 
+	Total running time for loop 1 is 0.16 seconds
+	Visited 3508 parts 
+	Total running time for loop 2 is 0.61 seconds
+	Visited 2386 parts 
+	Total running time for loop 3 is 0.42 seconds
+	Visited 6190 parts 
+	Total running time for loop 4 is 1.07 seconds
+	Visited 3789 parts 
+	Total running time for loop 5 is 0.66 seconds
+	Visited 5411 parts 
+	Total running time for loop 6 is 0.93 seconds
+	Visited 3173 parts 
+	Total running time for loop 7 is 0.55 seconds
+	Visited 1693 parts 
+	Total running time for loop 8 is 0.29 seconds
+	Visited 1106 parts 
+	Total running time for loop 9 is 0.20 seconds
+	Visited 8607 parts 
+	Total running time for loop 10 is 1.48 seconds
+			Avg time per warm run in the reverse direction:  0.69
+commit ok
+number of attached processes at wiss_final = 1
+insert 100 parts from sun benchmark database containing 20000 parts
+locking=TRUE, repeat 10 times
+after each insert, the inserted parts are then deleted
+number of attached processes = 1
+new transaction id = 1
+	Total running time for loop 1 is 1.09 seconds
+	Total running time for loop 2 is 1.02 seconds
+	Total running time for loop 3 is 1.03 seconds
+	Total running time for loop 4 is 1.02 seconds
+	Total running time for loop 5 is 1.05 seconds
+	Total running time for loop 6 is 1.10 seconds
+	Total running time for loop 7 is 1.02 seconds
+	Total running time for loop 8 is 1.01 seconds
+	Total running time for loop 9 is 1.01 seconds
+	Total running time for loop 10 is 0.99 seconds
+			Avg time per warm run:  1.03
+attempting to delete all newly inserted parts 
+commit ok
+number of attached processes at wiss_final = 1

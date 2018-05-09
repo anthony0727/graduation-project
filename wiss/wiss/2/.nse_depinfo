@@ -1,0 +1,8 @@
+clean: .RECURSIVE record clean Makefile .RECURSIVE btree clean Makefile .RECURSIVE hash clean Makefile .RECURSIVE directory clean Makefile
+record/r_error.i: .RECURSIVE record r_error.i Makefile
+btree/bt_error.i: .RECURSIVE btree bt_error.i Makefile
+subdirs: .RECURSIVE record wiss2r.o Makefile .RECURSIVE btree wiss2b.o Makefile .RECURSIVE hash wiss2h.o Makefile .RECURSIVE directory wiss2d.o Makefile
+hash/libWiSS2h.a: .RECURSIVE hash libWiSS2h.a Makefile.lib
+directory/libWiSS2d.a: .RECURSIVE directory libWiSS2d.a Makefile.lib
+btree/libWiSS2b.a: .RECURSIVE btree libWiSS2b.a Makefile.lib
+record/libWiSS2r.a: .RECURSIVE record libWiSS2r.a Makefile.lib

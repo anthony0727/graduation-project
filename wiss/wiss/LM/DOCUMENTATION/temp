@@ -1,0 +1,138 @@
+.br
+.ls 1
+.ft R
+.sp 1
+.in+4
+.br
+.IP
+int activate (trans_id)
+.in+4
+.br
+.IP
+int    trans_id;
+.br
+.IP
+/* Given a transaction id, a cell is created in the wait for graph */
+.in-4
+.sp 1
+.br
+.IP
+struct    graph_bucket    *find_trans (trans_id)
+.in+4
+.br
+.IP
+int     trans_id;
+.br
+.IP
+/* Given a transaction id, it finds the node corresponding to the transaction
+in the transaction wait for graph */
+.in-4
+.sp 1
+.br
+.IP
+lock_file (trans_cell, file_id, mode, duration, cond)
+.in+4
+.br
+.IP
+register struct graph_bucket *trans_cell;/* cell in the wait for graph*/
+.br
+.IP
+FID file_id;
+.br
+.IP
+LOCKTYPE   mode;
+.br
+.IP
+DURATION   duration;
+.br
+.IP
+boolean     cond;
+.br
+.IP
+/*  Given a file, it tries to acquire the desired lock mode on it.
+Return values are GRANTED, NOT_GRANTED and ABORTED */
+.in-4
+.sp 1
+.br
+.IP
+lock_page (trans_cell, page_id, mode, duration, cond)
+.in+4
+.br
+.IP
+register  struct      graph_bucket    *trans_cell;
+.br
+.IP
+PID page_id;
+.br
+.IP
+LOCKTYPE   mode;
+.br
+.IP
+DURATION duration;
+.br
+.IP
+boolean cond;
+.br
+.IP
+/* Given a page, it tries to acquire the desired lock mode on it.
+Return values are GRANTED, NOT_GRANTED and ABORTED */
+.in-4
+.sp 1
+.br
+.IP
+m_release_page(trans_cell, page_id)
+.in+4
+.br
+.IP
+struct    graph_bucket *trans_cell;
+.br
+.IP
+PID    page_id;
+.br
+.IP
+/* Release a manual lock on a page */
+.in-4
+.sp 1
+.br
+.IP
+m_release_file (trans_cell, file_id)
+.in+4
+.br
+.IP
+struct    graph_bucket  *trans_cell;
+.br
+.IP
+FID    file_id;
+.br
+.IP
+/* Release a manual lock on a file */
+.in-4
+.sp 1
+.br
+.IP
+committ_trans (trans_id)
+.in+4
+.br
+.IP
+int    trans_id;
+.br
+.IP
+/* Given a transaction it releases all the resources it acquired during its 
+life */
+.in-4
+.sp 1
+.br
+.IP
+abort_trans (trans_id)
+.in+4
+.br
+.IP
+int    trans_id;
+/* Given a transaction it is aborted by releasing all the resources it acquired */
+.in-8
+.sp 1
+.ce 
+\fBFig. 4: Lock Manager Interfaces
+.ft R
+.ls 2
+.sp 1

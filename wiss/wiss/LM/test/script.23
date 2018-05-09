@@ -1,0 +1,115 @@
+O 0
+O 1
+O 2
+
+L 0 0 1 c f
+l 0 0 0 3 c f
+l 0 0 1 3 c f
+l 0 0 2 3 c f
+
+L 0 0 5 c f
+L 1 0 2 c f
+L 2 0 3 c f
+
+T 0
+
+A 1
+A 2
+C 0
+Q
+
+
+
+--------------------------- script.23 ---------------------------
+
+The main actions here are:
+  a) transaction 0 locks file 0 in IS mode, and lock pages 0,1,3
+     of file 0 in S mode.
+  b) transaction 0 upgrades its file lock to X, and transactions 
+     1 and 2 ask for a lock on file 0.
+  c) transaction 0 signals that the file 0 is destroyed to allow 
+     the transactions 1 and 2 restart and abort (as the file was
+     destroyed by transaction 0).
+
+
+
+The detailed description of each command line is:
+
+ open_trans(trans 0)
+ open_trans(trans 1)
+ open_trans(trans 2)
+
+ lock_file(trans 0, file 0, mode IS, duration MANUAL, cond False)
+ lock_page(trans 0, file 0, page 0, mode S, duration COMMIT, cond False)
+ lock_page(trans 0, file 0, page 1, mode S, duration COMMIT, cond False)
+ lock_page(trans 0, file 0, page 2, mode S, duration COMMIT, cond False)
+
+ lock_file(trans 0, file 0, mode X, duration COMMIT, cond False)
+ lock_file(trans 1, file 0, mode IX, duration COMMIT, cond False)
+ lock_file(trans 2, file 0, mode S, duration COMMIT, cond False)
+
+ look at state of transaction 0
+
+ abort(trans 1)
+ abort(trans 2)
+ commit(trans 0)
+ quit
+
+
+
+The expected output (so as to perform a "diff" with the next 
+execution output) is:
+
+-------------------------------------------------
+O 0
+--> 1
+
+O 1
+--> 1
+
+O 2
+--> 1
+
+L 0 0 1 c f
+--> 0
+
+l 0 0 0 3 c f
+--> 0
+
+l 0 0 1 3 c f
+--> 0
+
+l 0 0 2 3 c f
+--> 0
+
+L 0 0 5 c f
+--> 0
+
+L 1 0 2 c f
+--> -1550
+
+L 2 0 3 c f
+--> -1550
+
+T 0
+--> Trans 0 is owning:
+
+   . Page 2 (lock S)
+           . lock S granted to trans 0
+
+   . Page 1 (lock S)
+           . lock S granted to trans 0
+
+   . Page 0 (lock S)
+           . lock S granted to trans 0
+   . File 0 (lock X)
+           . lock X granted to trans 0
+           . lock IX waited by trans 1 - duration 2
+           . lock S waited by trans 2 - duration 2
+ No lock waited by trans. 0
+
+A 1
+A 2
+C 0
+Q
+-------------------------------------------------

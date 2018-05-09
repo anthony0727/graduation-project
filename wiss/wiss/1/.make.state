@@ -1,0 +1,80 @@
+.MAKE_VERSION:	VERSION-1.0
+wiss1.o:
+	echo ld -r ~~~ -o wiss1.o
+	ld -r bfopenfile.o bfclosefile.o bfflushbuf.o  bfallocbuf.o bfgetbuf.o bffreebuf.o bfreadbuf.o bfdiscard.o  bfsetdirty.o bfdismount.o bferror.o bfinit.o bffinal.o  bfinvalidate.o BFhash.o BFallocbuf.o BFdumptables.o bffindbuf.o  bfunpin.o bfpin.o -o wiss1.o
+.BUILT_LAST_MAKE_RUN:
+bfclosefile.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfclosefile.c
+bfinvalidtrans.o:	../buftab.h 
+	cc -I..   -g   -target sun4 -c  bfinvalidtrans.c
+.BUILT_LAST_MAKE_RUN:
+libWiSS1.a:
+	rm -f libWiSS1.a
+	ar rc libWiSS1.a bfopenfile.o bfclosefile.o bfflushbuf.o  bfallocbuf.o bfgetbuf.o bffreebuf.o bfreadbuf.o bfdiscard.o  bfsetdirty.o bfdismount.o bferror.o bfinit.o bffinal.o  bfinvalidate.o BFhash.o BFallocbuf.o BFdumptables.o bffindbuf.o  bfunpin.o bfpin.o
+.BUILT_LAST_MAKE_RUN:
+bfinvalidate.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfinvalidate.c
+bfinvalidpage.o:	../buftab.h 
+	cc -I..   -g   -target sun4 -c  bfinvalidpage.c
+.BUILT_LAST_MAKE_RUN:
+bfopenfile.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfopenfile.c
+.BUILT_LAST_MAKE_RUN:
+bffreebuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bffreebuf.c
+.BUILT_LAST_MAKE_RUN:
+bfunpin.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfunpin.c
+bfinvalidfile.o:	../buftab.h 
+	cc -I..   -g   -target sun4 -c  bfinvalidfile.c
+.BUILT_LAST_MAKE_RUN:
+bfinit.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfinit.c
+clean:
+	/bin/rm -f *.o
+.BUILT_LAST_MAKE_RUN:
+BFhash.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../stats.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  BFhash.c
+.BUILT_LAST_MAKE_RUN:
+bffindbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bffindbuf.c
+../bf_error.h:
+	m4 ../defs.m4 bferror.m4 > ../bf_error.h
+.BUILT_LAST_MAKE_RUN:
+bfpin.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfpin.c
+.BUILT_LAST_MAKE_RUN:
+bferror.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bferror.c
+bferror.i:
+	m4 ../handler.m4 bferror.m4 > bferror.i
+.BUILT_LAST_MAKE_RUN:
+bfdiscard.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfdiscard.c
+.BUILT_LAST_MAKE_RUN:
+bfgetbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfgetbuf.c
+.BUILT_LAST_MAKE_RUN:
+bfreadbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfreadbuf.c
+.BUILT_LAST_MAKE_RUN:
+BFdumptables.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  BFdumptables.c
+.BUILT_LAST_MAKE_RUN:
+bfdismount.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfdismount.c
+.BUILT_LAST_MAKE_RUN:
+bfsetdirty.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfsetdirty.c
+.BUILT_LAST_MAKE_RUN:
+bfflushbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfflushbuf.c
+.BUILT_LAST_MAKE_RUN:
+bfallocbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bfallocbuf.c
+.BUILT_LAST_MAKE_RUN:
+BFallocbuf.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  BFallocbuf.c
+.BUILT_LAST_MAKE_RUN:
+bffinal.o:	../buftab.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -DLMTRACE  -g    -target sun4 -c  bffinal.c

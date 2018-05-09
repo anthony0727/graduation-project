@@ -1,0 +1,513 @@
+last edited by
+chou (4/1/84)
+..
+.sh 1 "Access Method Level Interface and Operations"
+.pp
+Level 3 implements the access methods of sequential scan, index scan,
+and long item scan.
+For sequential scans and index scans, a boolean expression can be
+specified as a search predicate.
+Only records that satisfy the boolean expression are visible during the scan.
+For a B-tree index scan, a pair of keys can also be specified.
+This allows for efficient range scans through B-tree indices.
+For a hash index scan, a search key is specified and
+only the records with a matching key value are returned.
+.pp
+Level 3 software maintains an active scan table that describes all
+the scans in progress.
+The table contains information about the scan type
+(sequential, B-tree index, hashed index, or long item), 
+the open file number of the file being scanned,
+a scan cursor, and several parameters that are determined by the scan type.
+If the scan type is sequential or hash index, 
+then the parameter is a boolean expression; 
+if B-tree index, then the parameters are an upper and a lower bounds
+and a boolean expression; 
+if hash index, then the parameter is a search key and a boolean expression;
+if long item, then the parameter is the RID of the directory of the long item.
+A boolean expression is a linked list of simple boolean terms,
+and the elements on the list are semantically ANDed together.
+
+.np
+am_openfile 
+(VolID, FileName, Mode)
+.sp 0
+char	*FileName;
+.sp 1
+Make available a file in the requested mode.
+Return an Open File number to the caller for future access to the file.
+\fBNOTICE\fR opening a file does not set any locks on the file.
+File level locks must be set explicitly with a call to lock_file();
+.sp 1
+.ul
+Implementation:
+st_openfile(VolID, FileName, Mode)
+.sp
+.np
+am_openindex 
+(VolID, FileName, IndexNo, Mode)
+.sp 0
+char	*FileName;
+.sp 1
+Make an index available in the requested mode.
+Return an Open File number to the caller for future access to the file.
+\fBNOTICE\fR opening a b-tree index does not set any locks on the index.
+File level locks must be set explicitly with a call to lock_file();
+.sp 1
+.ul
+Implementation:
+st_openbtree(VolID, FileName, IndexNo, Mode)
+.sp
+.np
+am_openhash 
+(VolID, FileName, HashNo, Mode)
+.sp 0
+char	*FileName;
+.sp 1
+Make a hash index available in the requested mode.
+Return an Open File number to the caller for future access to the hash file.
+\fBNOTICE\fR opening a hash index does not set any locks on the index.
+File level locks must be set explicitly with a call to lock_file();
+.sp 1
+.ul
+Implementation:
+st_openhash(VolID, FileName, HashNo, Mode)
+.sp
+.np
+am_closefile 
+(OpenFileNum)
+.sp 
+Release a file or an index from further access.
+.sp 1
+.ul
+Implementation:
+st_closefile(OpenFileNum)
+.sp
+.np
+am_openfilescan 
+(OpenFileNum, BooleanExpr, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+BOOLEXP	*BooleanExpr;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Open a sequential scan on a file and return the ID of the scan.
+BooleanExpr is a linked list of simple boolean terms to be used as
+a search predicate for the scan.
+Only those records that 
+satisfy the complete boolean expression will be returned by this scan.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX,
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Set up information in the scan table.
+.sp
+.np
+am_openindexscan 
+(OpenFileNum, IndexFileNum, IndexKey, LB, UB, BooleanExpr, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+KEYINFO	*IndexKey;
+KEY	*LB, UB;
+BOOLEXP	*BooleanExpr;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Open a scan on a file through an index and return the ID of the scan.
+Only those records that fall between the lower and upper bounds and which
+satisfy the complete boolean expression will be returned by this scan.
+IndexKey contains information of the field on which the index is built.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX,
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Set up information in the scan table.
+.sp
+.np
+am_openhashscan 
+(OpenFileNum, IndexFileNum, HashKey, SearchKey, BooleanExpr, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+KEYINFO	*HashKey;
+KEY	*SearchKey;
+BOOLEXP	*BooleanExpr;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Open a scan on a file through a hash index and return the ID of the scan.
+Only those records that has the specified key value, and that
+satisfies the complete boolean expression will be returned by this scan.
+HashKey contains information of the field on which the index is built.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX,
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Set up information in the scan table.
+.sp
+.np
+am_openlongscan 
+(OpenFileNum, DirID, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	trans_id;
+short	lockup;
+short 	lockmode;
+short	cond;
+.fi
+.sp 1
+Open a scan on a long data item and return the ID of the scan.
+The directory of the long data item is stored as record DirID.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX,
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Set up information in the scan table.
+.sp
+.np
+am_closescan 
+(ScanID)
+.sp
+Close the scan identified by a scan ID.
+.sp 1
+.ul
+Implementation:
+If this was a long item scan, remove gaps in the updated slices
+by calling st_compresslong.
+If this was an index update scan, commit all the updates here.
+Finally, remove the entry of the scan from the scan table.
+.sp
+.ul
+Note:
+Updates of an index scan are deferred till the scan is close
+to avoid certain semantic problems associated with index update scan. 
+For example, "give everyone a 10% raise" might cause an infinite loop 
+if we are not careful about how it is actually done.
+.sp
+.np
+am_insertscan 
+(ScanID, RecAdr, Len, NewRID)
+.sp 0
+.nf
+char	*RecAdr;
+int	Len;
+RID	*NewRID;
+.fi
+.sp 1
+Insert a record near the cursor of a scan and
+return (via NewRID) the RID of the new record.
+The text of the new record, of length Len, is in a user
+buffer pointed to by RecAdr.
+This routine is for sequential scans and index scans only.
+.sp 1
+.ul
+Implementation:
+For a sequential scan,
+call st_insertrecord to put the record near the scan cursor.
+For an index scan, the text of the new record is recorded in a temporary file.
+.sp
+.np
+am_insertlong 
+(ScanID, After, RecAdr, Length)
+.sp 0
+char	*RecAdr;
+.sp 1
+Insert a string of bytes into a long data item.
+If After is TRUE, insert after the current byte in the scan; otherwise
+insert before the current byte.
+This routine is for long item scans only.
+.sp 1
+.ul
+Implementation:
+Call st_insertframe to insert the bytes into the long data item.
+.sp
+.np
+am_updatescan 
+(ScanID, RecAdr, Len)
+.sp 0
+char	*RecAdr;
+.sp
+Update the record under the scan cursor.
+The new text, of length Len, is in a buffer pointed to by RecAdr.
+.sp 1
+.ul
+Implementation:
+For a sequential scan, call st_writerecord to overwrite the record 
+that is under the scan cursor.
+For an index scan, the new text is recorded in a temporary file.
+.sp
+.np
+am_updatelong 
+(ScanID, RecAdr, Length)
+.sp 0
+char	*RecAdr;
+.sp
+Replace Length bytes of a long data item, starting from the cursor
+position, with the new text in the buffer pointed to by RecAdr.
+Return the actual number of bytes written.
+.sp 1
+.ul
+Implementation:
+Call st_writeframe.
+.sp
+.np
+am_deletescan 
+(ScanID)
+.sp 
+Delete the record under the scan cursor.
+.sp 1
+.ul
+Implementation:
+For a sequential scan, call st_deleterecord to remove the record that is
+under the scan cursor.
+For an index scan, the RID of the record under the scan cursor
+is recorded in a temporary file.
+.sp
+.np
+am_deletelong 
+(ScanID, Length)
+.sp 
+Remove Length bytes, starting from the cursor position, from a long data item.
+.sp 1
+.ul
+Implementation:
+Call st_deleteframe.
+.sp
+.np
+am_fetchfirst 
+(ScanID, FirstRID)
+.sp 0
+RID	*FirstRID;
+.sp 1
+Return (via FirstRID) the RID of the first record of a scan.
+.sp 1
+.ul
+Implementation:
+.(l
+depending on the scan type, call
+st_firstfile(OpenFileNum, FirstRID), or
+st_firstindex(OpenFileNum, LB, Xcursor, FirstRID), or
+st_gethash(OpenFileNum, SearchKey, Xcursor, FirstRID),
+applying boolean expression to the record thus obtained; 
+if it does not satisfy all of these boolean terms, 
+ continue as in am_fetchnext.
+.)l
+.np
+am_fetchnext 
+(ScanID, NextRID)
+.sp 0
+RID	*NextRID;
+.sp 1
+Return (via NextRID) the RID of the next record of a scan.
+.sp 1
+.ul
+Implementation:
+.(l
+depending on the scan type, repeatedly call
+st_nextfile(OpenFileNum, CurrRID, NextRID), or
+st_getadjrid(OpenFileNum, NEXT, Xcursor, NextRID), or
+st_nexthash(OpenFileNum, Xcursor, NextRID).
+applying boolean expression to each record thus obtained, 
+and only returning a RID when it satisfies all of these 
+ boolean terms.
+.)l
+.np
+am_fetchprev 
+(ScanID, PrevRID)
+.sp 0
+RID	*PrevRID;
+.sp 1
+Return (via PrevRID) the RID of the previous record of a scan.
+.sp 1
+.ul
+Implementation:
+.(l
+depending on the scan type, repeatedly call
+st_prevfile(OpenFileNum, CurrRID, PrevRID) or
+st_getadjrid(OpenFileNum, PREV, Xcursor, PrevRID), 
+applying boolean expression to each record thus obtained, 
+and only returning a RID when it satisfies all of these 
+ boolean terms.
+.)l
+.np
+am_fetchlast 
+(ScanID, LastRID)
+.sp 0
+RID	*LastRID;
+.sp 1
+Return via (LastRID) the RID of the last record of the scan.
+.sp 1
+.ul
+Implementation:
+.(l
+depending on the scan type, call
+st_lastfile(OpenFileNum, LastRID), or
+st_lastindex(OpenFileNum, UB, Xcursor, LastRID),
+applying boolean expression to the record thus obtained;
+if it does not satisfy all of these boolean terms, 
+ continue as in am_fetchprev.
+.)l
+.np
+am_readscan 
+(ScanID, RecAdr, Length)
+.sp 0
+char	*RecAdr;
+.sp 1
+Read the record that is under the scan cursor into the buffer pointed to by 
+RecAdr.
+Length is the expected length of the record.
+Return the actual number of bytes read.
+.sp 1
+.ul
+Implementation:
+Call st_readrecord.
+.sp
+.np
+am_readlong 
+(ScanID, RecAdr, Length)
+.sp 0
+char	*RecAdr;
+.sp
+Read Length bytes into RecAdr from a long data item.
+Return the actual number of bytes read.
+.sp 1
+.ul
+Implementation:
+Call st_readframe.
+.sp
+.np
+am_geticursor
+(ScanID, Xcursor)
+.sp 0
+XCURSOR	*Xcursor;
+.sp 1
+Return the cursor of an index scan.
+This index cursor can be used later to reset the cursor of 
+the index scan (by calling am_setiscan).
+.sp 1
+.ul
+Implementation:
+Consult the scan table.
+.sp 1
+.ul
+Note:
+The cursor of a sequential scan is already available through
+a call to am_fetchfirst, am_fetchnext, etc..
+.sp
+.np
+am_setscan (ScanID, RecID)
+.sp 0
+RID	*RecID;
+.sp 1
+Re-position the cursor of a scan to RecID.
+This routine is for sequential scans only.
+.sp 1
+.ul
+Implementation:
+Update the cursor in the scan table.
+.sp
+.np
+am_setiscan (ScanID, Xcursor)
+.sp 0
+XCURSOR	*Xcursor;
+.sp 1
+Re-position the cursor of an index scan to Xcursor.
+This routine is for index scans only.
+.sp 1
+.ul
+Implementation:
+Update the cursor in the scan table.
+.sp
+.np
+am_setcursor (ScanID, Offset, Relocation)
+.sp 
+Change the cursor of a long item scan to a new position.
+Offset is a 4-byte integer.
+Relocation is 0 for positioning relative to the first byte in the item,
+1 for positioning relative to the cursor position,
+and 2 for positioning relative to the last byte in the item.
+This routine is for scans on long data items only.
+.sp 1
+.ul
+Implementation:
+Update the cursor in the scan table.
+.sp
+.np
+am_error (Message, ErrorCode)
+.sp 0
+char	*Message;
+.sp 1
+Explain the meaning of a WiSS Error Code.
+Message is any additional information the caller wishes to display when
+the error occurs.
+.sp
+.ul
+Implementation:
+Examine the error code to see which level it came from and
+call the appropriate error display routine at that level.
+.sp
+.np
+am_fatalerror (Message, ErrorCode)
+.sp 0
+char	*Message;
+.sp 1
+Explain the meaning of a WiSS Error Code and terminate.
+Message is any additional information the caller wishes to display when
+the error occurs.
+.sp
+.ul
+Implementation:
+Call am_error, am_final and exit.
+.sp
+.np
+am_init ()
+.sp 
+Initialize every level of WiSS for system startup.
+.sp 
+.ul
+Implementation:
+Clear counters, tables.
+.sp
+.np
+am_final ()
+.sp 
+Finalize every level of WiSS for system shutdown.
+.sp 
+.ul
+Implementation:
+Flush out in-core tables, buffers, and so on.
+

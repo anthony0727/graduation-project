@@ -1,0 +1,7 @@
+#
+make all
+make disk
+build  hp0a file20K 20000 TRUE > SunBench.small
+lookup  hp0a file20K 20000 1000 10 TRUE >> SunBench.small
+traverse  hp0a file20K 20000 7 10 TRUE >> SunBench.small
+insert  hp0a file20K 20000 100 10 TRUE >> SunBench.small

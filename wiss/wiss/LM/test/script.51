@@ -1,0 +1,44 @@
+O 0
+O 0
+C 1
+
+Q
+
+
+
+--------------------------- script.51 ---------------------------
+
+The main actions here are:
+  a) Tries to open a transaction twice, and to commit a not-opened
+     transaction.
+
+
+
+
+The detailed description of each command line is:
+
+ open_trans(trans 0)
+ open_trans(trans 0)
+ commit_trans(trans 1)
+
+ quit
+
+
+
+The expected output (so as to perform a "diff" with the next 
+execution output) is:
+
+-------------------------------------------------
+O 0
+--> 1
+
+O 0 -0-ERROR, The given trans id is a duplicate, transactions should be uniqu
+e.
+
+--> -1
+
+C 1
+ERROR, Transaction 1 is not active and can't be commited.
+
+Q
+-------------------------------------------------

@@ -1,11 +1,14 @@
-./algorithm_handler.hpp
-./attribute_handler.hpp
-./bitarray_handler.hpp
 ./engine.hpp
-./index_handler.hpp
+./template.cpp
 ./information_handler.hpp
-./parameter_handler.hpp
-./test.cpp
-./timer_handler.hpp
 ./wiss_all.hpp
+./test.cpp
 ./wiss_handler.hpp
+./attribute_handler.hpp
+./trianglecounting.cpp
+./parameter_handler.hpp
+./algorithm_handler.hpp
+./template copy.cpp
+./timer_handler.hpp
+./index_handler.hpp
+./bitarray_handler.hpp

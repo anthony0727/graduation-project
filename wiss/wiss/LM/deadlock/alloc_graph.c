@@ -1,0 +1,154 @@
+
+/********************************************************/
+/*                                                      */
+/*               WiSS Storage System                    */
+/*          Version SystemV-4.0, September 1990	        */
+/*                                                      */
+/*              COPYRIGHT (C) 1990                      */
+/*                David J. DeWitt 		        */
+/*               Madison, WI U.S.A.                     */
+/*                                                      */
+/*	         ALL RIGHTS RESERVED                    */
+/*                                                      */
+/********************************************************/
+
+
+#include 	<wiss.h>
+#include	<page.h>
+#include	<sm.h>
+#include 	<lockquiz.h>
+
+extern SMDESC   *smPtr; /* ptr to common data structures in shared memory */
+extern  int     procNum; /* index of the process in the smPtr->users table */
+
+extern    char  *shmAlloc ();
+extern	void 	shmFree();
+
+alloc_more_locks ()
+{
+  struct    lockq    *p, *perm;
+  short     i, counter;
+  
+#ifdef LMTRACE
+  printf ("++++++++++++++ allocating more locks in deadlock detector +++++++");
+#endif
+  p = (struct lockq *) shmAlloc (sizeof (smPtr->freelocks));
+  if (p == NULL)
+  {
+	printf("shmAlloc failed in allocating more lock nodes on server\n");
+        printf("increase shared memory heap space \n");
+  }
+
+  counter = sizeof (smPtr->freelocks) / sizeof (*perm);
+  perm = p;
+  init_lock_node (perm, NOBODY, perm+1, &smPtr->freelocks [0]);/* The first element*/
+  for (i = 1, p++; i < (counter-1); i++, p++)
+    init_lock_node (p, NOBODY, p + 1, p - 1);
+  init_lock_node (&smPtr->freelocks [0], NOBODY, perm, p);
+  init_lock_node (p, NOBODY, &smPtr->freelocks [0], p - 1);
+}
+
+
+alloc_more_graphnode ()
+{
+  struct    graph_bucket    *p, *perm;
+  short     i, counter;
+  
+#ifdef LMTRACE
+  printf ("++++++++ allocating more graph nodes in deadlock detector +++++++");
+#endif
+  p = (struct graph_bucket *) shmAlloc (sizeof (smPtr->freegraph));
+  if (p == NULL)
+  {
+	printf("shmAlloc failed in allocating more lock nodes on server\n");
+        printf("increase shared memory heap space \n");
+  }
+
+  counter = sizeof (smPtr->freegraph) / sizeof (*p);
+  perm = p;
+  init_graph_node (perm, -1, perm+1, &smPtr->freegraph [0]);
+  for (i = 1,p++; i < (counter-1); i++, p++)
+    init_graph_node (p, -1, p + 1, p - 1);
+  init_graph_node (&smPtr->freegraph [0], -1, perm, p);
+  init_graph_node (p, -1, &smPtr->freegraph [0], p - 1);
+}
+
+
+struct    lockq    *malloc_lock ()
+{
+  struct    lockq    *found;
+  
+  SetLatch(&smPtr->freeLockLatch, procNum, NULL);
+  if (smPtr->freelocks [0].flink == &smPtr->freelocks [0])
+    alloc_more_locks ();
+  found = smPtr->freelocks [0].flink;
+  smPtr->freelocks [0].flink = found -> flink;
+  smPtr->freelocks [0].flink -> blink = &smPtr->freelocks [0];
+  found -> flink = found -> blink = found->collision = NULL;
+  ReleaseLatch(&smPtr->freeLockLatch, procNum);
+  return (found);
+}
+
+
+struct    graph_bucket    *malloc_graph_node ()
+{
+  struct    graph_bucket    *found;
+  
+  SetLatch(&smPtr->lockLatch, procNum, NULL);
+  if (smPtr->freegraph [0].flink == &smPtr->freegraph [0])
+    	alloc_more_graphnode ();
+  found = smPtr->freegraph [0].flink;
+  smPtr->freegraph [0].flink = found -> flink;
+  ReleaseLatch(&smPtr->lockLatch, procNum);
+  found -> flink -> blink = &smPtr->freegraph [0];
+  found -> flink = found -> blink = NULL;
+  found -> aborted = FALSE;
+  found -> request = l_NL;
+  found -> someone_waiting = FALSE;
+  found -> res_wait = NULL;
+  found -> locks_held = NULL;
+  InitLatch (&found->concurrent);
+  
+  /* The following set of lines are for statistics */
+  /* -------> */
+  /* found -> no_pagereleases = found -> no_pagelocks = found -> no_filelocks = found -> no_filereleases = found -> no_blocks = found -> no_upgrades = found ->total_blocktime = 0; */
+  /* found -> BLOCKED = FALSE; */
+  return (found);
+}
+
+
+free_lock_node (node)
+     struct    lockq          *node;
+{
+  if (node -> blink != NULL)
+    node -> blink -> flink = node -> flink;
+  if (node -> flink != NULL)
+    node -> flink -> blink = node -> blink;
+  SetLatch(&smPtr->freeLockLatch, procNum, NULL);
+  init_lock_node (node, NOBODY, smPtr->freelocks [0].flink, &smPtr->freelocks [0]);
+  smPtr->freelocks [0].flink -> blink = node;
+  smPtr->freelocks [0].flink = node;
+  ReleaseLatch(&smPtr->freeLockLatch, procNum);
+}
+
+
+free_graph_node (index, node)
+     struct    graph_bucket    *node;
+{
+  SetLatch(&smPtr->trans [index].concurrent, procNum, NULL);
+  if (smPtr->trans [index].transptr == node)
+    smPtr->trans [index].transptr = node -> flink;
+  if (node -> blink != NULL)
+    node -> blink -> flink = node -> flink;
+  if (node -> flink != NULL)
+    node -> flink -> blink = node -> blink;
+  ReleaseLatch(&smPtr->trans [index].concurrent, procNum);
+  SetLatch(&smPtr->lockLatch, procNum, NULL);
+  init_graph_node (node, -1, smPtr->freegraph [0].flink, &smPtr->freegraph[0]);
+  /* release local hash tables */
+  (void) shmFree((char *) node->pidHashTbl);/* changed when hash tables put in sm */
+  (void) shmFree((char *) node->fidHashTbl);  /* changed when hash tables put in sm */
+  smPtr->freegraph [0].flink -> blink = node;
+  smPtr->freegraph [0].flink = node;
+  ReleaseLatch(&smPtr->lockLatch, procNum);
+}

@@ -1,0 +1,1387 @@
+.ig
+last modified by
+Chou	7/12/84
+..
+
+.sh 1 "Storage Level Interface and Operations"
+.pp
+Level 2 is responsible for implementing storage structures.
+Above this level, all access is to records and character strings, 
+while below this level the unit of access is the page.
+The storage structures supported are 
+.ul
+sequential files,
+.ul
+unstructured files \**,
+and 
+.ul
+indices.
+.(f
+\**
+Unstructured files are intended to imitate files under UNIX
+and can be viewed as simple streams (arrays) of bytes.
+.)f
+The operations supported are for the creation and deletion of these
+structures, and for the access of records, either via a sequential scan
+through the file, or an associated index.
+Two types of indices are supported, B-tree and hash indices.
+Index files are identified by extending the primary file name
+with an index number (e.g., the indices on the EMP file are named
+EMP.%c1, EMP.%c2, and so on, where %c is 'i' for B-tree or 'h' for hash index).
+Above this level, files are known by their file name.
+Below this level, they are known by their internal file identifier.
+.pp
+In addition to the "file-level" storage structures,
+level 2 also provides a special "field-level" storage structure, called 
+.ul
+long data items.
+This structure provides a facility for storing variable
+length data objects that may grow to virtually unlimited size.
+Operations are provided for creating and destroying these items,
+and for accessing and updating their contents.
+(The principal difference between unstructured files and long data items is that
+the former do not support insertions and deletions at arbitrary locations.)
+.pp
+There exists one file directory on each volume which is maintained by level 2.
+The file directory is the place where all the logical information on files
+are kept.
+To speed up the access to file directories,
+level 2 also maintains an in-core data structure, the open file table,
+that keeps track of all the active files (of all volumes) 
+and the modes (either read or write) they are open for. 
+In addition, other relevant information, such as the first and the last 
+page of a file, are also cached in the table.
+
+.np
+st_createfile
+(VolID, FileName, NumPages, ExtentFillFactor, PageFillFactor)
+.sp 0
+char	*FileName;
+.sp 1
+Create a file of the name FileName and an initial size of NumPages pages.
+The PageFillFactor (in %) is used to control filling of pages when locality is
+not an issue.
+.sp 1
+.ul
+Implementation:
+.(l
+io_createfile(VolID, NumPages, ExtentFillFactor, &FileID) 
+add <FileName, FileID, PageFillFactor> to file directory
+.)l
+.np
+st_destroyfile 
+(VolID, FileName, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*FileName;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Destroy the named file and return its storage space to the free list.
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used)
+.sp 1
+.ul
+Implementation:
+.(l
+look up the internal ID of the file
+io_destroyfile(&FileID)
+remove its descriptor from the file directory
+.)l
+.np
+st_createindex 
+(VolID, FileName, IndexNo, KeyAttr, FillFactor, Unique, Sortfile, trans_id, lockup, cond)
+.sp 0
+.nf
+short		VolID;
+char		*FileName;
+short		IndexNo;
+KEYINFO		*KeyAttr;
+short		FillFactor;
+short		Unique;
+short		SortFile;
+int		trans_id;
+short		lockup;
+short		cond;
+.fi
+.sp 1
+Create a B-tree index on the named file and give it the name FileName.iIndexNo.
+Index numbers are integers starting at 1 (and less than 1000).
+KeyAttr is a structure of the form <key length, key offset, key type>, and
+describes the field on which the index is structured.
+FillFactor (in %) is a hint to the system to keep the index pages 
+somewhat unfilled for future expansion.
+Unique is a boolean which is TRUE if the index is primary (one RID per key).
+Sortfile is a boolean which is true if the file should be sorted on this key.
+Indices are created on single field only.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+If Sortfile is TRUE, sort the data file and extract key/RID pairs into
+a temporary file; otherwise, extract key/RID pairs into a temporary and sort it.
+In either case, build an index (from bottom up) using the sorted key/RID
+pairs in the temporary file.
+After the index is built, remove the temporary key/RID file.
+.np
+st_createhash 
+(VolID, FileName, HashNo, KeyAttr, FillFactor, Unique, trans_id, lockup, cond)
+.sp 0
+.nf
+char		*FileName;
+int		HashNo;
+KEYINFO		*KeyAttr;
+int		FillFactor;
+int		Unique;
+int		trans_id;
+short		lockup;
+short		cond;
+.fi
+.sp 1
+Create a hash index on the named file and give it the name FileName.hHashNo.
+Hash numbers are integers starting at 1 (and less than 1000).
+KeyAttr is a structure of the form <key length, key offset, key type>, and
+describes the field on which the index is structured.
+FillFactor (in %) is a hint to the system to keep the index pages 
+somewhat unfilled for future expansion.
+Unique is a boolean which is TRUE if the index is primary (one RID per key).
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+For each record in the data file, extract its key field and insert
+a key/RID entry into the hash file.
+.sp
+.np
+st_dropbtree
+(VolID, FileName, IndexNo, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*FileName;
+int	indexno;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Remove a B-tree index of the name FileName.iIndexNo.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+io_destroyfile(&FileID of FileName.iIndexNo)
+remove its descriptor from the file directory
+.)l
+.np
+st_destroyhash
+(VolID, FileName, HashNo, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*FileName;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Remove a hash index of the name FileName.hHashNo.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+io_destroyfile(&FileID of FileName.hHashNo)
+remove its descriptor from the file directory
+.)l
+.np
+st_rename
+(VolID, NewName, OldName, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*NewName, OldName;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Change the name of an existing file.
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used)
+.sp 1
+.ul
+Implementation:
+Call file directory routines to create a file descriptor with the new name,
+copy the file information over, and remove the old descriptor.
+.sp
+.np
+st_openfile
+(VolID, FileName, AccessMode)
+.sp 0
+char	*FileName;
+.sp 1
+Make the file available for access in the requested mode (READ or WRITE).
+Return an open file number for future access to the file.
+Notice, NO lock is set on the file.  This, must be done explicitly
+with a call to lock_file();
+.sp 1
+.ul
+Implementation:
+.(l
+look up the file in the file directory and
+ and cache its descriptor in the open file table
+inform level 1 that the file is active
+.)l
+.np
+st_openbtree
+(VolID, FileName, IndexNo, AccessMode)
+.sp 0
+char	*FileName;
+.sp 1
+Make the index file available for access in the requested mode (READ or WRITE).
+Return an open file number for future access to the B-tree.
+.sp 1
+.ul
+Implementation:
+.(l
+look up the index file in the file directory and
+ and cache its descriptor in the open file table
+inform level 1 that the file is active
+.)l
+.np
+st_openhash
+(VolID, FileName, HashNo, AccessMode)
+.sp 0
+char	*FileName;
+.sp 1
+Make an index file available for access in the requested mode (READ or WRITE).
+Return an open file number for future access to the hash index.
+.sp 1
+.ul
+Implementation:
+.(l
+look up the index file in the file directory and
+ and cache its descriptor in the open file table
+inform level 1 that the file is active
+.)l
+.np
+st_closefile 
+(OpenFileNum)
+.sp 
+The specified file is no longer available for access.
+.sp 1
+.ul
+Implementation:
+.(l
+inform level 1 that the file is no longer active
+remove its descriptor from the open file table
+.)l
+.ul
+Note:
+This routine is applicable to both files and indices.
+In other words, there is no difference between closing a file and an index.)
+.sp
+.np
+st_volid 
+(OpenFileNum)
+.sp 
+Return the ID of the volume on which the file resides.
+.sp 1
+.ul
+Implementation:
+Consult the open file table.
+.sp
+.np
+st_accessmode 
+(OpenFileNum)
+.sp 
+Return the access mode (READ or WRITE) of this file.
+.sp 1
+.ul
+Implementation:
+Consult the open file table.
+.sp
+.np
+st_readrecord
+(OpenFileNum, RecID, RecAdr, Len, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*RecID;
+char	*RecAdr;
+int	Len;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+The named record is read into the area pointed to by RecAdr and of length Len.
+The actual number of bytes read (never any greater than Len) is returned.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.  
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX, 
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+.(l
+PageID <- RecID[Vol#,Page#], Slot <- RecID[Rec#]
+ask buffer manager for the page PageID
+locate the starting address of the slot within the page
+copy Len bytes from the page buffer to RecAdr
+.)l
+.np
+st_writerecord 
+(OpenFileNum, RecID, RecAdr, Len, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*RecID;
+char	*RecAdr;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+The record RecID is overwritten by a new text which is pointed to by RecAdr.
+Indices, if any, must be updated separately.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+PageID <- RecID[Vol#,Page#], Slot <- RecID[Rec#]
+ask buffer manager for the page PageID
+locate the starting address of the slot within the page
+copy Len bytes from RecAdr to the page buffer
+set the page dirty
+.)l
+.np
+st_insertrecord 
+(OpenFileNum, RecAdr, Len, NearRID, NewRID, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*RecAdr;
+RID	*NearRID, NewRID;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Insert a record into a file, near NearRID if possible.
+RecAdr points to a user buffer where the text of the new record is stored.
+The RID of the inserted record is returned through NewRID.
+If NearRID is NULL, the system places the record as it pleases.
+Indices, if any, must be updated separately.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+PageID <- NearRID[Vol#,Page#], Slot <- NearRID[Rec#]
+ask buffer manager for the page PageID
+if there is enough room, add the record to the page
+else try the next page and then the previous page 
+if all the previous effort failed or NearRID is NULL,
+  append the record to the end of the file
+.)l
+.np
+st_appendrecord 
+(OpenFileNum, RecAdr, Len, NewRID, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*RecAdr;
+RID	*NewRID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Append a record onto the last page of the file (if the page fill factor
+permits; otherwise allocate a new page).
+Return the RID of the appended record through NewRID.
+Indices, if any, must be updated separately.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+get the last page of the file
+if there's room for this record, append it to this page
+else allocate a page nearby and append it to the file, 
+ and add the record to the new page
+.)l
+.np
+st_deleterecord 
+(OpenFileNum, RecID, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*RecID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Delete record RecID from the file.
+Deletion of indices, if any, should be performed separately.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+PageID <- RecID[Vol#,Page#], Slot <- RecID[Rec#]
+ask buffer manager for the page PageID
+remove the "Slot"th entry on the page
+if the page become empty, free the page
+.)l
+.np
+st_insertindex 
+(OpenFileNum, Key, RecID, trans_id, lockup, cond)
+.sp 0
+.nf
+KEY	*Key;
+RID	*RecID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Insert a Key, described by the structure <Type, Len, KeyValue>, and
+a RID RecID into an index file.
+If the key already exists, append RecID to its pointer list (RID list),
+provided that the index is not unique.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+B-tree insertion algorithm.
+.sp
+.np
+st_deleteindex 
+(OpenFileNum, Key, RecID, trans_id, lockup, cond)
+.sp 0
+.nf
+KEY	*Key;
+RID	*RecID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Locate the key described by the structure <Type, Len, KeyValue>,
+and remove RecID from its pointer list (RID list).
+If there are no more RIDs associated with this key, delete the key also.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+B-tree deletion algorithm.
+.sp
+.np
+st_inserthash 
+(OpenFileNum, Key, RecID, trans_id, lockup, cond)
+.sp 0
+.nf
+KEY	*Key;
+RID	*RecID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Insert a Key, described by the structure <Type, Len, KeyValue>, and
+a RID RecID into an index file.
+If the key already exists, append RecID to its pointer list (RID list),
+provided that the index is not unique.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Hashed file insertion algorithm.
+.sp
+.np
+st_deletehash 
+(OpenFileNum, Key, RecID, trans_id, lockup, cond)
+.sp 0
+.nf
+KEY	*Key;
+RID	*RecID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Locate the key described by the structure <Type, Len, KeyValue>,
+and remove RecID from its pointer list (RID list).
+If there are no more RIDs associated with this key, delete the key also.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Hashed file deletion algorithm.
+.sp
+.np
+st_firstfile 
+(OpenFileNum, FirstRID, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*FirstRID;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Return (via FirstRID) the RID of the first record in the file.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX, 
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Consult the open file table to find the first page of the file.
+Get the page and find the first valid RID on it.
+.sp
+.np
+st_nextfile 
+(OpenFileNum, CurrRID, NextRID, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*CurrRID, *NextRID;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Return (via NextRID) the RID of the record that follows CurrRID in the file.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX, 
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Locate the page record CurrRID resides and look for the next valid RID.
+If no valid RID can be found on the page, try the next page and so on. 
+.sp
+.np
+st_prevfile 
+(OpenFileNum, CurrRID, PrevRID, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*CurrRID, *PrevRID;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Return (via PrevRID) the RID of the record that precedes CurrRID in the file.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX, 
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Locate the page record CurrRID resides and look for the previous valid RID.
+If no valid RID can be found on the page, try the previous page and so on. 
+.sp
+.np
+st_lastfile 
+(OpenFileNum, LastRID, trans_id, lockup, lockmode, cond)
+.sp 0
+.nf
+RID	*LastRID;
+int	trans_id;
+short	lockup;
+short	lockmode;
+short	cond;
+.fi
+.sp 1
+Return (via LastRID) the RID of the last record in the file.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+lockmode must be one of the valid lock modes: l_NL, l_IS, l_IX, 
+l_S, l_SIX, l_X.
+.sp 1
+.ul
+Implementation:
+Consult the open file table to find the last page of the file.
+Get the page and find the last valid RID on it.
+.sp
+.np
+st_firstindex 
+(OpenFileNum, LB, Xcursor, FirstRID, trans_id, lockup, oper, cond)
+.sp 0
+.nf
+KEY	*LB;
+XCURSOR	*Xcursor;
+RID	*FirstRID;
+int	trans_id;
+short	lockup;
+enum    bt_oper oper;
+short	cond;
+.fi
+.sp 1
+Return (via FirstRID) the RID of the first record 
+whose key does not precede the lower bound described by
+<KeyType, KeyLen, KeyValue>.
+If LB is NULL, the record with the smallest key is returned.
+The current position on the leaf level of the index is returned via Xcursor.
+(A cursor is a structure of the form 
+<Page ID, Slot, Offset within the slot>, 
+which describes the physical location of an index in a tree.)
+.sp
+oper is BT_READ, BT_INSERT, BT_DELETE, or BT_INSERT_DELETE,
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+B-tree traversal algorithm.
+.sp
+.np
+st_lastindex 
+(OpenFileNum, UB, Xcursor, LastRID, trans_id, lockup, oper, cond)
+.sp 0
+.nf
+KEY	*UB;
+XCURSOR	*Xcursor;
+RID	*LastRID;
+int	trans_id;
+short	lockup;
+enum    bt_oper oper;
+short	cond;
+.fi
+.sp 1
+Return (via LastRID) the RID of the last record, in index order, whose key
+does not exceed the upper bound.
+If UB is NULL, the record with the largest key is returned.
+The current position on the leaf level of the index is returned via Xcursor.
+.sp
+oper is BT_READ, BT_INSERT, BT_DELETE, or BT_INSERT_DELETE,
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+B-tree traversal algorithm.
+.sp
+.np
+st_getindex 
+(OpenFileNum, SearchKey, Xcursor, FirstRID, trans_id, lockup, oper, cond)
+.sp 0
+.nf
+KEY	*SearchKey;
+XCURSOR	*Xcursor;
+RID	*FirstRID;
+int	trans_id;
+short	lockup;
+enum    bt_oper oper;
+short	cond;
+.fi
+.sp 1
+Return (via FirstRID) the RID of the first record 
+whose key matches the search key described by <KeyType, KeyLen, KeyValue>.
+The current position on the leaf level of the index is returned via Xcursor.
+.sp
+oper is BT_READ, BT_INSERT, BT_DELETE, or BT_INSERT_DELETE,
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+B-tree traversal algorithm.
+.sp
+.np
+st_getadjrid
+(filenum, which, Cursor, AdjRID, trans_id, lockup, oper, cond)
+.sp
+.nf
+int     filenum;        
+int     which;          /* PREV or NEXT */
+XCURSOR *Cursor;        /* position of the current index in the btree */
+RID     *AdjRID;        /* where to return the adjacent RID */
+int     trans_id;
+short   lockup;         
+enum    bt_oper    
+short   cond;
+.sp
+.fi
+Given a cursor of an index scan, return via AdjRID either the next or the
+previous RID of the same key. If the RID list is exhausted, then
+proceed to the next or the previous key.
+A cursor is represented by <page ID, slot #, offset>.
+'Which' should be set to NEXT or PREV.
+.sp
+oper is BT_READ, BT_INSERT, BT_DELETE, or BT_INSERT_DELETE,
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp
+.np
+st_gethash 
+(OpenFileNum, SearchKey, Xcursor, FirstRID, trans_id, lockup, cond)
+.sp 0
+.nf
+KEY	*SearchKey;
+XCURSOR	*Xcursor;
+RID	*FirstRID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Return (via FirstRID) the RID of the first record 
+whose key matches the search key described by <KeyType, KeyLen, KeyValue>.
+The current position on the leaf level of the index is returned via Xcursor.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Hashed file access algorithm.
+.sp
+.np
+st_getadjindex 
+(OpenFileNum, Which, Xcursor, AdjRID)
+.sp 0
+.nf
+XCURSOR	*Xcursor;
+RID	*AdjRID;
+.fi
+.sp 1
+Return (via AdjRID) the RID of the next or the previous index
+relative to the given cursor.
+The cursor is updated to point to the location of AdjRID in the tree.
+'Which' should be set to either NEXT or PREV.
+.sp 1
+.ul
+Implementation:
+Locate the current index through the cursor and
+set AdjRID to point to the RID of the next or previous index.
+.sp
+.np
+st_nexthash 
+(OpenFileNum, Xcursor, NextRID, trans_id, lockup, cond)
+.sp 0
+.nf
+XCURSOR	*Xcursor;
+RID	*NextRID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Return (via NextRID) the RID of the next record having the same key
+as the one under the cursor.
+The cursor is updated to point to the location of NextRID in the leaf page.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Locate the current leaf page through the cursor and
+set NextRID to point to the RID of the next index.
+.sp
+.np
+st_createlong 
+(OpenFileNum, DirID, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Create a long data item, and return the RID of its directory.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Create an empty directory (as a record) and call 
+st_insertrecord to put it somewhere in the file.
+.sp
+.np
+st_destroylong 
+(OpenFileNum, DirID, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Destroy a long data item, whose directory is pointed to by DirID.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Release all the slices (pages) used by this long data item and call 
+st_deleterecord to remove its directory.
+.sp
+.np
+st_compresslong 
+(OpenFileNum, DirID, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Compress the long data item whose directory is pointed to by DirID.
+This operation can be time-consuming, and is intended to be used
+after an editing session on a long data item.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Scan through the entire data item, compress slices whenever possible and
+update the directory of the long data item if necessary.
+.sp
+.np
+st_readframe 
+(OpenFileNum, DirID, Offset, RecAdr, Len, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	Offset;
+char	*RecAdr;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp  1
+Len bytes, starting from the "Offset"th byte of the long data item, 
+are read into RecAdr.
+DirID points to the directory of the long data item.
+The actual number of bytes read (never greater than Len) is returned.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+get the directory of the long data item
+locate the slice the "Offset"th byte is in
+while (Len > 0)
+  copy bytes from the current slice to RecAdr
+  Len <- Len - # of bytes read from this slice
+  RecAdr <- RecAdr + # of bytes just read
+  get the next slice
+end while
+.)l
+.np
+st_writeframe 
+(OpenFileNum, DirID, Offset, RecAdr, Len, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	Offset;
+char	*RecAdr;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Overwrite Len bytes of the long data item, starting from the "Offset"th byte,
+with the new text at RecAdr.
+The directory of the long data item is pointed to by DirID.
+If the routine cannot write as much data as it has been given,
+it will write as much as there is room for, and return only that length.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+get the directory of the long data item
+locate the slice the "Offset"th byte is in
+while (Len > 0)
+  copy bytes from RecAdr to the current slice
+  Len <- Len - # of bytes written to this slice
+  RecAdr <- RecAdr + # of bytes just written
+  tell buffer manager that this slice is dirty 
+  get the next slice
+end while
+.)l
+.np
+st_insertframe 
+(OpenFileNum, DirID, Offset, RecAdr, Len, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	Offset;
+char	*RecAdr;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Len bytes of data in RecAdr are inserted 
+at Offset bytes from the start of the long data item.
+Return the actual number of bytes inserted. 
+The directory of the long data item is pointed to by DirID.
+.sp 1
+.ul
+Implementation:
+.(l
+get the directory of the long data item
+locate the slice the "Offset"th byte is in
+allocate slices if necessary to make room for new data
+copy bytes from RecAdr to slice buffer(s)
+update the directory of the long data item
+.)l
+.np
+st_deleteframe 
+(OpenFileNum, DirID, Offset, Len, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*DirID;
+int	Offset;
+int	Len;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Delete Len bytes of data from the long data item, 
+starting from the "Offset"th byte.
+Return the actual number of bytes deleted. 
+The directory of the long data item is pointed to by DirID.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+.(l
+get the directory of the long data item
+locate the slice the "Offset"th byte is in
+remove the bytes from the current slice 
+ and possibly the slices that follow
+compress data on slices (locally) if feasible
+update the directory of the long data item
+.)l
+.np
+st_compare 
+(OpenFileNum, RecID, Operator, Field, Value, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*RecID;
+KEYINFO	*Field;
+KEY	*Value;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp
+Compare the field of record RecID with the given value to see if they satisfy
+the relation specified by 'Operator' (<, >, =, etc.).
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+Extract the field of the record from page buffer,
+and compare it with the given value.
+.sp
+.np
+st_ridcompare 
+(OpenFileNum1, RID1, F1, OpenFileNum2, RID2, F2, ReturnValue, trans_id, lockup, cond)
+.sp 0
+.nf
+RID	*RID1, *RID2;
+KEYINFO	*F1, *F2;
+int	*ReturnValue;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Compare field F1 of record RID1 with field F2 of record RID2, and
+return the value of their difference (ie, F1(RID1) - F2(RID2))
+in ReturnValue \**.
+F1 and F2 describe attributes of the fields in RID1 and RID2, respectively.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.(f
+\**
+For string operands, the interpretation of the return value
+is similar to the that of the "strncmp" in C's library.
+.)f
+.sp 1
+.ul
+Implementation:
+Locate the positions of both fields in page buffers,
+and return the result of their difference.
+.sp
+.np
+st_filepages
+(VolID, FileName)
+.sp 0
+char	*FileName;
+.sp
+Return the number of data pages in the named file.
+.sp
+.ul
+Implementation:
+Consult the file directory.
+.sp
+.np
+st_indexpages
+(VolID, FileName, IndexNo)
+.sp 0
+char	*FileName;
+.sp
+Return the number of pages in the named index.
+.sp
+.ul
+Implementation:
+Consult the file directory.
+.sp
+.np
+st_recordcard
+(VolID, FileName)
+.sp 0
+char	*FileName;
+.sp
+Return the number of records in the named file.
+.sp
+.ul
+Implementation:
+Consult the file directory.
+.sp
+.np
+st_keycard
+(VolID, FileName, IndexNo)
+.sp 0
+char	*FileName;
+.sp
+Return the number of distinct keys in the named index.
+.sp
+.ul
+Implementation:
+Consult the file directory.
+.sp
+.np
+st_sort 
+(VolID, FileName, KeyAttr, Suffix, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*FileName;
+KEYINFO	*KeyAttr;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Sort a file on a given field.  
+KeyAttr points to a structure of the form 
+<key length, key offset, key type> which describes
+the field on which the file is to be sorted.
+Suffix is used for generating a temporary file name during the sort.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.ul
+Implementation:
+.(l
+create a temporary file Tmp
+st_sortinto(VolID, FileName, Tmp, KeyAttr, Suffix)
+st_destroyfile(VolID, FileName)
+st_rename(VolID, Tmp, FileName, trans_id, lockup, cond)
+.)l
+.np
+st_sortinto 
+(VolID, SourceFile, ResultFile, KeyAttr, Suffix, trans_id, lockup, cond)
+.sp 0
+.nf
+char	*SourceFile, *ResultFile;
+KEYINFO	*KeyAttr;
+int	trans_id;
+short	lockup;
+short	cond;
+.fi
+.sp 1
+Sort a source file on a given field, and put the sorted result
+into another file.  
+KeyAttr points to a structure of the form 
+<key length, key offset, key type> which describes
+the field on which the file is to be sorted.
+Suffix is used for generating a temporary file.
+.sp
+trans_id identifies a transaction.  If lockup is TRUE, then the
+file is locked before the file is destroyed. If cond is TRUE (as
+well as lockup), conditional locking is used.  If cond is FALSE
+then unconditional locking is used.
+.sp 1
+.ul
+Implementation:
+External merge sort.
+.sp
+.np
+st_create
+(VolID, FileName)
+.sp 0
+.nf
+char	*FileName;
+.fi
+.sp 1
+Create an unstructured file with the given name.
+.sp 1
+.ul
+Implementation:
+Create a WiSS file and an empty page map for it.
+.sp
+.np
+st_destroy 
+(VolID, FileName)
+.sp 0
+.nf
+char	*FileName;
+.fi
+.sp 1
+Destroy the named unstructured file.
+.sp 1
+.ul
+Implementation:
+Remove the file and release all its resources.
+.sp
+.np
+int st_open 
+(VolID, FileName, Mode)
+.sp 0
+.nf
+char	*FileName;
+.fi
+.sp
+Open an unstructured file for reading (if Mode is 0), or writing (if Mode is 1).
+(Note that the write mode implies read mode in WiSS).
+An open file number is returned to the caller.
+.sp 1
+.ul
+Implementation:
+Make the file accessible by reading in its file descriptor and
+create a cursor for it.
+.sp
+.np
+st_close 
+(OpenFileNum)
+.sp 1
+Reclaim the OpenFileNum; it is no longer a usable path to the file.
+.sp 1
+.ul
+Implementation:
+Remove the descriptor of the file from the open file table.
+.sp
+.np
+int st_lseek 
+(OpenFileNum, Offset, Whence)
+.sp 1
+Position the unstructured file cursor to the offset relative to the
+reference point specified by "Whence".
+The new position of the cursor is returned.
+.sp 1
+.ul
+Implementation:
+Update the cursor associated with the file.
+.sp
+.np
+st_read 
+(OpenFileNum, Buffer, nBytes)
+.sp 0
+.nf
+char	*Buffer;
+.fi
+.sp 1
+Read "nBytes" bytes from the unstructured file to the buffer, and 
+advance the file cursor.
+.sp 1
+.ul
+Implementation:
+Use the page table for the file to locate the page under the cursor,
+and copy bytes into the user's buffer.
+Update the file cursor after the operation completes.
+.sp
+.np
+st_write
+(OpenFileNum, Buffer, nBytes)
+.sp 0
+.nf
+char	*Buffer;
+.fi
+Write "nBytes" bytes from the buffer to the unstructured file, 
+and advance the file cursor.
+.sp 1
+.ul
+Implementation:
+Use the page table for the file to locate the page under the cursor,
+and copy bytes from the user's buffer onto the page.
+Update the file cursor after the operation completes.
+.sp
+.np
+st_mount (DeviceName)
+.sp 0
+char	*DeviceName;
+.sp 1
+Mount the named device and
+return the identifier of the volume on that device.
+.sp 1
+.ul
+Implementation:
+.(l
+io_mount(DeviceName)
+cache the file directory information in a table.
+.)l
+.np
+st_dismount (DeviceName)
+.sp 0
+char	*DeviceName;
+.sp 1
+Dismount the named device.
+.sp 1
+.ul
+Implementation:
+.(l
+flush any relevant information from the open file 
+  table to the file directory on the volume
+bf_dismount(DeviceName)
+.)l
+.np
+st_init ()
+.sp 1
+Initialize the storage level at system startup.
+.sp 1
+.ul
+Implementation:
+Clear counters, tables.
+.sp
+.np
+st_final ()
+.sp 1
+Finalize the storage level at system shutdown.
+.sp 1
+.ul
+Implementation:
+Flush in-core tables to disk.

@@ -1,0 +1,92 @@
+.MAKE_VERSION:	VERSION-1.0
+../lockmanager/initlock.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/initlock.c
+.././lockmanager/initlock.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/initlock.c
+/u/futter/LM/lockmanager/initlock.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/lockquiz.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/initlock.c
+/u/futter/LM.old/lockmanager/initlock.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/initlock.c
+trans.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h 
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  trans.c
+create.o:	../../../wiss/wiss.h ../../../wiss/mode.h ../locktype.h ../resource.h ../lockdefs.h ../LM_macro.h ../../../wiss/st_macro.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  create.c
+../lockmanager/release.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h ../LM_error.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/release.c
+.././lockmanager/release.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/release.c
+/u/futter/LM/lockmanager/release.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/locktype.h /u/futter/LM/lockquiz.h /u/futter/LM/wiss/mode.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h /u/futter/LM/LM_macro.h /u/futter/LM/wiss/st_macro.h /u/futter/LM/LM_error.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/release.c
+/u/futter/LM.old/lockmanager/release.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/dummy.h /u/futter/LM.old/locktype.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/resource.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h /u/futter/LM.old/LM_macro.h /u/futter/LM.old/wiss/st_macro.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/release.c
+../lockmanager/create.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/create.c
+.././lockmanager/create.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/create.c
+/u/futter/LM/lockmanager/create.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/LM_macro.h /u/futter/LM/wiss/st_macro.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/create.c
+/u/futter/LM.old/lockmanager/create.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/LM_macro.h /u/futter/LM.old/wiss/st_macro.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/create.c
+../lockmanager/info.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/info.c
+.././lockmanager/info.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/info.c
+/u/futter/LM/lockmanager/info.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/locktype.h /u/futter/LM/wiss/mode.h /u/futter/LM/graph.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/info.c
+/u/futter/LM.old/lockmanager/info.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/dummy.h /u/futter/LM.old/locktype.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/graph.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/info.c
+execs:
+	echo /u/futter/LM/lockmanager/LM_event.c /u/futter/LM/lockmanager/release.c /u/futter/LM/lockmanager/alloclock.c /u/futter/LM/lockmanager/printstat.c /u/futter/LM/lockmanager/create.c /u/futter/LM/lockmanager/initlock.c /u/futter/LM/lockmanager/locker.c  >> ../execs
+../lockmanager/LM_event.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h /usr/include/stdio.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/LM_event.c
+.././lockmanager/LM_event.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/LM_event.c
+/u/futter/LM/lockmanager/LM_event.o:	/u/futter/LM/locktype.h /usr/include/stdio.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/LM_event.c
+/u/futter/LM.old/lockmanager/LM_event.o:	/u/futter/LM.old/locktype.h /usr/include/stdio.h /u/futter/LM.old/dummy.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/LM_event.c
+clean:
+	/bin/rm -f *.o 
+printstat.o:	../locktype.h /u/o2/systeme/wiss/sem_key.h /usr/include/sys/types.h /usr/include/sys/sysmacros.h /usr/include/sys/ipc.h /usr/include/sys/sem.h /usr/include/stdio.h ../dummy.h /usr/include/strings.h /u/o2/systeme/wiss/mode.h /u/o2/systeme/wiss/LM_error.h ../resource.h /u/o2/systeme/wiss/prio.h /u/o2/systeme/wiss/stats.h 
+	cc -I.. -I/u/o2/systeme/wiss -DUSEPROC -DUPGRADE -DDEBUG -DLM_DEBUG -DLMTRACE  -g   -sun3 -c  printstat.c
+/u/futter/LM/lockmanager/printstat.o:	/u/futter/LM/locktype.h /u/futter/LM/wiss/dummy.h /u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h /u/futter/LM/wiss/stats.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/printstat.c
+/u/futter/LM.old/lockmanager/printstat.o:	/u/futter/LM.old/locktype.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h /u/futter/LM.old/wiss/stats.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/printstat.c
+initlock.o:	../../../wiss/wiss.h ../../../wiss/mode.h ../locktype.h ../../lockquiz.h ../resource.h ../lockdefs.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  initlock.c
+LockManager.o:
+	ld -r .././lockmanager/LM_event.o .././lockmanager/release.o .././lockmanager/alloclock.o  .././lockmanager/create.o .././lockmanager/initlock.o .././lockmanager/locker.o trans.o .././lockmanager/info.o -o LockManager.o
+.BUILT_LAST_MAKE_RUN:
+libWiSSlockmanager.a:
+	rm -f libWiSSlockmanager.a
+	ar rc libWiSSlockmanager.a .././lockmanager/LM_event.o .././lockmanager/release.o .././lockmanager/alloclock.o  .././lockmanager/create.o .././lockmanager/initlock.o .././lockmanager/locker.o .././lockmanager/lock_test.o trans.o .././lockmanager/info.o
+locker.o:	../../../wiss/wiss.h ../../../wiss/mode.h ../locktype.h ../../lockquiz.h ../resource.h ../lockdefs.h ../graph.h ../LM_macro.h ../../../wiss/st_macro.h ../LM_error.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  locker.c
+alloclock.o:	../../../wiss/wiss.h ../../../wiss/mode.h ../locktype.h ../resource.h ../lockdefs.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  alloclock.c
+../lockmanager/alloclock.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/alloclock.c
+.././lockmanager/alloclock.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/alloclock.c
+/u/futter/LM/lockmanager/alloclock.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/alloclock.c
+/u/futter/LM.old/lockmanager/alloclock.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/wiss/prio.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/alloclock.c
+info.o:	../../../wiss/wiss.h ../locktype.h ../../../wiss/mode.h ../graph.h ../resource.h ../lockdefs.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  info.c
+../lockmanager/locker.o:	../../wiss.h ../../page.h ../../sm.h ../../latch.h ../../st_h.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../lockquiz.h ../LM_macro.h ../LM_error.h ../locktables.h 
+	cc -I.. -I../../../wiss -I../..       -sun3 -c  ../lockmanager/locker.c
+.BUILT_LAST_MAKE_RUN:
+.././lockmanager/locker.o:
+	cc -I../. -I../.. -I..  -DLMTRACE -g    -target sun4 -c  .././lockmanager/locker.c
+/u/futter/LM/lockmanager/locker.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/wiss/mode.h /u/futter/LM/locktype.h /u/futter/LM/lockquiz.h /u/futter/LM/resource.h /u/futter/LM/lockdefs.h /u/futter/LM/graph.h /u/futter/LM/LM_macro.h /u/futter/LM/wiss/st_macro.h /u/futter/LM/LM_error.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss   -g   -sun3 -c  /u/futter/LM/lockmanager/locker.c
+/u/futter/LM.old/lockmanager/locker.o:	/u/futter/LM.old/wiss/wiss.h /u/futter/LM.old/wiss/mode.h /u/futter/LM.old/dummy.h /u/futter/LM.old/locktype.h /u/futter/LM.old/resource.h /u/futter/LM.old/lockdefs.h /u/futter/LM.old/graph.h /u/futter/LM.old/LM_macro.h /u/futter/LM.old/wiss/st_macro.h 
+	cc -I/u/futter/LM.old -I/u/futter/LM.old/wiss -DUPGRADE -DSERVER  -g   -sun3 -c  /u/futter/LM.old/lockmanager/locker.c
+EXECS:
+	echo ./lockmanager/LM_event.c ./lockmanager/release.c ./lockmanager/alloclock.c ./lockmanager/create.c ./lockmanager/initlock.c ./lockmanager/locker.c ./lockmanager/info.c  >> ../EXECS
+LM_event.o:	../locktype.h /usr/include/stdio.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  LM_event.c
+release.o:	../../../wiss/wiss.h ../locktype.h ../../lockquiz.h ../../../wiss/mode.h ../resource.h ../lockdefs.h ../graph.h ../LM_macro.h ../../../wiss/st_macro.h ../LM_error.h 
+	cc -I.. -I../../../wiss -I../..   -g   -sun3 -c  release.c

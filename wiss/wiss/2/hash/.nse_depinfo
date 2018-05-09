@@ -1,0 +1,9 @@
+h_util.o-CPP: -I../.. -I../../LM
+h_dump.o-CPP: -I../.. -I../../LM
+st_createhash.o-CPP: -I../.. -I../../LM
+st_destroyhash.o-CPP: -I../.. -I../../LM
+st_openhash.o-CPP: -I../.. -I../../LM
+st_inserthash.o-CPP: -I../.. -I../../LM
+st_deletehash.o-CPP: -I../.. -I../../LM
+st_gethash.o-CPP: -I../.. -I../../LM
+st_nexthash.o-CPP: -I../.. -I../../LM

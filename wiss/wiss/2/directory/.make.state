@@ -1,0 +1,68 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+st_mount.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_mount.c
+wiss2d.o:
+	echo ld -r ~~~ -o wiss2d.o
+	ld -r d_dumptable.o d_directory.o st_mount.o st_dismount.o st_createf.o st_destroyf.o st_rename.o	 st_openfile.o st_closefile.o st_mode.o st_chmod.o st_stat.o st_volid.o st_error.o st_init.o st_final.o -o wiss2d.o
+	chmod -x wiss2d.o
+.BUILT_LAST_MAKE_RUN:
+st_rename.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_rename.c
+.BUILT_LAST_MAKE_RUN:
+st_mode.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_mode.c
+.BUILT_LAST_MAKE_RUN:
+st_closefile.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_closefile.c
+.BUILT_LAST_MAKE_RUN:
+st_init.o:	../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_init.c
+.BUILT_LAST_MAKE_RUN:
+st_error.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../record/r_error.i d_error.i ../btree/bt_error.i 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_error.c
+../../d_error.h:
+	m4 ../../defs.m4 d_error.m4 >../../d_error.h
+.BUILT_LAST_MAKE_RUN:
+libWiSS2d.a:
+	rm -f libWiSS2d.a
+	ar rc libWiSS2d.a d_dumptable.o d_directory.o st_mount.o st_dismount.o st_createf.o st_destroyf.o st_rename.o	 st_openfile.o st_closefile.o st_mode.o st_chmod.o st_stat.o st_volid.o st_error.o st_init.o st_final.o
+.BUILT_LAST_MAKE_RUN:
+st_dismount.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_dismount.c
+monowissutil.o:	/usr/include/stdio.h /usr/include/rpc/rpc.h /usr/include/rpc/types.h /usr/include/malloc.h /usr/include/sys/types.h /usr/include/sys/stdtypes.h /usr/include/sys/sysmacros.h /usr/include/sys/time.h /usr/include/time.h /usr/include/netinet/in.h /usr/include/rpc/xdr.h /usr/include/rpc/auth.h /usr/include/rpc/clnt.h /usr/include/rpc/rpc_msg.h /usr/include/rpc/auth_unix.h /usr/include/rpc/auth_des.h /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h ../../../lm/lockquiz.h
+monowissutil.o:	../../../lm/locktype.h ../../../lm/locktables.h 
+	cc -I../.. -I../../../lm   -g  -target sun4 -c  monowissutil.c
+.BUILT_LAST_MAKE_RUN:
+st_final.o:	../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_final.c
+clean:
+	/bin/rm -f *.o
+.BUILT_LAST_MAKE_RUN:
+st_createf.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_createf.c
+.BUILT_LAST_MAKE_RUN:
+d_dumptable.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  d_dumptable.c
+.BUILT_LAST_MAKE_RUN:
+st_chmod.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_chmod.c
+.BUILT_LAST_MAKE_RUN:
+d_directory.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  d_directory.c
+.BUILT_LAST_MAKE_RUN:
+st_destroyf.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_destroyf.c
+d_data.o:	../../st_macro.h ../../st_fd.h 
+	cc -I../.. -I../../../lm   -g  -target sun4 -c  d_data.c
+.BUILT_LAST_MAKE_RUN:
+st_volid.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_volid.c
+.BUILT_LAST_MAKE_RUN:
+st_openfile.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_openfile.c
+d_error.i:
+	m4 ../../handler.m4 d_error.m4 > d_error.i
+.BUILT_LAST_MAKE_RUN:
+st_stat.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_h.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_stat.c

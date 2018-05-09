@@ -1,0 +1,34 @@
+.MAKE_VERSION:	VERSION-1.0
+sgtty.o:	/usr/include/curses.h /usr/include/stdio.h /usr/include/sgtty.h /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h /usr/include/sys/ttold.h /usr/include/sys/ioccom.h /usr/include/sys/ttycom.h /usr/include/sys/filio.h /usr/include/sys/sockio.h 
+	cc -I../.. -I../../server -I../../../wiss -g  -sun3 -c  sgtty.c
+../../server/server_lm.o:.RECURSIVE .. server_lm.o Makefile
+../../server/server_lm.o:
+	cd ../../server; echo --- `pwd` ---; make TRACEFLAG='' DEBUGFLAG='' PROF='-g' LM='../../../server' HIER=''
+test4.o:	../../../wiss/wiss.h ../../locktype.h ../../lockquiz.h 
+	cc -I../.. -I../../server -I../../../wiss -g  -sun3 -c  test4.c
+test3.o:
+	cc -I../.. -I../../server -I../../../wiss -g  -sun3 -c  test3.c
+test2.o:	/usr/include/stdio.h ../../../wiss/wiss.h ../../locktype.h ../../lockquiz.h 
+	cc -I../.. -I../../server -I../../../wiss -g  -sun3 -c  test2.c
+test1.o:	../../../wiss/wiss.h ../../locktype.h ../../lockquiz.h 
+	cc -I../.. -I../../server -I../../../wiss -g  -sun3 -c  test1.c
+test4:
+	ld -Bstatic -e start /lib/crt0.o  test4.o ../../server/server_lm.o sgtty.o -lc -o test4
+test3:
+	ld -Bstatic -e start /lib/crt0.o  test3.o ../../server/server_lm.o sgtty.o -lc -o test3
+test2:
+	ld -Bstatic -e start /lib/crt0.o  test2.o ../../server/server_lm.o sgtty.o -lc -o test2
+test1:
+	ld -Bstatic -e start /lib/crt0.o  test1.o ../../server/server_lm.o sgtty.o -lc -o test1
+/u/futter/LM/test/sgtty.o:	/usr/include/curses.h /usr/include/stdio.h /usr/include/sgtty.h /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h /usr/include/sys/ttold.h /usr/include/sys/ioccom.h /usr/include/sys/ttycom.h /usr/include/sys/filio.h /usr/include/sys/sockio.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss -g  -sun3 -c  /u/futter/LM/test/sgtty.c
+.BUILT_LAST_MAKE_RUN:
+clean:
+	/bin/rm -f *.o test1 test2 test3 test4
+/u/futter/LM/test/test1.o:	/u/futter/LM/wiss/wiss.h /u/futter/LM/locktype.h /u/futter/LM/lockquiz.h /u/futter/LM/wiss/mode.h /u/futter/LM/graph.h 
+	cc -I/u/futter/LM -I/u/futter/LM/wiss -g  -sun3 -c  /u/futter/LM/test/test1.c
+/u/futter/LM/test/test1:
+	ld -Bstatic -e start /lib/crt0.o /u/futter/LM/test/test1.o /u/futter/LM/lm.o  /u/futter/LM/test/sgtty.o -lc -o /u/futter/LM/test/test1
+/u/futter/LM/lm.o:.RECURSIVE ../../../../../LM lm.o Makefile
+/u/futter/LM/lm.o:
+	cd /u/futter/LM; echo --- `pwd` ---; make

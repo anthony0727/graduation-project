@@ -1,0 +1,100 @@
+test2 can be run in 2 manners: 
+- interactively, if test2 is run without parameter
+- in batch, to run predefined tests, if "test2 -f <script_file_name>" is run,
+  where <script_file_name> is one of the script.xx described below.
+
+
+
+Asking for locks scripts:
+  script.10
+    Locks files and pages in shared mode.
+
+  script.11
+    Upgrades locks on files and pages, and locks files and pages in 
+    exclusive mode.
+
+  script.12
+    Ask for a lock on a page without having locked the file containing this
+    page. This is for calls to lock_page() with file_id = nullFID on the 
+    workstation.
+
+Releasing locks scripts:
+  script.20
+    Releases file and page locks by committing the owner transaction.
+
+  script.21
+    Releases file and page locks by aborting the owner transaction.
+
+  script.22
+    Releases file and page locks in manual mode (= the non 2 phase locking 
+    mode which is used for indices).
+
+  script.23
+    Signals a file is destroyed.
+
+Deadlock detection scripts:
+  script.30
+    Detects a deadlock between two transactions (locks on files only).
+
+  script.31
+    Detects a deadlock between three transactions (locks on files and pages).
+
+Conditional locking script:
+  script.40
+    Locks files only if the lock can be granted immediatly. Otherwise, 
+    if it would produce a wait or a deadlock, the requirement is forgotten.
+
+Bad usages scripts:
+  script.50
+    The transaction must be opened before it asks for a lock on a file 
+    or on a page, and before to release a file or a page.
+
+  script.51
+    A transaction cannot be opened or committed twice.
+
+  script.52
+    The transaction can't neither ask for a lock, nor release a file 
+    or a page when it is waiting.
+
+  script.53
+    The file must be locked before to ask for a lock on a file's page.
+    NOT VALID ANYMORE AS LOCK_PAGE  CAN BE CALLED WITH A NULL FILEID PARAM.
+
+
+The meaning of the command initials, of the argument initials, and of the 
+returned codes is:
+
+Commands:
+ Q  stands for ............ quit
+ O  stands for ............ open transaction
+ A  stands for ............ abort transaction
+ C  stands for ............ commit transaction
+ L  stands for ............ lock a file
+ R  stands for ............ release a file lock
+ l  stands for ............ lock a page
+ r  stands for ............ release a page lock
+ S  stands for ............ signal a destroyed file
+ T  stands for ............ state of a transaction
+ F  stands for ............ state of a file
+ P  stands for ............ state of a page
+
+Arguments:
+ t  stands for ............ true  
+ f  stands for ............ false 
+ c  stands for ............ commit-time
+ m  stands for ............ manual
+ 
+Returned codes:
+ 1     .... ok
+ 0     .... lock granted
+ -1    .... not ok
+ -350  .... transaction supposed to be asleep
+ -750  .... transaction not opened
+ -1250 .... transaction aborted
+ -1550 .... transaction has to wait
+ -1650 .... transaction would be aborted
+ -1750 .... transaction would have to wait 
+ -1950 .... file not locked
+
+
+

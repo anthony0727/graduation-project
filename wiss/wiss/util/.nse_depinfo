@@ -1,0 +1,6 @@
+bit.o-CPP: -I..
+traceflags.o-CPP: -I..
+data.o-CPP: -I..
+suffixname.o-CPP: -I..
+sys.o-CPP: -I..
+shmalloc.o-CPP: -I..

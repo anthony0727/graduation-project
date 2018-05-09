@@ -1,0 +1,11 @@
+lint-CPP: -I. -I./LM/.
+t-CPP: -I.
+t-LD: /lib/libg.a
+t-COMP: /usr/lib/crt0.o
+3/libWiSS3.a: .RECURSIVE 3 libWiSS3.a Makefile.lib
+1/libWiSS1.a: .RECURSIVE 1 libWiSS1.a Makefile.lib
+util/libWiSSutil.a: .RECURSIVE util libWiSSutil.a Makefile.lib
+2/libWiSS2.a: .RECURSIVE 2 libWiSS2.a Makefile.lib
+0/libWiSS0.a: .RECURSIVE 0 libWiSS0.a Makefile.lib
+SM_temp/libWiSSsm.a: .RECURSIVE SM_temp libWiSSsm.a Makefile.lib
+LM_temp/libWiSSlm.a: .RECURSIVE LM_temp libWiSSlm.a Makefile.lib

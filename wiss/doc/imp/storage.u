@@ -1,0 +1,56 @@
+
+.sh 2 "Unstructured Files"
+.(x
+.sh 2 "Unstructured Files"
+.)x
+.pp
+Unstructured files are intended to imitate files under UNIX.
+Each unstructured file can be viewed as a simple stream (array) of bytes.
+An implicit cursor is associated with each active unstructured file
+which can be re-positioned by explicit seek operations.
+
+.sh 3 "Page Table Structure and File Cursors"
+.(x
+.sh 3 "Page Table Structure and File Cursors"
+.)x
+.pp
+Since the contents of an unstructured file are addressed by byte offests,
+a map is required to map logical addresses into physical addresses.
+The B-tree structure for building indices is borrowed to implement
+page tables for unstructured files.
+In such a B-tree page table,
+logical page numbers are used as keys, and physical page addresses
+are treated as data to the B-tree.
+When accessing bytes in an unstructured file, the corresponding
+logical page numbers are used as search keys to the page table.
+If a logical page number is found, its associated data
+is used to fetch the physical page; otherwise a physical page is
+allocated and a pair of logical and physical page numbers is inserted
+into the page table.
+.pp
+There is an implicit cursor associated with each active instance of
+an unstructured file.
+Such a cursor is actually a byte address, and is maintained in
+a cursor table called "UX_seektab[]".
+This table is referenced and updated when a read or write operation on an
+unstructured file is requested.
+A seek operation also updates the cursor table.
+
+.sh 3 "Routines"
+.(x
+.sh 3 "Routines"
+.)x
+.pp
+.de RR
+.np
+\\$1 (in \\$2.c)
+.sp 0
+..
+.RR "UX_initfile()" "UX_pages"
+This routine creates an empty B-tree as the page table for a file.
+.RR "UX_getpage()" "UX_pages"
+This routine, using the page table for the file,
+translates a logical page number into a memory address.
+If there is no physical page corresponds to the logical page yet,
+this routine also allocates a physical page.
+

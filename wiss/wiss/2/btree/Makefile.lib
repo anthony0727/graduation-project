@@ -1,0 +1,54 @@
+# Makefile for level 2 Btree
+
+INCLUDE = ../..
+LOCK = ../../LM
+PIC	= -PIC
+
+CFLAGS = $C -I$(INCLUDE) -I$(LOCK) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) $(PIC)
+# the $PROF variable can be used for -O, -g, -pg, etc.,
+# by "make PROF=-O"
+
+INNER = btinsertkey.o bttraverse.o btdump.o \
+	btutil1.o     btutil2.o    btutilx.o	btleafrids.o
+
+OUTER =  stcreateidx.o   stdropbtree.o  stopenbtree.o\
+	 stfirstindex.o  stlastindex.o  stgetadjidx.o\
+	 stgetindex.o    stinsertidx.o  stdeleteidx.o  stsort.o
+
+INNERC = btinsertkey.c bttraverse.c btdump.c \
+ 	 btutil1.c     btutil2.c    btutilx.c	 btleafrids.c
+
+OUTERC =  stcreateidx.c   stdropbtree.c  stopenbtree.c\
+	  stfirstindex.c  stlastindex.c  stgetadjidx.c\
+	  stgetindex.c    stinsertidx.c  stdeleteidx.c  stsort.c
+
+# OBJECT FILE OF ALL BTREE FILES
+libWiSS2b.a : $(INNER) $(OUTER)
+	-rm -f libWiSS2b.a
+	ar rc libWiSS2b.a $(INNER) $(OUTER)
+
+$(INNER) $(OUTER) : $(INCLUDE)/wiss.h $(INCLUDE)/page.h \
+		    $(INCLUDE)/st.h $(INCLUDE)/st_bt.h \
+		    $(INCLUDE)/bt_error.h $(INCLUDE)/sm.h
+
+bt_error.i : bt_error.m4
+	m4 $(INCLUDE)/handler.m4 bt_error.m4 > bt_error.i
+
+$(INCLUDE)/bt_error.h : bt_error.m4
+	m4 $(INCLUDE)/defs.m4 bt_error.m4 >$(INCLUDE)/bt_error.h
+
+
+tags : $(INNERC) $(OUTERC)
+	@ctags  $(INNERC) $(OUTERC) 
+
+lint :  $(INNERC) $(OUTERC) $(RECORD) $(L2)
+	@echo lint ~~~ '>lint.out'
+	@lint -I$(INCLUDE) -I$(LOCK) $(DEBUGFLAG) $(TRACEFLAG)\
+		$(INNERC) $(OUTERC) >lint.out
+
+#	@lint -I$(INCLUDE) $(DEBUGFLAG) $(TRACEFLAG)\
+#		$(INNERC) $(OUTERC) $(RECORD)/*.c $(DIRECTORY)/*.c >lint.out
+
+clean :
+	/bin/rm -f *.o
+	/bin/rm -f *.a

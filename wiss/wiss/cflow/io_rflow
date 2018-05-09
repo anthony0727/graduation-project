@@ -1,0 +1,143 @@
+1	IO_AllocExtents: int(), <IOextent.c 59>
+2		IO_AllocFile : <>
+3		io_allocpages : <>
+4	IO_AllocFile: int(), <IOfiman.c 61>
+5		IO_Format : <>
+6		io_createfile : <>
+7	IO_AllocPageInExt: int(), <IOextent.c 192>
+8		io_allocpages : 3
+9	IO_Close: int(), <IOmount.c 411>
+10	IO_DisMount: int(), <IOmount.c 160>
+11		IO_Format : 5
+12		io_dismount : <>
+13		io_final : <>
+14	IO_FlushHeader: int(), <IOmount.c 199>
+15		IO_DisMount : <>
+16	IO_Format: int(), <IOmount.c 255>
+17	IO_FreeExtents: int(), <IOextent.c 134>
+18		IO_FreeFile : <>
+19	IO_FreeFile: int(), <IOfiman.c 130>
+20		io_destroyfile : <>
+21	IO_FreePageInExt: int(), <IOextent.c 256>
+22		IO_AllocExtents : <>
+23		io_freepage : <>
+24	IO_Mount: int(), <IOmount.c 73>
+25		io_mount : <>
+26	IO_Open: int(), <IOmount.c 382>
+27		io_mount : 25
+28	IO_ReadPage: int(), <IOreadwrite.c 69>
+29		IO_Mount : <>
+30		io_readpage : <>
+31	IO_WritePage: int(), <IOreadwrite.c 131>
+32		IO_FlushHeader : <>
+33		IO_Format : 5
+34		io_writepage : <>
+35	IO_checker: int(), <IOcheck.c 53>
+36		io_checker : <>
+37	InitLatch: <>
+38		io_init : <>
+39	ReleaseLatch: <>
+40		io_allocpages : 3
+41		io_checker : 36
+42		io_createfile : 6
+43		io_destroyfile : 20
+44		io_dismount : 12
+45		io_final : 13
+46		io_freepage : 23
+47		io_mount : 25
+48	SetLatch: <>
+49		io_allocpages : 3
+50		io_checker : 36
+51		io_createfile : 6
+52		io_destroyfile : 20
+53		io_dismount : 12
+54		io_final : 13
+55		io_freepage : 23
+56		io_mount : 25
+57	checkset: <>
+58		IO_AllocExtents : 22
+59		IO_FlushHeader : 32
+60		IO_FreePageInExt : <>
+61		IO_checker : <>
+62	clearbit: <>
+63		IO_AllocExtents : 22
+64		IO_AllocPageInExt : <>
+65		IO_FlushHeader : 32
+66		IO_checker : 61
+67	clearmap: <>
+68		IO_Mount : 29
+69	close: <>
+70		IO_Close : <>
+71		IO_DisMount : 15
+72	countmap: <>
+73		IO_AllocPageInExt : 64
+74		IO_checker : 61
+75	free: <>
+76		IO_AllocFile : 2
+77		IO_Format : 5
+78		IO_FreeFile : 18
+79		IO_checker : 61
+80	io_allocpages: int(), <io_allocp.c 57>
+81		IO_Format : 5
+82	io_checker: int(), <io_check.c 45>
+83	io_clearstat: int(), <IOreadwrite.c 178>
+84	io_createfile: int(), <io_createf.c 51>
+85	io_destroyfile: int(), <io_destroyf.c 45>
+86	io_dismount: int(), <io_dismount.c 45>
+87	io_error: char*(), <io_error.c 44>
+88	io_final: int(), <io_final.c 44>
+89	io_freepage: int(), <io_freepage.c 53>
+90	io_init: int(), <io_init.c 48>
+91	io_mount: int(), <io_mount.c 45>
+92	io_readpage: int(), <io_readpage.c 53>
+93	io_volid: int(), <io_volid.c 45>
+94	io_writepage: int(), <io_writepage.c 54>
+95	local_io_init: int(), <io_init.c 85>
+96	lseek: <>
+97		IO_ReadPage : <>
+98		IO_WritePage : <>
+99	malloc: <>
+100		IO_AllocFile : 2
+101		IO_Format : 5
+102		IO_FreeFile : 18
+103		IO_checker : 61
+104	nextset: <>
+105		IO_AllocExtents : 22
+106		IO_AllocPageInExt : 64
+107	open: <>
+108		IO_Format : 5
+109		IO_Mount : 29
+110		IO_Open : <>
+111	printf: <>
+112		IO_checker : 61
+113		io_readpage : 30
+114		io_writepage : 34
+115	read: <>
+116		IO_ReadPage : 97
+117	setbit: <>
+118		IO_AllocExtents : 22
+119		IO_AllocFile : 2
+120		IO_AllocPageInExt : 64
+121		IO_FreeExtents : <>
+122		IO_FreeFile : 18
+123		IO_FreePageInExt : 60
+124		io_allocpages : 3
+125	shmAlloc: <>
+126		IO_Format : 5
+127		IO_Mount : 29
+128	shmFree: <>
+129		IO_DisMount : 15
+130	strcmp: <>
+131		IO_Format : 5
+132		io_dismount : 12
+133		io_mount : 25
+134		io_volid : <>
+135	strcpy: <>
+136		IO_Format : 5
+137		io_mount : 25
+138	write: <>
+139		IO_WritePage : 98
+140	wsetmap: <>
+141		IO_Format : 5
+142		IO_FreePageInExt : 60
+143		IO_checker : 61

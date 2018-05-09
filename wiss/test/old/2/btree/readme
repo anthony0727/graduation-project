@@ -1,0 +1,9 @@
+test1	- test sort
+test5	- test st_getindex
+test6   - RID list overflow
+test7   - prefix key 
+test8   - scaning through index
+		st_firstindex, st_lastindex, st_getadjrid
+test9   - building indices
+		st_cresteindex, st_deleteindex, st_insertindex
+

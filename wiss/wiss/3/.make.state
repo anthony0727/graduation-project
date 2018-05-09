@@ -1,0 +1,128 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+am_closescan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_closescan.c
+wiss3.o:
+	echo ld -r ~~~ -o wiss3.o
+	ld -r AM_error.o  AM_boolean.o AM_scantable.o AM_commit.o AM_commit1.o am_setcursor.o am_setscan.o    am_init.o       am_final.o am_openfile.o   am_closefile.o am_openindex.o   am_filescan.o  am_longscan.o   am_indexscan.o  am_closescan.o am_fetch1st.o  am_fetchlast.o  am_fetchnext.o  am_fetchprev.o am_insertl.o   am_insertscn.o  am_deletel.o    am_delscan.o am_updscan.o   am_updlong.o    am_readlong.o   am_newindexscan.o am_readscan.o   am_error.o     am_log.o  am_geticursor.o  am_setiscan.o   am_openhash.o  am_hashscan.o  am_filelocking.o am_createvol.o am_destroyvol.o  -o wiss3.o
+.BUILT_LAST_MAKE_RUN:
+am_geticursor.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_geticursor.c
+.BUILT_LAST_MAKE_RUN:
+am_destroyvol.o:	../io_error.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_destroyvol.c
+../am_error.h:
+	m4 ../defs.m4 am_error.m4 >../am_error.h
+.BUILT_LAST_MAKE_RUN:
+AM_scantable.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  AM_scantable.c
+.BUILT_LAST_MAKE_RUN:
+am_closefile.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_closefile.c
+.BUILT_LAST_MAKE_RUN:
+am_setscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_setscan.c
+.BUILT_LAST_MAKE_RUN:
+am_indexscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_indexscan.c
+.BUILT_LAST_MAKE_RUN:
+am_newindexscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_newindexscan.c
+.BUILT_LAST_MAKE_RUN:
+libWiSS3.a:
+	rm -f libWiSS3.a
+	ar rc libWiSS3.a AM_error.o  AM_boolean.o AM_scantable.o AM_commit.o AM_commit1.o am_setcursor.o am_setscan.o    am_init.o       am_final.o am_openfile.o   am_closefile.o am_openindex.o   am_filescan.o  am_longscan.o   am_indexscan.o  am_closescan.o am_fetch1st.o  am_fetchlast.o  am_fetchnext.o  am_fetchprev.o am_insertl.o   am_insertscn.o  am_deletel.o    am_delscan.o am_updscan.o   am_updlong.o    am_readlong.o   am_newindexscan.o am_readscan.o   am_error.o     am_log.o  am_geticursor.o  am_setiscan.o   am_openhash.o  am_hashscan.o  am_filelocking.o am_createvol.o am_destroyvol.o
+.BUILT_LAST_MAKE_RUN:
+am_fetch1st.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_fetch1st.c
+.BUILT_LAST_MAKE_RUN:
+am_longscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_longscan.c
+.BUILT_LAST_MAKE_RUN:
+am_delscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_delscan.c
+.BUILT_LAST_MAKE_RUN:
+am_setiscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_setiscan.c
+.BUILT_LAST_MAKE_RUN:
+am_insertscn.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_insertscn.c
+.BUILT_LAST_MAKE_RUN:
+am_deletel.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_deletel.c
+.BUILT_LAST_MAKE_RUN:
+AM_commit.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  AM_commit.c
+.BUILT_LAST_MAKE_RUN:
+am_createvol.o:
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_createvol.c
+.BUILT_LAST_MAKE_RUN:
+am_fetchprev.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_fetchprev.c
+clean:
+	/bin/rm -f *.o
+.BUILT_LAST_MAKE_RUN:
+am_log.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_log.c
+.BUILT_LAST_MAKE_RUN:
+am_setcursor.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../st_r.h ../r_error.h ../record.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_setcursor.c
+.BUILT_LAST_MAKE_RUN:
+am_openindex.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_openindex.c
+.BUILT_LAST_MAKE_RUN:
+am_fetchnext.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_fetchnext.c
+.BUILT_LAST_MAKE_RUN:
+am_fetchlast.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_fetchlast.c
+.BUILT_LAST_MAKE_RUN:
+AM_error.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  AM_error.c
+.BUILT_LAST_MAKE_RUN:
+am_error.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_error.c
+am_error.i:
+	m4 ../handler.m4 am_error.m4 > am_error.i
+.BUILT_LAST_MAKE_RUN:
+am_hashscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_hashscan.c
+.BUILT_LAST_MAKE_RUN:
+am_filescan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_filescan.c
+.BUILT_LAST_MAKE_RUN:
+am_updlong.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_updlong.c
+.BUILT_LAST_MAKE_RUN:
+am_updscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_updscan.c
+.BUILT_LAST_MAKE_RUN:
+am_final.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_final.c
+.BUILT_LAST_MAKE_RUN:
+am_init.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_init.c
+.BUILT_LAST_MAKE_RUN:
+AM_commit1.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  AM_commit1.c
+.BUILT_LAST_MAKE_RUN:
+am_openhash.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_openhash.c
+.BUILT_LAST_MAKE_RUN:
+am_openfile.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_openfile.c
+.BUILT_LAST_MAKE_RUN:
+am_readlong.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_readlong.c
+.BUILT_LAST_MAKE_RUN:
+AM_boolean.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../st_r.h ../r_error.h ../record.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  AM_boolean.c
+.BUILT_LAST_MAKE_RUN:
+am_insertl.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_insertl.c
+.BUILT_LAST_MAKE_RUN:
+am_readscan.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../LM/lockquiz.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_readscan.c
+.BUILT_LAST_MAKE_RUN:
+am_filelocking.o:	../scaninfo.h ../sm.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I.. -I../LM  -DLMTRACE -g   -target sun4 -c  am_filelocking.c

@@ -1,0 +1,38 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+h_util.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  h_util.c
+.BUILT_LAST_MAKE_RUN:
+st_createhash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_createhash.c
+wiss2h.o:
+	echo ld -r ~~~ -o wiss2h.o
+	ld -r h_util.o h_dump.o st_createhash.o st_destroyhash.o st_openhash.o  st_inserthash.o st_deletehash.o st_gethash.o st_nexthash.o -o wiss2h.o
+	chmod -x wiss2h.o
+.BUILT_LAST_MAKE_RUN:
+st_nexthash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_nexthash.c
+.BUILT_LAST_MAKE_RUN:
+st_gethash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_gethash.c
+.BUILT_LAST_MAKE_RUN:
+h_dump.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  h_dump.c
+.BUILT_LAST_MAKE_RUN:
+st_deletehash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_deletehash.c
+.BUILT_LAST_MAKE_RUN:
+libWiSS2h.a:
+	rm -f libWiSS2h.a
+	ar rc libWiSS2h.a h_util.o h_dump.o st_createhash.o st_destroyhash.o st_openhash.o  st_inserthash.o st_deletehash.o st_gethash.o st_nexthash.o
+.BUILT_LAST_MAKE_RUN:
+st_destroyhash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_destroyhash.c
+clean:
+	/bin/rm -f *.o
+.BUILT_LAST_MAKE_RUN:
+st_inserthash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h ../../LM/lockquiz.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_inserthash.c
+.BUILT_LAST_MAKE_RUN:
+st_openhash.o:	../../st.h ../../st_r.h ../../r_error.h ../../record.h ../../st_bt.h ../../bt_error.h ../../latch.h ../../st_d.h ../../d_error.h ../../st_macro.h ../../st_fd.h ../../filed.h ../../locktype.h ../../resource.h ../../lockdefs.h ../../graph.h 
+	cc -I../.. -I../../LM  -DLMTRACE -g   -target sun4 -c  st_openhash.c

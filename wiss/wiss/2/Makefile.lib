@@ -1,0 +1,67 @@
+# Makefile for level 2 of WiSS
+
+INCLUDE = ..
+LOCK = ../../lm
+RECORD = record
+BTREE = btree
+HASH = hash
+DIRECTORY = directory
+PIC	= -PIC
+
+# sub-directories
+SUBDIR = $(RECORD) $(BTREE) $(HASH) $(DIRECTORY) 
+
+TRACEFLAG = -DTRACE
+CFLAGS = -I$(INCLUDE) -I$(LOCK) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) $(PIC)
+
+# the OUTER file is level 2 initialization routine
+
+# compiler options to be passed dowm
+OPTIONS = TRACEFLAG='$(TRACEFLAG)' DEBUGFLAG='$(DEBUGFLAG)' PROF='$(PROF)' PIC='$(PIC)'
+
+SUBLIBS	= $(RECORD)/libWiSS2r.a \
+	  $(BTREE)/libWiSS2b.a \
+	  $(HASH)/libWiSS2h.a \
+	  $(DIRECTORY)/libWiSS2d.a
+
+libWiSS2.a : $(SUBLIBS)
+	-rm -rf tmplib
+	-rm -f libWiSS2.a
+	-mkdir tmplib
+	set -x; \
+	(cd tmplib; for i in $(SUBLIBS); do (ar x ../$$i); done)
+	(cd tmplib; rm -f __.SYMDEF; ar cr ../libWiSS2.a `lorder * | tsort`)
+	-rm -rf tmplib
+
+MAKE	= make -f Makefile.lib
+
+$(RECORD)/libWiSS2r.a :
+	(cd $(RECORD); $(MAKE) $(OPTIONS))
+
+$(BTREE)/libWiSS2b.a :
+	(cd $(BTREE); $(MAKE) $(OPTIONS))
+
+$(HASH)/libWiSS2h.a :
+	(cd $(HASH); $(MAKE) $(OPTIONS))
+
+$(DIRECTORY)/libWiSS2d.a :
+	(cd $(DIRECTORY); $(MAKE) $(OPTIONS))
+
+subdirs:
+	for i in ${SUBDIR}; do (cd $$i; $(MAKE) $(OPTIONS) ); done;
+
+$(RECORD)/r_error.i : $(RECORD)/r_error.m4
+	cd $(RECORD); make r_error.i
+$(BTREE)/bt_error.i : $(BTREE)/bt_error.m4
+	cd $(BTREE); make bt_error.i
+$(DIRECTORY)/d_error.i : $(DIRECTORY)/d_error.m4
+	cd $(DIRECTORY); make d_error.i
+
+lint : $(INNERC) $(OUTERC)
+	@echo lint ~~~ '>lint.out'
+	@lint -I$(INCLUDE) $(INNERC) $(OUTERC) >lint.out
+
+clean :
+	/bin/rm -f *.o
+	/bin/rm -f *.a
+	for i in ${SUBDIR}; do (cd $$i; $(MAKE) clean); done;

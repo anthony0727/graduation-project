@@ -1,0 +1,8 @@
+#
+make disk
+../../bin/server &
+build bdblues /home/temporary/dewitt/hp0a file200K 200000 TRUE > SunBench.small
+lookup bdblues /home/temporary/dewitt/hp0a file200K 200000 1000 30 TRUE >> SunBench.small
+traverse bdblues /home/temporary/dewitt/hp0a file200K 200000 7 30 TRUE >> SunBench.small
+insert bdblues /home/temporary/dewitt/hp0a file200K 200000 100 30 TRUE >> SunBench.small
+skill server

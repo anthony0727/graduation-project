@@ -1,0 +1,3 @@
+format.o-CPP: -I..
+format-COMP: /usr/lib/crt0.o
+format-LD: /lib/libg.a

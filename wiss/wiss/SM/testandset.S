@@ -1,0 +1,377 @@
+/*
+ * unsigned
+ * testandset(addr, value)
+ *        struct testandset *addr;
+ *
+ * testandset() returns '0' if it could set the byte lock to 
+ * a non-zero 'value', which may be ignored depending upon
+ * the implementation.  Otherwise, testandset() returns
+ * the current value of the  byte lock.
+ *
+ * Depending upon a particular 'value' for the byte may be
+ * a pitfall of using this function.  Also, assuming that
+ * the syncronization unit is a byte may be invalid also.
+ *
+ * void
+ * testandset_release(addr)
+ *	struct testandset *addr;
+ *
+ * Release a testandset() lock.  A simple store may not be enough
+ * in some cases.
+ *
+ * void
+ * testandset_init(addr)
+ *	struct testandset *addr;
+ * Initialize a testandset() lock.
+ *
+ * unsigned
+ * testandset_examine(addr)
+ *	struct testandset *addr;
+ * Retrieve the value of a testandset() lock; 0==not locked, 1==locked
+ *
+ *
+ * ** A future enhancement to this package would be to have the
+ * machine-dependent test+set lock protect another (adjacent) location,
+ * so that the "value" argument of testandset() could be supported
+ * on all architectures.
+ *
+ * Author: Joe Burger (bolo@cs.wisc.edu) on 28 November 1990
+ */
+
+#if defined(sparc)
+/*
+ * The 'value' argument is ignored with the sparc implementation,
+ * although it could be implemented by writing the 'value' to the
+ * byte after ldstub "locks" it.
+ *
+ * Function of 'ldstub':
+ * Ldstub fetches the contents of the byte pointed to by 'addr'
+ * and replaces the contents of the byte with hex 0xff (decimal 255).
+ * Presumably this is done with a RWM bus cycle.
+ * The 'C' function return value is the previous value of the byte.
+ *
+ */
+#define	PROC(x)	.seg "text" ; .proc 14 ; .global x ; x :
+
+PROC(_testandset)
+	retl
+	ldstub	[%o0],%o0	/* in delay slot */
+
+PROC(_testandset_release)
+	retl
+	stb	%g0,[%o0]
+
+PROC(_testandset_init)
+	retl
+	stb	%g0,[%o0]
+
+PROC(_testandset_examine)
+	retl
+	ldub	[%o0],%o0
+#endif
+
+#if defined(mc68000) || defined(mc68010) || defined(mc68020) || defined(mc68030) || defined(mc68040)
+
+/*
+ * cas: compare and swap with operand; usage:  cas  dc,du,<ea>
+ * The 'dc' "compare" operand is compared to the value of the operand
+ * at <ea>.  If they are equal, the value at <ea> is replaced/updated
+ * with the value of the 'du' "update" operand.
+ */
+#define	PROC(x)	.text ; .even ; .globl x ; x:
+
+PROC(_testandset)
+	movl	sp@(4),a0	/* address */
+	movl	sp@(8),d1	/* value */
+	clrl	d0		/* compare operand for CAS */
+	casb	d0,d1,a0@
+	/* return is in d0 == old value of <ea> */
+	rts
+
+PROC(_testandset_release)
+	movl	sp@(4),a0	/* address */
+	clrl	d0
+	movb	d0,a0@
+	rts
+
+PROC(_testandset_init)
+	movl	sp@(4),a0	/* address */
+	clrl	d0
+	movb	d0,a0@
+	rts
+
+PROC(_testandset_examine)
+	movl	sp@(4),a0
+	clrl	d0
+	movb	a0@,d0
+	rts
+#endif
+
+#if defined(vax)
+
+/*
+ * bbssi: branch on bit set and set interlocked
+ * The bit is checked for its current value, then is always set.
+ * If the bit is set, the branch is taken, else execution falls through
+ */
+#define	PROC(x)	.text ; .align 1 ; .globl x; x :
+
+PROC(_testandset)
+	.word	0x00	/* don't save any registers */
+	bbssi	$0,*4(ap),1f
+	/* bit not set, we "have" the byte */
+	clrl	r0	/* return value */
+	ret
+1:	/* bit was set, we can't have it yet */
+	movl	$1,r0	/* return value */
+	ret
+PROC(_testandset_release)
+	.word	0x00	/* don't save any registers */
+	clrb	*4(ap)
+	ret
+PROC(_testandset_init)
+	.word	0x00	/* don't save any registers */
+	clrb	*4(ap)
+	ret
+PROC(_testandset_examine)
+	.word	0x00
+	movb	*4(ap),r0	/* get the lock */
+	bicl2	$0xfe,r0	/* and clear all unused bits */
+	ret
+#endif
+
+#if defined(i386)
+/*
+ * bts: bit test and set
+ * The bit is copied into the carry flag (CF) and then set bit
+ * xchg: exchange memory and register
+ * exchange contents of memory location and register
+ *
+ * currently ignores flag value
+ */
+
+#define	PROC(x)	.text ; .align 2 ; .globl x ; x:
+
+#ifdef SYSV
+PROC(testandset)
+#else
+PROC(_testandset)
+#endif
+	pushl	%ebp	/* build stack frame for debuggers */
+	movl	%esp,%ebp
+	movl	8(%ebp),%ecx	/* addr -> cx */
+	movl	$1,%eax		/* "1" == test and set grabbed */
+	lock
+	xchgb  (%ecx),%al	/* return value in %eax */
+	leave
+	ret
+#ifdef SYSV
+PROC(testandset_release)
+#else
+PROC(_testandset_release)
+#endif
+	pushl	%ebp	/* build stack frame for debuggers */
+	movl	%esp,%ebp
+	movl	8(%ebp),%ecx	/* addr */
+	movb	$0,(%ecx)	/* clear it */
+	leave
+	ret
+
+#ifdef SYSV
+PROC(testandset_init)
+#else
+PROC(_testandset_init)
+#endif
+	pushl	%ebp	/* build stack frame for debuggers */
+	movl	%esp,%ebp
+	movl	8(%ebp),%ecx	/* addr */
+	movb	$0,(%ecx)	/* clear it */
+	leave
+	ret
+
+#ifdef SYSV
+PROC(testandset_examine)
+#else
+PROC(_testandset_examine)
+#endif
+	pushl	%ebp
+	movl	%esp,%ebp
+	movl	8(%ebp),%ecx
+	movl	$0,%eax
+	movb	(%ecx),%al
+	leave
+	ret
+#endif
+
+#ifdef mips
+/*
+ * mips doesn't have a test-and-set instruction.
+ * this placeholder is here so the mips assembler doesn't choke
+ * on the empty input file
+ */
+	.align	2
+/*
+ * Future versions of the MIPS architecture (r4000 or r6000)
+ * are rumored to have some form of test and set.
+ * They are the same machines that require a dedicated 
+ * testandset_release() to release the lock.
+ */
+#endif
+
+#if defined(hppa) || defined(hp800)
+	 /* 	
+	 * Gads this one is backwards! :
+	 * *loc == '0' means it is locked
+	 * *loc != '0' means it is unlocked
+	 *
+	 * Also, the lock needs to be 16 bytes on 16 byte alignment
+	 * The code auto-magically aligns the pointer to the next
+	 * 16 byte alignment, the user has to provide enough space
+	 * for alignment if they don't guarantee 16-byte alignment
+	 * of the lock
+	 */
+
+	.SPACE $PRIVATE$
+	.SUBSPA $DATA$,QUAD=1,ALIGN=8,ACCESS=31
+	.SPACE $TEXT$
+	.SUBSPA $LIT$,QUAD=0,ALIGN=8,ACCESS=44
+	.SUBSPA $CODE$,QUAD=0,ALIGN=8,ACCESS=44,CODE_ONLY
+	.IMPORT $global$,DATA
+	.IMPORT $$dyncall,MILLICODE
+; gcc_compiled.:
+	.SPACE $TEXT$
+	.SUBSPA $CODE$
+
+	.align 4
+	.EXPORT testandset,PRIV_LEV=3,ARGW0=GR,ARGW1=GR,RTNVAL=GR
+testandset
+	.PROC
+	.CALLINFO FRAME=24,NO_CALLS
+	.ENTRY
+	addi	15,26,26	/* align addr to nearest 16: addr += (16-1) */
+	ldi	15,1
+	andcm	26,1,26		/* addr &= ~15 */
+	ldcws	0(0,26),28	/* delay; clear *arg0, old *arg0 -> ret0 */
+	comclr,<>  28,0,28	/* was it  == 0 ??  (locked) */
+	ldo	1(0),28			/* if so, return failure */
+	bv 0(2)			/* return to RP */
+	nop
+
+	.EXIT
+	.PROCEND
+	.align 4
+	.EXPORT testandset_release,PRIV_LEV=3,ARGW0=GR,RTNVAL=GR
+testandset_release
+	.PROC
+	.CALLINFO FRAME=24,NO_CALLS
+	.ENTRY
+	addi	15,26,26	/* align to nearest 16: addr += 15 */
+	ldi	15,1
+	andcm	26,1,26		/* addr &= ~15 */
+	ldi  1,19		/* 1 -> caller saves 19 */
+	sync			/* hopefully sync any stores */
+	bv 0(2)			/* return to RP */
+	stw 19,0(0,26)		/* delay: reg(19)==1 -> *arg0 */
+	.EXIT
+	.PROCEND
+
+	.align 4
+	.EXPORT testandset_examine,PRIV_LEV=3,ARGW0=GR,RTNVAL=GR
+testandset_examine
+	.PROC
+	.CALLINFO FRAME=24,NO_CALLS
+	.ENTRY
+	addi	15,26,26	/* align to nearest 16: addr += 15 */
+	ldi	15,1
+	andcm	26,1,26		/* addr &= ~15 */
+	ldw	0(26),28	/* (addr) -> ret0 */
+	nop
+	comclr,<>  28,0,28	/* was it  == 0 ??  (locked) */
+	ldi	1,28			/* if so, return 1 */
+	bv 0(2)			/* return to RP */
+	nop
+	.EXIT
+	.PROCEND
+
+	.align 4
+	.EXPORT testandset_init,PRIV_LEV=3,ARGW0=GR,RTNVAL=GR
+testandset_init
+	.PROC
+	.CALLINFO FRAME=24,NO_CALLS
+	.ENTRY
+	addi	15,26,26	/* align to nearest 16: addr += 15 */
+	ldi	15,1
+	andcm	26,1,26		/* addr &= ~15 */
+	ldi  1,19		/* 1 -> caller saves 19 */
+	bv 0(2)			/* return to RP */
+	stw 19,0(0,26)		/* delay: reg(19)==1 -> *arg0 */
+	.EXIT
+	.PROCEND
+
+#endif /* hppa */
+
+#if defined(ibm032)
+
+/*
+ * tsh: test and set halfword
+ *	the hi-order byte of the hword is set to 0xff
+ *	the lo-order byte is unaltered.
+ * 
+ * The 'value' argument is ignored
+ */
+#define	DEFINEPROC(x,y)	.data ; .align 2 ; .globl x; x: .long y
+#define	PROC(x)	.text ; .align 2 ; .globl x ; x:
+#define	HCC
+
+#if defined(HCC)
+	.globl  .oVncs
+	.set    .oVncs,0
+	.globl  .oVhc2.1s
+	.set    .oVhc2.1s,0
+	.data
+L00DATA:
+	DEFINEPROC(_testandset_examine,_.testandset_examine)
+	DEFINEPROC(_testandset,_.testandset)
+	DEFINEPROC(_testandset_release,_.testandset_release)
+	DEFINEPROC(_testandset_init,_.testandset_init)
+#endif
+
+#if defined(PCC)
+LL0:	pcc stuff not supported
+#endif
+
+#define	arg0	r2
+#define	ret0	arg0
+
+L00TEXT:
+PROC(_.testandset)
+	brx	r15		/* return */
+	tsh	ret0,0(arg0)	/* do the testandset, 0==got it */
+	.long	0xdf02df00	/* trace table -- no stack frame */
+
+PROC(_.testandset_examine)
+	brx	r15		/* return */
+	lhs	ret0,0(arg0)	/* fetch the word */
+	.long	0xdf02df00	/* trace table -- no stack frame */
+
+PROC(_.testandset_release)
+	lis	r0,0
+	brx	r15
+	sths	r0,0(r2)
+	.long	0xdf02df00	/* trace table -- no stack frame */
+
+PROC(_.testandset_init)
+	lis	r0,0
+	brx	r15
+	sths	r0,0(r2)
+	.long	0xdf02df00	/* trace table -- no stack frame */
+
+#if defined(PCC)
+        .ltorg
+        .globl .oVpcc
+        .globl .oVncs
+        .set .oVpcc, 0
+        .set .oVncs, 0
+#endif
+
+#endif /* ibm032 */

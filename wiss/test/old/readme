@@ -1,0 +1,5 @@
+There are three test programs in this directory.
+test1 : testing sequential scans
+test2 : testing index scans
+test3 : testing scans on long data items
+test4 : ??????

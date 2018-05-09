@@ -1,0 +1,25 @@
+
+test1 	-- simple interface routine testing
+test2   -- scan table testing	
+test3   -- test on complex boolean expressions
+----------------------------------------------------
+test4	-- test on index read scan
+test5	-- test on index update scans (insert, update, delete)
+test6	-- test on index update scans (insert, update, delete)
+	test5 and test6 are similiar, but test on differnet indices
+----------------------------------------------------
+test7   -- wiss application demos (sequential scan)
+test8   -- wiss application demos (index scan)
+----------------------------------------------------
+test9	-- test on sequential scans (update, set_scan)
+test10  -- testing on sort with "self generating data"
+----------------------------------------------------
+test11	-- long data item
+----------------------------------------------------
+test12  -- testing on multiple volumes (self generating data)
+----------------------------------------------------
+test14  -- 
+test15  -- general error reporter
+test16  -- statistics
+test17  -- hash scan (unique key )
+test18  -- hash scan (non-unique key )

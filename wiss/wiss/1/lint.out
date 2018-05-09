@@ -1,0 +1,62 @@
+bfopenfile.c:
+bfclosefile.c:
+bfflushbuf.c:
+bfflushbuf.c(43): warning: e unused in function bf_flushbuf
+bfallocbuf.c:
+bfgetbuf.c:
+bffreebuf.c:
+bfreadbuf.c:
+bfdiscard.c:
+bfdiscard.c(38): warning: argument filenum unused in function bf_discard
+bfsetdirty.c:
+bfsetdirty.c(41): warning: argument filenum unused in function bf_setdirty
+bfdismount.c:
+bferror.c:
+bfinit.c:
+bfinit.c(54): warning: i unused in function bf_init
+bffinal.c:
+bfinvalidate.c:
+BFhash.c:
+BFallocbuf.c:
+BFdumptables.c:
+BFdumptables.c(42): warning: j unused in function BF_dumpbuftable
+bffindbuf.c:
+bfunpin.c:
+bfpin.c:
+Lint pass2:
+exit value declared inconsistently	llib-lc(233)  ::  bffreebuf.c(78)
+SetLatch, arg. 3 used inconsistently	bfreadbuf.c(85)  ::  BFhash.c(349)
+bf_openfile defined( bfopenfile.c(41) ), but never used
+bf_closefile defined( bfclosefile.c(39) ), but never used
+BF_lock returns value which is always ignored
+BF_unlock returns value which is always ignored
+smPtr used( bfclosefile.c(79) ), but not defined
+bf_flushbuf defined( bfflushbuf.c(41) ), but never used
+io_writepage used( bfflushbuf.c(78) ), but not defined
+bf_allocbuf defined( bfallocbuf.c(43) ), but never used
+BF_insert returns value which is always ignored
+bf_getbuf defined( bfgetbuf.c(44) ), but never used
+bf_freebuf defined( bffreebuf.c(42) ), but never used
+printf returns value which is always ignored
+bf_readbuf defined( bfreadbuf.c(46) ), but never used
+io_readpage used( bfreadbuf.c(82) ), but not defined
+SetLatch used( bfreadbuf.c(85) ), but not defined
+ReleaseLatch used( bfreadbuf.c(89) ), but not defined
+procNum used( bfreadbuf.c(89) ), but not defined
+bf_discard defined( bfdiscard.c(41) ), but never used
+BF_delete returns value which is always ignored
+bf_setdirty defined( bfsetdirty.c(44) ), but never used
+bf_dismount defined( bfdismount.c(40) ), but never used
+bf_error defined( bferror.c(41) ), but never used
+bf_init defined( bfinit.c(53) ), but never used
+InitLatch used( bfinit.c(70) ), but not defined
+shmAlloc used( bfinit.c(90) ), but not defined
+bf_final defined( bffinal.c(37) ), but never used
+bf_invalidate defined( bfinvalidate.c(38) ), but never used
+no_IO_READS defined( ../stats.h(18) ), but never used
+no_IO_WRITES defined( ../stats.h(19) ), but never used
+no_BUFFER_HITS defined( ../stats.h(20) ), but never used
+BF_dumpfixed returns value which is always ignored
+bf_findbuf defined( bffindbuf.c(47) ), but never used
+bf_unpin defined( bfunpin.c(38) ), but never used
+bf_pin defined( bfpin.c(36) ), but never used

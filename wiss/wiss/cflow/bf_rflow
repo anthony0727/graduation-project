@@ -1,0 +1,134 @@
+1	BF_allocbuf: int(), <BFallocbuf.c 47>
+2		bf_allocbuf : <>
+3		bf_getbuf : <>
+4		bf_readbuf : <>
+5	BF_delete: int(), <BFhash.c 178>
+6		BF_allocbuf : <>
+7		bf_discard : <>
+8		bf_dismount : <>
+9		bf_invalidate : <>
+10	BF_dumpbufpool: int(), <BFdumptables.c 66>
+11		bf_freebuf : <>
+12	BF_dumpbuftable: int(), <BFdumptables.c 41>
+13		BF_allocbuf : 6
+14		BF_delete : <>
+15		BF_insert : <>
+16		bf_freebuf : 11
+17	BF_dumpfixed: int(), <BFdumptables.c 83>
+18		BF_insert : 15
+19	BF_hash_dump: int(), <BFhash.c 564>
+20		BF_delete : 14
+21	BF_hashinit: int(), <bfinit.c 81>
+22		bf_init : <>
+23	BF_insert: int(), <BFhash.c 114>
+24		bf_allocbuf : 2
+25		bf_getbuf : 3
+26		bf_readbuf : 4
+27	BF_lock: int(), <BFhash.c 283>
+28		BF_allocbuf : 6
+29		bf_allocbuf : 2
+30		bf_closefile : <>
+31		bf_discard : 7
+32		bf_dismount : 8
+33		bf_final : <>
+34		bf_findbuf : <>
+35		bf_flushbuf : <>
+36		bf_freebuf : 11
+37		bf_getbuf : 3
+38		bf_invalidate : 9
+39		bf_pin : <>
+40		bf_readbuf : 4
+41		bf_setdirty : <>
+42		bf_unpin : <>
+43	BF_lock_dump: int(), <BFhash.c 546>
+44		BF_unlock : <>
+45	BF_lookup: int(), <BFhash.c 51>
+46		bf_allocbuf : 2
+47		bf_closefile : 30
+48		bf_dismount : 8
+49		bf_findbuf : 34
+50		bf_flushbuf : 35
+51		bf_getbuf : 3
+52		bf_invalidate : 9
+53		bf_readbuf : 4
+54	BF_unlock: int(), <BFhash.c 437>
+55		BF_allocbuf : 6
+56		bf_allocbuf : 2
+57		bf_closefile : 30
+58		bf_discard : 7
+59		bf_dismount : 8
+60		bf_final : 33
+61		bf_findbuf : 34
+62		bf_flushbuf : 35
+63		bf_freebuf : 11
+64		bf_getbuf : 3
+65		bf_invalidate : 9
+66		bf_pin : 39
+67		bf_readbuf : 4
+68		bf_setdirty : 41
+69		bf_unpin : 42
+70	InitLatch: <>
+71		BF_hashinit : <>
+72		BF_lock : <>
+73		bf_init : 22
+74	ReleaseLatch: <>
+75		BF_allocbuf : 6
+76		BF_delete : 14
+77		BF_insert : 15
+78		BF_lock : 72
+79		BF_lookup : <>
+80		BF_unlock : 44
+81		bf_discard : 7
+82		bf_readbuf : 4
+83	SetLatch: <>
+84		BF_allocbuf : 6
+85		BF_delete : 14
+86		BF_insert : 15
+87		BF_lock : 72
+88		BF_lookup : 79
+89		BF_unlock : 44
+90		bf_discard : 7
+91		bf_readbuf : 4
+92	bf_allocbuf: int(), <bfallocbuf.c 43>
+93	bf_closefile: int(), <bfclosefile.c 39>
+94	bf_discard: int(), <bfdiscard.c 41>
+95	bf_dismount: int(), <bfdismount.c 40>
+96	bf_error: char*(), <bferror.c 41>
+97	bf_final: int(), <bffinal.c 37>
+98	bf_findbuf: int(), <bffindbuf.c 47>
+99	bf_flushbuf: int(), <bfflushbuf.c 41>
+100	bf_freebuf: int(), <bffreebuf.c 42>
+101	bf_getbuf: int(), <bfgetbuf.c 44>
+102	bf_init: int(), <bfinit.c 53>
+103	bf_invalidate: int(), <bfinvalidate.c 38>
+104	bf_openfile: int(), <bfopenfile.c 41>
+105	bf_pin: int(), <bfpin.c 36>
+106	bf_readbuf: int(), <bfreadbuf.c 46>
+107	bf_setdirty: int(), <bfsetdirty.c 44>
+108	bf_unpin: int(), <bfunpin.c 38>
+109	exit: <>
+110		bf_freebuf : 11
+111	io_readpage: <>
+112		bf_readbuf : 4
+113	io_writepage: <>
+114		BF_allocbuf : 6
+115		bf_dismount : 8
+116		bf_final : 33
+117		bf_flushbuf : 35
+118	printf: <>
+119		BF_allocbuf : 6
+120		BF_delete : 14
+121		BF_dumpbufpool : <>
+122		BF_dumpbuftable : <>
+123		BF_dumpfixed : <>
+124		BF_hash_dump : <>
+125		BF_insert : 15
+126		BF_lock : 72
+127		BF_lock_dump : <>
+128		BF_unlock : 44
+129		bf_freebuf : 11
+130		bf_pin : 39
+131		bf_readbuf : 4
+132		bf_unpin : 42
+133	shmAlloc: <>
+134		BF_hashinit : 71

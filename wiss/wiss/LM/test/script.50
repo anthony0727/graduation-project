@@ -1,0 +1,55 @@
+L 0 0 1 c f
+l 0 0 0 3 c f
+R 0 0
+r 0 0
+
+Q
+
+
+
+--------------------------- script.50 ---------------------------
+
+The main actions here are:
+  a) Tries to lock a file and a page, to release a file and a page
+     without having open the transaction.
+
+
+
+The detailed description of each command line is:
+
+ lock_file(trans 0, file 0, mode IS, duration COMMIT, cond False)
+ lock_page(trans 0, file 0, page 0, mode S, duration COMMIT, cond False)
+ release_file(trans 0, file 0)
+ release_page(trans 0, page 0)
+
+ quit
+
+
+
+The expected output (so as to perform a "diff" with the next 
+execution output) is:
+
+-------------------------------------------------
+L 0 0 1 c f
+ERROR (proc lock_file), Transaction cell is null, non existant.
+
+--> -750
+
+l 0 0 0 3 c f
+ERROR (proc lock_page), trans_cell passed in is NULL.
+
+ERROR (proc lock_page), Activate trans before locking a page on it.
+
+--> -1250
+
+R 0 0 ERROR, Transaction is not active and can't be commited.
+
+--> -750
+
+r 0 0
+ERROR, Transaction is not active and can't be commited.
+
+--> -750
+
+Q
+-------------------------------------------------

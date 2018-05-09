@@ -1,0 +1,7 @@
+Level 3 software maintains an active scan  table  that  describes
+all scans in progress. For each scan, the table contains the scan
+type (sequential, index, link, or long), and the open file number
+of  the  file  associated  with the scan.  For scans on long data
+items a cursor is included in the scan table which is the current
+byte of the scan.  For sequential, index, or link type scans, the
+cursor stored in the scan table is the current RID of the scan.

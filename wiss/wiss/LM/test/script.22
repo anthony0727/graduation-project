@@ -1,0 +1,155 @@
+O 0
+L 0 0 1 m f
+l 0 0 0 3 m f
+l 0 0 1 3 m f
+l 0 0 2 3 m f
+
+O 1
+L 1 0 2 c f
+l 1 0 1 3 c f
+l 1 0 2 5 c f
+
+T 0
+
+r 0 2
+T 0
+
+R 0 0
+T 0
+T 1
+
+C 0
+Q
+
+
+
+--------------------------- script.22 ---------------------------
+
+The main actions here are:
+  a) transaction 0 locks file 0 in IS mode, and lock pages 0,1,3
+     of file 0 in S mode.
+  b) transaction 1 locks file 0 and 2 of its pages.
+  c) transaction 0 releases page 2.
+  d) transaction 0 releases file 0.
+
+
+
+The detailed description of each command line is:
+
+ open_trans(trans 0)
+ lock_file(trans 0, file 0, mode IS, duration MANUAL, cond False)
+ lock_page(trans 0, file 0, page 0, mode S, duration MANUAL, cond False)
+ lock_page(trans 0, file 0, page 1, mode S, duration MANUAL, cond False)
+ lock_page(trans 0, file 0, page 2, mode S, duration MANUAL, cond False)
+
+ open_trans(trans 1)
+ lock_file(trans 1, file 0, mode IX, duration COMMIT, cond False)
+ lock_page(trans 1, file 0, page 1, mode S, duration COMMIT, cond False)
+ lock_page(trans 1, file 0, page 2, mode X, duration COMMIT, cond False)
+
+ look at state of transaction 0
+
+ release_page(trans 0, page 2)
+ look at state of transaction 0
+
+ release_file(trans 0, file 0)
+ look at state of transaction 0
+ look at state of transaction 1
+
+ commit(trans 0)
+ commit(trans 1)
+ quit
+
+
+
+The expected output (so as to perform a "diff" with the next 
+execution output) is:
+
+-------------------------------------------------
+O 0
+--> 1
+
+L 0 0 1 m f
+--> 0
+
+l 0 0 0 3 m f
+--> 0
+
+l 0 0 1 3 m f
+--> 0
+
+l 0 0 2 3 m f
+--> 0
+
+O 1
+--> 1
+
+L 1 0 2 c f
+--> 0
+
+l 1 0 1 3 c f
+--> 0
+
+l 1 0 2 5 c f
+--> -1550
+
+T 0
+--> Trans 0 is owning:
+
+   . Page 2 (lock S)
+           . lock S granted to trans 0
+           . lock X waited by trans 1 - duration 2
+
+   . Page 1 (lock S)
+           . lock S granted to trans 0
+           . lock S granted to trans 1
+
+   . Page 0 (lock S)
+           . lock S granted to trans 0
+   . File 0 (lock IX)
+           . lock IX granted to trans 1
+           . lock IS granted to trans 0
+ No lock waited by trans. 0
+
+r 0 2
+-->(walkfile) transaction 1 can restart!
+
+--> 1
+
+T 0
+--> Trans 0 is owning:
+
+   . Page 1 (lock S)
+           . lock S granted to trans 0
+           . lock S granted to trans 1
+
+   . Page 0
+ (lock S)
+           . lock S granted to trans 0
+   . File 0 (lock IX)
+           . lock IX granted to trans 1
+           . lock IS granted to trans 0
+ No lock waited by trans. 0
+
+R 0 0
+--> 1
+
+T 0
+--> No lock owned by trans. 0
+ No lock waited by trans. 0
+
+T 1
+--> Trans 1 is owning:
+
+   . Page 2 (lock X)
+           . lock X granted to trans 1
+
+   . Page 1 (lock S)
+           . lock S granted to trans 1
+   . File 0 (lock IX)
+           . lock IX granted to trans 1
+ No lock waited by trans. 1
+
+C 0
+Q
+-------------------------------------------------

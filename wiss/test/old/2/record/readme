@@ -1,0 +1,9 @@
+test1: 	test of r_slide
+test2: 	test of record routines (simple)
+test3: 	test of record routines (error detection)
+test4: 	test of record routines (error detection)
+*test5:	test of record routines (exhausitive)
+
+test6:	test of long data item (simple)
+*test7:	test of long data item (exhausitive)
+

@@ -1,0 +1,72 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+io_freepage.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_freepage.c
+wiss0.o:
+	echo ld -r ~~~ -o wiss0.o
+	ld -r -y_singleuser IOreadwrite.o IOmount.o IOcheck.o IOfiman.o IOextent.o io_createf.o io_destroyf.o io_allocp.o io_freepage.o io_readpage.o io_writepage.o io_filedir.o io_check.o io_mount.o io_volid.o io_dismount.o io_error.o io_init.o io_final.o -o wiss0.o
+	chmod -x wiss0.o
+.BUILT_LAST_MAKE_RUN:
+IOmount.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h /usr/include/sys/file.h /usr/include/sys/types.h /usr/include/sys/stdtypes.h /usr/include/wchar.h /usr/include/sys/sysmacros.h /usr/include/sys/fcntlcom.h /usr/include/sys/stat.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  IOmount.c
+.BUILT_LAST_MAKE_RUN:
+io_mount.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_mount.c
+.BUILT_LAST_MAKE_RUN:
+io_allocp.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_allocp.c
+.BUILT_LAST_MAKE_RUN:
+libWiSS0.a:
+	rm -f libWiSS0.a
+	ar rc libWiSS0.a IOreadwrite.o IOmount.o IOcheck.o IOfiman.o IOextent.o io_createf.o io_destroyf.o io_allocp.o io_freepage.o io_readpage.o io_writepage.o io_filedir.o io_check.o io_mount.o io_volid.o io_dismount.o io_error.o io_init.o io_final.o
+.BUILT_LAST_MAKE_RUN:
+io_writepage.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_writepage.c
+.BUILT_LAST_MAKE_RUN:
+IOreadwrite.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h ../stats.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  IOreadwrite.c
+.BUILT_LAST_MAKE_RUN:
+io_error.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_error.c
+IOerror.i:
+	m4 ../handler.m4 IOerror.m4 >IOerror.i
+.BUILT_LAST_MAKE_RUN:
+io_dismount.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_dismount.c
+.BUILT_LAST_MAKE_RUN:
+IOextent.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  IOextent.c
+clean:
+	/bin/rm -f *.o
+.BUILT_LAST_MAKE_RUN:
+io_final.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_final.c
+.BUILT_LAST_MAKE_RUN:
+IOfiman.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  IOfiman.c
+.BUILT_LAST_MAKE_RUN:
+io_destroyf.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_destroyf.c
+.BUILT_LAST_MAKE_RUN:
+io_init.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_init.c
+.BUILT_LAST_MAKE_RUN:
+IOcheck.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  IOcheck.c
+.BUILT_LAST_MAKE_RUN:
+io_check.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_check.c
+../io_error.h:
+	m4 ../defs.m4 IOerror.m4 >../io_error.h
+.BUILT_LAST_MAKE_RUN:
+io_volid.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_volid.c
+.BUILT_LAST_MAKE_RUN:
+io_filedir.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_filedir.c
+.BUILT_LAST_MAKE_RUN:
+io_createf.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_createf.c
+.BUILT_LAST_MAKE_RUN:
+io_readpage.o:	../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h 
+	cc -I..  -DLMTRACE -g  -D_SYNCHDISK  -target sun4 -c  io_readpage.c

@@ -1,0 +1,212 @@
+.ig
+last edited by
+chou	(4/1/84)
+..
+
+.sh 1 "Buffer Level Interface and Operations"
+.pp
+Level 1 is responsible for buffer management,
+and calls the level 0 interface to do the actual disk reads and writes of pages.
+It maintains a pool of buffer pages, 
+and implements a page replacement algorithm.
+An in-core table, the buffer table, keeps track of the state of all the
+pages that reside in the buffer pool.
+The replacement algorithm is a modified global CLOCK algorithm that 
+incorporates a FIX/UNFIX protocol.
+Certain buffer access routines, including bf_readbuf and bf_getbuf, implicitly
+fix a page in the buffer pool.
+Fixed pages are exempt from page replacement considerations and are "unfixed"
+through the use of some other routines, including bf_freebuf and bf_discard.
+.pp
+The following operations are supported at this level:
+
+.np
+bf_openfile (FileNum, Mode)
+.sp 1
+Prepare the file for access.
+.sp 1
+.ul
+Implementation:
+Notify the buffer manager that a file has been requested.
+.sp
+.np
+bf_closefile (FileNum)
+.sp 1
+The specified file is no longer available for access.
+.sp 1
+.ul
+Implementation:
+Examine each buffer used by the current user,
+and release the one that contains a page of this file.
+.sp 1
+.ul
+Note:
+This routine assumes that all buffers of this file are clean. 
+In other words, it is the caller's responsibility to make sure that all 
+the "dirty" pages are flushed to disk before calling this routine.
+.sp
+.np
+bf_flushbuf (FileNum, Close)
+.sp 1
+Flush all the buffers associated with this file.
+If the second parameter "Close" is TRUE, then close the file too.
+.sp 1
+.ul
+Implementation:
+.(l
+examine each buffer used by the current user
+for each buffer associated with the file
+  if the page is dirty, flush it out to disk
+  if (Close), release the buffer
+.)l
+.np
+bf_readbuf (transId, FileNum, Fid, PageID, ReturnPage)
+.sp 0
+.nf
+int	transId;  
+int	FileNum;
+int	Fid;
+PID	*PageID;
+PAGE	**ReturnPage;
+.fi
+.sp 1
+Translate a page ID into a memory address and return it as a PAGE pointer.
+The page is fixed in the buffer pool.
+That is, the page is guaranteed to
+stay in main memory until it is released by the user.
+transId identifies the transaction making the request. 
+Filenum may be NIL and Fid may be a NULLFID if they are not known.
+.sp 1
+.ul
+Implementation:
+.(l
+p <- look up the page in the buffer table
+If p == NULL
+    p <- index of the newly allocated buffer
+    io_readpage(PageID, &bufferpool[p])
+increment the fix count of the buffer 
+*ReturnPage <- &bufferpool[p]
+.)l
+.np
+bf_getbuf (transId, FileNum, Fid, PageID, ReturnPage)
+.sp 0
+.nf
+int	transId;  
+int	FileNum;
+int	Fid;
+PID	*PageID;
+PAGE	**ReturnPage;
+.fi
+.sp 1
+Allocate and clear a free buffer for a page.
+If the page is already in the buffer pool, the page is reinitialized instead.
+In both cases, the address of the buffer is returned as a PAGE pointer.
+The page is fixed in the buffer pool.
+transId identifies the transaction making the request. 
+Filenum may be NIL and Fid may be a NULLFID if they are not known.
+.sp 1
+.ul
+Implementation:
+.(l
+p <- look up the page in the buffer table
+if p == NULL
+    find a free buffer and initialize the buffer table entry 
+set dirty bit of the buffer
+increment the fix count of the buffer 
+*ReturnPage = &bufferpool[p]
+.)l
+.np
+bf_findbuf (transId, FileNum, Fid, PageID, ReturnPage)
+.sp 0
+.nf
+int	transId;  
+int	FileNum;
+int	Fid;
+PID	*PageID;
+PAGE	**ReturnPage;
+.fi
+.sp 1
+This routine translates a disk page id into a memory buffer address.
+If the page is not in the buffer, it is an error.  That is, this
+routine is called when the given buffer page is known to reside
+in the buffer pool.  The fix count of the buffer page is NOT
+incremented by this routine.
+transId identifies the transaction making the request. 
+Filenum may be NIL and Fid may be a NULLFID if they are not known.
+.np
+bf_freebuf(FileNum, PageID, PagePtr)
+.sp 0
+.nf
+PID	*PageID;
+PAGE	*Pageptr;
+.sp 1
+.fi
+Release the buffer associated with a page.
+The page is unfixed.
+.sp 1
+.ul
+Implementation:
+Look up the page in the buffer table, and decrement the fix count of 
+the buffer.
+.sp
+.np
+bf_setdirty (FileNum, PageID, PagePtr)
+.sp 0
+.nf
+PID	*PageID;
+PAGE	*Pageptr;
+.fi
+.sp 1
+Mark as modified the buffer corresponding to a page.
+.sp 1
+.ul
+Implementation:
+Look up the page in the buffer table, and mark it dirty.
+.np
+bf_discard (FileNum, PageID, PagePtr)
+.sp 0
+.nf
+PID	*PageID;
+PAGE	*Pageptr;
+.fi
+.sp 1
+Invalidate a buffer associated with a page.
+The buffer is unfixed.
+.sp 1
+.ul
+Implementation:
+Look for the page in the buffer table.
+Mark the buffer invalid.
+.np
+bf_dismount (volid)
+.sp 0
+int	volid;
+.sp 1
+Dismount the named volume.
+All the buffers associated with the volume mounted on the device
+are flushed to disk (if it is dirty) and released.
+.sp 1
+.ul
+Implementation:
+.(l
+flush and release relevant buffers
+io_dismount(DeviceName)
+.)l
+.np
+bf_init ()
+.sp 0
+Initialize level 1 data structures for system startup.
+.sp 1
+.ul
+Implementation:
+Clear counters, tables, etc..
+.sp
+.np
+bf_final()
+.sp 0
+Finalized (clean up) level 1 data structures for system shutdown.
+.sp 1
+.ul
+Implementation:
+Flush all buffers, dismount all devices, etc..
+

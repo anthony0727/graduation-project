@@ -1,0 +1,4 @@
+lm.o-LD: /lib/libm.a
+clean: .RECURSIVE lockmanager clean Makefile .RECURSIVE deadlock clean Makefile .RECURSIVE test clean Makefile
+deadlock/libWiSSdeadlock.a: .RECURSIVE deadlock libWiSSdeadlock.a Makefile.lib
+lockmanager/libWiSSlockmanager.a: .RECURSIVE lockmanager libWiSSlockmanager.a Makefile.lib

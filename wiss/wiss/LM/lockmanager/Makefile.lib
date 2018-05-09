@@ -1,0 +1,47 @@
+.KEEP_STATE:
+
+LM=		..
+WISS = 		../..
+LMl= 		$(LM)/lockmanager
+LOCK=           ..
+#PIC	= -PIC
+TRACEFLAG = -DTRACE
+
+#CFLAGS = -I$(WISS) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) 
+CFLAGS = -I$(LM) -I$(WISS) -I$(LOCK) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) $(PIC) $(HIER)
+#CFLAGS = -I$(LM) -I$(WISS) -I$(LOCK) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) $(HIER) -DLMTRACE
+
+# the INNER files are lower-level routines
+INNER = $(LMl)/LM_event.o $(LMl)/release.o $(LMl)/alloclock.o \
+	$(LMl)/create.o $(LMl)/initlock.o $(LMl)/locker.o 
+#$(LMl)/lock_test.o 
+
+INNERC = $(LMl)/LM_event.c $(LMl)/release.c $(LMl)/alloclock.c \
+	$(LMl)/create.c $(LMl)/initlock.c $(LMl)/locker.c $(LMl)/lock_test.c
+
+# the OUTER files are seen by the outside world
+OUTER =  trans.o $(LMl)/info.o  
+OUTERC = trans.c $(LMl)/info.c
+
+# Here come the dependencies
+# first, the thing which depends on everything else
+libWiSSlockmanager.a : $(INNER) $(OUTER) 
+	-rm -f libWiSSlockmanager.a
+	ar rc libWiSSlockmanager.a $(INNER) $(OUTER)
+
+EXECS:
+	echo $(INNERC) $(OUTERC) >> ../EXECS
+
+lint : $(INNERC) $(OUTERC)
+	@echo lint ~~~ '>lint.out'
+	@lint -I$(INCLUDE) $(INNERC) $(OUTERC) >lint.out
+
+$(INNER): $(WISS)/sm.h $(WISS)/wiss.h $(WISS)/page.h $(LM)/lockquiz.h \
+	$(LM)/LM_macro.h  $(WISS)/locktype.h
+
+ens:
+	enscript -2r -G -P7a $(INNERC)
+
+clean :
+	/bin/rm -f *.o 
+	/bin/rm -f *.a

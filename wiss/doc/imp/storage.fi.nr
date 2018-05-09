@@ -1,0 +1,124 @@
+.ds f. storage.fi
+.ig
+last edited by chou (4/1/1984)
+..
+.sh 2 "File Directory"
+.(x
+.sh 2 "File Directory"
+.)x
+.pp
+A file directory is used internally by the storage level to associate external
+file names with internal information. This internal information includes things
+like the internal (level 0) file ID, the first and last pages of the file, 
+the page fill factor, etc.. 
+There is one directory on each volume.
+Location of the root of directory is recorded in the volume header.
+
+.sh 3 "File Directory Structure"
+.(x
+.sh 3 "File Directory Structure"
+.)x
+.pp
+File directory is implemented by using a hybrid method of 
+.ul
+extendible hashing
+([Fagin]) and 
+.ul
+chained bucket hash 
+(Appendix \n+(AP).
+Normally, the size of a directory is too large to keep in memory. 
+Every reference to a particular file descriptor in the
+directory usually involves some disk accesses.
+Extendible hashing guarantees that at most two disk accesses are ever needed,
+one for the hash table and one for the leaf page. 
+However, extendible hashing will crash if too many keys hash to the same value.
+A chained bucket hash provides a solution to avoid such crashes.
+That is, if too many keys hash to the 
+same bucket, overflow pages are chained to the primary page in that bucket.
+.pp
+Since Wiss is an extent-based system, the total number of files is limited
+by the number of extents on each volume.
+A small hash table suffices in most cases.
+Furthermore, with provision for overflow, we can safely limit a hash table to
+a reasonable size to keep it in the memory.
+That is, at most one device access is required for accessing each file 
+descriptor, provided that the directory is not unreasonably large.
+
+.sh 3 "Open File Table"
+.(x
+.sh 3 "Open File Table"
+.)x
+.pp
+There is one "open file table" for all the mounted volumes.
+It can be viewed as an in-core version of all file directories.
+Information for all active files are kept in this table for fast access.
+Each entry in the table contains the file descriptor as well as some run time
+attributes, such as access mode, for a particular active file.
+It also provides facilities for changing the internal information of an 
+active file.
+Most of the time when one refers to the "open file table",
+an open file number is needed.
+This number is given when the file is opened.
+.pp
+In the current implementation, the
+.ul
+concurrency control 
+of WiSS is done at the file level.
+To be exact, a file may have many readers but only one writer at a time.
+The information needed to enforced concurrency control is maintained
+in the open file table.
+When a file is requested by a user,
+checking is done to make sure that the new file instance does not
+conflict with other active file instances.
+
+.sh 3 "Directory Page Formats"
+.(x
+.sh 3 "Directory Page Formats"
+.)x
+.pp
+The root of a file directory is the hash table for that directory.
+A hash table is limited to one page long so that it is small
+enough to keep in memory.
+To obtain maximum fan out, all the entries on the root page are short PIDs
+(i.e., PIDs without volume ID). 
+No other information are kept here.
+A null entry in the table is identified by its value. 
+Therefore, the "global" depth of a table can be easily obtained by examining the
+values of some entries. 
+The global depth of a hash table is calculated right after the root is read in.
+.pp
+The formats of primary and overflow leaf (bucket) pages are identical.
+The field "Local Depth" is the local depth of that bucket.
+"FileID" and "ThisPage" are the Level 0 file ID and page ID, respectively.
+Overflow pages are chained through "NextPage" pointers.
+"FileCount" is the number of file descriptors on the page.
+Figures showing the directory page formats are in Appendix \n+(AP.
+.sh 3 "Routines"
+.(x
+.sh 3 "Routines"
+.)x
+.pp
+.de RR
+.np
+\\$1 (in \\$2.c)
+.sp 0
+..
+.RR "d_dumptable()" "d_dumptable"
+Print the entire open file table.
+.RR "ST_accessfiledesc" "d_directory"
+Return the descriptor of a file if the access flag is READ;
+otherwise, update the file descriptor of a file in the directory.
+.RR "ST_dismount(volid)" "d_directory"
+Dismount a volume by flushing the directory information and
+remove its corresponding entry from the directory table.
+.RR "ST_filedirinit" "d_directory"
+Initialize the data structure that holds directory information.
+.RR "ST_mount" "d_directory"
+Mount a volume by setting up the information associate with the directory
+on the volume.
+.RR "ST_newfiledesc" "d_directory"
+Create a new file descriptor in a file directory.
+.RR "ST_zapfiledesc(volid, filename, *fid)" "d_directory"
+Delete a file descriptor from a file directory.
+The level 0 file ID of the file is returned.
+

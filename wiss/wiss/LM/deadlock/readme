@@ -1,0 +1,10 @@
+Dewitt, 11/91,  fixed bug in alloc_graph.c and create.c that was 
+resulted from having the pidHashTbl and fidHashTbl associated
+with each transaction in their private memory.  Basically this
+was a good idea except for the fact that walkfile (which is
+called when releasing a lock) turns out to end up to having to
+manipulating a waiting transaction's pidHashTbl or fidHashTbl.
+
+
+DeWitt 12/91, fixed some minor bugs in detect.c
+David

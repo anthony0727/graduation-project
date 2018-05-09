@@ -1,0 +1,72 @@
+.MAKE_VERSION:	VERSION-1.0
+subdirs:.RECURSIVE record wiss2r.o Makefile
+subdirs:.RECURSIVE btree wiss2b.o Makefile
+subdirs:.RECURSIVE hash wiss2h.o Makefile
+subdirs:.RECURSIVE directory wiss2d.o Makefile
+subdirs:
+	for i in record btree hash directory; do (cd $i; make TRACEFLAG='' DEBUGFLAG='' PROF='-g' ); done;
+st_error_ws.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h record/r_error.i directory_ws/d_error.i btree/bt_error.i 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_error_ws.c
+st_init.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_init.c
+.BUILT_LAST_MAKE_RUN:
+libWiSS2.a:
+	rm -rf tmplib
+	rm -f libWiSS2.a
+	mkdir tmplib
+	set -x; \
+	(cd tmplib; for i in record/libWiSS2r.a  btree/libWiSS2b.a  hash/libWiSS2h.a  directory/libWiSS2d.a; do (ar x ../$i); done)
+	(cd tmplib; rm -f __.SYMDEF; ar cr ../libWiSS2.a `lorder * | tsort`)
+	rm -rf tmplib
+st_error.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_error.c
+install:
+	ld -r record/wiss2r.o directory/wiss2d.o btree/wiss2b.o \
+	      hash/wiss2h.o -o wiss2.o
+.BUILT_LAST_MAKE_RUN:
+record/libWiSS2r.a:.RECURSIVE record libWiSS2r.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+record/libWiSS2r.a:
+	(cd record; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' PIC='')
+.BUILT_LAST_MAKE_RUN:
+hash/libWiSS2h.a:.RECURSIVE hash libWiSS2h.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+hash/libWiSS2h.a:
+	(cd hash; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' PIC='')
+.BUILT_LAST_MAKE_RUN:
+directory/libWiSS2d.a:.RECURSIVE directory libWiSS2d.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+directory/libWiSS2d.a:
+	(cd directory; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' PIC='')
+.BUILT_LAST_MAKE_RUN:
+btree/libWiSS2b.a:.RECURSIVE btree libWiSS2b.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+btree/libWiSS2b.a:
+	(cd btree; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' PIC='')
+st_error_server.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h directory_server/d_error.i 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_error_server.c
+st_final.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_final.c
+clean:.RECURSIVE record clean Makefile
+clean:.RECURSIVE btree clean Makefile
+clean:.RECURSIVE hash clean Makefile
+clean:.RECURSIVE directory clean Makefile
+clean:
+	/bin/rm -f *.o
+	for i in record btree hash directory; do (cd $i; make clean); done;
+record/r_error.i:.RECURSIVE record r_error.i Makefile
+record/r_error.i:
+	cd record; make r_error.i
+st_init_ws.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_init_ws.c
+directory/d_error.i:
+	cd directory; make d_error.i
+st_final_ws.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_final_ws.c
+st_init_server.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_init_server.c
+st_final_server.o:	../st_r.h ../record.h ../st_bt.h ../st_h.h ../st_d.h ../st_macro.h ../st_fd.h 
+	cc -I.. -I../../lm  -DTRACE -g   -c  st_final_server.c
+btree/bt_error.i:.RECURSIVE btree bt_error.i Makefile
+btree/bt_error.i:
+	cd btree; make bt_error.i

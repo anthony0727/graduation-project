@@ -1,0 +1,4 @@
+sm_final.o-CPP: -I..
+sm_init.o-CPP: -I..
+semaphore.o-CPP: -I..
+latch.o-CPP: -I..

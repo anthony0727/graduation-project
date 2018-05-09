@@ -1,0 +1,94 @@
+.KEEP_STATE:
+
+WISS=  .
+
+#DEBUGFLAG	= -DDEBUG
+#TRACEFLAG	= -DTRACE
+PROF		= -g
+#PROF		= -O
+#EVENTFLAG	= -DEVENTS
+PIC		= -PIC
+SYNCHDISK	= -D_SYNCHDISK
+
+# Compiler and partial loader for UNIX 4.0 to use
+CC = cc
+LOADER1=        ld -Bstatic -r
+
+CFLAGS = -I$(WISS) $(DEBUGFLAG) $(TRACEFLAG) $(PROF) $(PIC)
+
+OPTIONS = DEBUGFLAG='$(DEBUGFLAG)' TRACEFLAG='$(TRACEFLAG)' PROF='$(PROF)'\
+	EVENTFLAG='$(EVENTFLAG)' CC='$(CC)' TARGET_ARCH='$(TARGET_ARCH)' \
+	WISS='$(WISS)' PIC='$(PIC)'
+
+# sub-directories at this level
+SUBDIR = 0 1 2 3 util misc LM SM
+
+# sub-modules created in the sub-directories
+
+SUBLIBS	= 0/libWiSS0.a 1/libWiSS1.a 2/libWiSS2.a 3/libWiSS3.a \
+	  util/libWiSSutil.a LM/libWiSSlm.a SM/libWiSSsm.a
+
+libWiSS.a : $(SUBLIBS)
+	-rm -rf tmplib
+	-rm -f libWiSS.a
+	-mkdir tmplib
+	set -x; \
+	(cd tmplib; for i in $(SUBLIBS); do (ar x ../$$i); done)
+	(cd tmplib; rm -f __.SYMDEF; ar cr ../libWiSS.a `lorder * | tsort`)
+	-rm -rf tmplib
+	mv libWiSS.a ../bin
+	ranlib ../bin/libWiSS.a
+
+MAKE	= make -f Makefile.lib
+
+0/libWiSS0.a : do_it_always
+	@echo ------------------------------------------------
+	(cd 0; $(MAKE) $(OPTIONS) SYNCHDISK='$(SYNCHDISK)')
+1/libWiSS1.a : do_it_always
+	@echo ------------------------------------------------
+	(cd 1; $(MAKE) $(OPTIONS))
+2/libWiSS2.a : do_it_always
+	@echo ------------------------------------------------
+	(cd 2; $(MAKE) $(OPTIONS))
+3/libWiSS3.a : do_it_always
+	@echo ------------------------------------------------
+	(cd 3; $(MAKE) $(OPTIONS))
+util/libWiSSutil.a : do_it_always
+	@echo ------------------------------------------------
+	(cd util; $(MAKE) $(OPTIONS))
+LM/libWiSSlm.a : do_it_always
+	@echo ------------------------------------------------
+	(cd LM; $(MAKE) $(OPTIONS))
+SM/libWiSSsm.a : do_it_always
+	@echo ------------------------------------------------
+	(cd SM; $(MAKE) $(OPTIONS))
+
+do_it_always:
+
+lint :  do_it_always
+	lint -I. -I./LM/. 0/*.c 1/*.c 2/*.c 2/record/*.c 2/btree/*.c \
+	2/hash/*.c 2/directory/*.c \
+	3/*.c util/*.c misc/*.c LM/lockmanager/*.c LM/deadlock/*.c SM/*.c 
+
+clean:
+	for i in ${SUBDIR}; do (cd $$i; $(MAKE) clean); done;
+	/bin/rm -f  *~ TAGS execs cflow .make.state*
+
+# The files headers and execs contain the abolute pathnames of all
+# wiss files. They can be used by ctags and cflow.
+
+# NOTE : Whenever source files are deleted or created, execs or
+# headers should accordingly be deleted to allow the update of
+# tags and cflow.
+
+execs :	
+	rm -f execs
+	touch execs
+	for i in $(SUBDIR); do (cd $$i; $(MAKE) WISS='$(WISS)' execs); done
+
+TAGS:	execs 
+	etags `cat execs`
+
+cflow:	execs 
+	cflow -I$(WISS) -r `cat execs` > cflow
+

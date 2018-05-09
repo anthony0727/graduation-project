@@ -1,0 +1,111 @@
+/*
+ * unsigned
+ * testandset(addr, value)
+ *        unsigned char *addr;
+ *
+ * testandset() returns '0' if it could set the byte lock to 
+ * a non-zero 'value', which may be ignored depending upon
+ * the implementation.  Otherwise, testandset() returns
+ * the current value of the  byte lock.
+ *
+ * Depending upon a particular 'value' for the byte may be
+ * a pitfall of using this function.  Also, assuming that
+ * the syncronization unit is a byte may be invalid also.
+ *
+ * Author: Joe Burger (bolo@cs.wisc.edu) on 28 November 1990
+ */
+
+#if defined(sparc)
+/*
+ * The 'value' argument is ignored with the sparc implementation,
+ * although it could be implemented by writing the 'value' to the
+ * byte after ldstub "locks" it.
+ *
+ * Function of 'ldstub':
+ * Ldstub fetches the contents of the byte pointed to by 'addr'
+ * and replaces the contents of the byte with hex 0xff (decimal 255).
+ * Presumably this is done with a RWM bus cycle.
+ * The 'C' function return value is the previous value of the byte.
+ *
+ */
+#define	PROC(x)	.seg "text" ; .proc 14 ; .global x ; x :
+
+PROC(_testandset)
+	retl
+	ldstub	[%o0],%o0	/* in delay slot */
+#endif
+
+#if defined(mc68000) || defined(mc68010) || defined(mc68020) || defined(mc68030)
+
+/*
+ * cas: compare and swap with operand; usage:  cas  dc,du,<ea>
+ * The 'dc' "compare" operand is compared to the value of the operand
+ * at <ea>.  If they are equal, the value at <ea> is replaced/updated
+ * with the value of the 'du' "update" operand.
+ */
+#define	PROC(x)	.text ; .even ; .globl x; x :
+
+PROC(_testandset)
+	movl	sp@(4),a0	/* address */
+	movl	sp@(8),d1	/* value */
+	clrl	d0		/* compare operand for CAS */
+	casb	d0,d1,a0@
+	/* return is in d0 == old value of <ea> */
+	rts
+#endif
+
+#if defined(vax)
+
+/*
+ * bbssi: branch on bit set and set interlocked
+ * The bit is checked for its current value, then is always set.
+ * If the bit is set, the branch is taken, else execution falls through
+ */
+#define	PROC(x)	.text ; .align 1 ; .globl x; x :
+
+PROC(_testandset)
+	.word	0x00	/* don't save any registers */
+	bbssi	$0,*4(ap),1f
+	/* bit not set, we "have" the byte */
+	clrl	r0	/* return value */
+	ret
+1:	/* bit was set, we can't have it yet */
+	movl	$1,r0	/* return value */
+	ret
+#endif
+
+#if defined(i386)
+/*
+ * bts: bit test and set
+ * The bit is copied into the carry flag (CF) and then set bit
+ * xchg: exchange memory and register
+ * exchange contents of memory location and register
+ *
+ * currently ignores flag value
+ */
+
+#define	PROC(x)	.text ; .align 2 ; .globl x ; x:
+
+#ifdef SYSV
+PROC(testandset)
+#else
+PROC(_testandset)
+#endif
+	pushl	%ebp	/* build stack frame for debuggers */
+	movl	%esp,%ebp
+	movl	8(%ebp),%ecx	/* addr -> cx */
+	movl	$1,%eax		/* "1" == test and set grabbed */
+	lock
+	xchgb  (%ecx),%al	/* return value in %eax */
+	leave
+	ret
+#endif
+
+#ifdef mips
+/*
+ * mips doesn't have a test-and-set instruction.
+ * this placeholder is here so the mips assembler doesn't choke
+ * on the empty input file
+ */
+	.align	2
+#endif

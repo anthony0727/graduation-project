@@ -1,0 +1,8 @@
+test1  -- test5   : mounting, dismounting
+test6  -- test7   : creating & destorying files
+test8  -- test9   : opening & closing files
+test13 -- test16  : exercises for creating, destroying, and renaming files.
+		    - for testing file directory routines.
+
+test24		  : testing permission (src/util must compiled with DEBUG on)
+test25		  : testing concurrency control

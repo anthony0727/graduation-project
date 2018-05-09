@@ -1,0 +1,186 @@
+1	LM_dumpevent: int(), <lockmanager/LM_event.c 35>
+2		committ_trans : <>
+3	LM_event: int(), <lockmanager/LM_event.c 25>
+4	LM_initevent: int(), <lockmanager/LM_event.c 17>
+5	abort_trans: int(), <lockmanager/release.c 481>
+6		lock_file : <>
+7		lock_page : <>
+8	activate: int(), <deadlock/detect.c 34>
+9	addbucket: struct*(), <lockmanager/create.c 23>
+10	addowner: short(), <lockmanager/create.c 95>
+11	addowner_u: short(), <lockmanager/create.c 155>
+12		lock_file : 6
+13		lock_page : 7
+14		walkfile : <>
+15	addwaitbucket: struct*(), <lockmanager/create.c 46>
+16		lock_file : 6
+17		lock_page : 7
+18	addwaitbucket_u: struct*(), <lockmanager/create.c 74>
+19		lock_file : 6
+20		lock_page : 7
+21	alloc_more_graphnode: int(), <deadlock/alloc_graph.c 29>
+22		malloc_graph_node : <>
+23	alloc_more_locks: int(), <deadlock/alloc_graph.c 10>
+24		create_file_lock : <>
+25		create_page_lock : <>
+26		lock_file : 6
+27		lock_page : 7
+28		malloc_lock : <>
+29		walkfile : 14
+30	alloc_more_node: int(), <lockmanager/alloclock.c 16>
+31		lock_file : 6
+32		lock_page : 7
+33		malloc_node : <>
+34	alloc_more_waitnode: int(), <lockmanager/alloclock.c 56>
+35		addowner : <>
+36		addwaitbucket : <>
+37		addwaitbucket_u : <>
+38		lock_file : 6
+39		lock_page : 7
+40		malloc_waitnode : <>
+41		walkfile : 14
+42	check_deadlock: int(), <deadlock/detect.c 85>
+43		check_deadlock : <>
+44		check_deadlock_u : <>
+45	check_deadlock_u: int(), <deadlock/detect.c 161>
+46		lock_file : 6
+47		lock_page : 7
+48		walkfile : 14
+49	committ_trans: int(), <lockmanager/release.c 347>
+50		abort_trans : <>
+51	create_file_lock: struct*(), <deadlock/create.c 45>
+52	create_graphnode: struct*(), <deadlock/create.c 15>
+53		activate : <>
+54	create_page_lock: struct*(), <deadlock/create.c 71>
+55	error_checking: int(), <lockmanager/locker.c 218>
+56	exit: <>
+57		committ_trans : 2
+58		lock_file : 6
+59		lock_page : 7
+60		m_release_file : <>
+61		m_release_page : <>
+62		release_owner_node : <>
+63		set_new_mode : <>
+64		walkfile : 14
+65	file_state: int(), <lockmanager/info.c 86>
+66	find_trans: struct*(), <deadlock/detect.c 16>
+67		abort_trans : 50
+68		activate : 53
+69		check_deadlock : 43
+70		check_deadlock_u : 44
+71		committ_trans : 2
+72		error_checking : <>
+73		lock_file : 6
+74		lock_page : 7
+75		m_release_file : 60
+76		m_release_page : 61
+77		signal_file_destroy : <>
+78		trans_state : <>
+79		walkfile : 14
+80	findfile: struct*(), <lockmanager/locker.c 112>
+81		file_state : <>
+82	findpage: struct*(), <lockmanager/locker.c 82>
+83		page_state : <>
+84	free_bucket: int(), <lockmanager/alloclock.c 146>
+85		release_node : <>
+86	free_graph_node: int(), <deadlock/alloc_graph.c 133>
+87		terminate : <>
+88	free_lock_node: int(), <deadlock/alloc_graph.c 86>
+89	free_wait_node: int(), <lockmanager/alloclock.c 132>
+90	getlockmode: short(), <lockmanager/locker.c 137>
+91	init_graph: int(), <deadlock/init_graph.c 43>
+92		init_waitfor_graph : <>
+93	init_graph_node: int(), <deadlock/init_graph.c 20>
+94		alloc_more_graphnode : <>
+95		free_graph_node : <>
+96		init_graph : <>
+97	init_lock_node: int(), <deadlock/init_graph.c 10>
+98		alloc_more_locks : <>
+99		free_lock_node : <>
+100		init_lockq : <>
+101	init_lockq: int(), <deadlock/init_graph.c 32>
+102		init_waitfor_graph : 92
+103	init_locktable: int(), <lockmanager/initlock.c 60>
+104		initialize_resources : <>
+105	init_res_node: int(), <lockmanager/initlock.c 15>
+106		alloc_more_node : <>
+107		free_bucket : <>
+108		init_locktable : <>
+109	init_wait_node: int(), <lockmanager/initlock.c 43>
+110		alloc_more_waitnode : <>
+111		free_wait_node : <>
+112		init_waiters : <>
+113	init_waiters: int(), <lockmanager/initlock.c 95>
+114		initialize_resources : 104
+115	init_waitfor_graph: int(), <deadlock/init_graph.c 54>
+116		initialize_resources : 104
+117	initialize_resources: int(), <lockmanager/initlock.c 111>
+118	is_file_acquired: struct*(), <lockmanager/locker.c 188>
+119		error_checking : 72
+120		lock_file : 6
+121	is_page_acquired: struct*(), <lockmanager/locker.c 260>
+122		lock_page : 7
+123	lock_file: int(), <lockmanager/locker.c 306>
+124	lock_page: int(), <lockmanager/locker.c 584>
+125	lock_strength: short(), <lockmanager/release.c 54>
+126		addowner : 35
+127	m_release_file: int(), <lockmanager/release.c 561>
+128	m_release_page: int(), <lockmanager/release.c 514>
+129		m_release_file : 60
+130	malloc: <>
+131		alloc_more_graphnode : 94
+132		alloc_more_locks : 98
+133		alloc_more_node : 106
+134		alloc_more_waitnode : 110
+135	malloc_graph_node: struct*(), <deadlock/alloc_graph.c 62>
+136		create_graphnode : <>
+137	malloc_lock: struct*(), <deadlock/alloc_graph.c 48>
+138	malloc_node: struct*(), <lockmanager/alloclock.c 83>
+139		addbucket : <>
+140	malloc_waitnode: struct*(), <lockmanager/alloclock.c 109>
+141	page_state: int(), <lockmanager/info.c 132>
+142	print_trans_node: int(), <lockmanager/info.c 16>
+143		trans_state : 78
+144	printf: <>
+145		LM_dumpevent : <>
+146		abort_trans : 50
+147		activate : 53
+148		addowner_u : <>
+149		check_deadlock : 43
+150		check_deadlock_u : 44
+151		committ_trans : 2
+152		error_checking : 72
+153		file_state : 81
+154		lock_file : 6
+155		lock_page : 7
+156		m_release_file : 60
+157		m_release_page : 61
+158		page_state : 83
+159		print_trans_node : <>
+160		printlock : <>
+161		release_owner_node : 62
+162		set_new_mode : 63
+163		signal_file_destroy : 77
+164		terminate : 87
+165		trans_state : 78
+166		walkfile : 14
+167	printlock: int(), <lockmanager/locker.c 67>
+168	release_node: int(), <lockmanager/alloclock.c 163>
+169	release_owner_node: short(), <lockmanager/release.c 266>
+170	reply_to_waiter: <>
+171		signal_file_destroy : 77
+172		walkfile : 14
+173	set_new_mode: int(), <lockmanager/locker.c 236>
+174		walkfile : 14
+175	signal_file_destroy: int(), <lockmanager/release.c 33>
+176	strcpy: <>
+177		LM_event : <>
+178	terminate: int(), <deadlock/detect.c 61>
+179		committ_trans : 2
+180	trans_state: int(), <lockmanager/info.c 47>
+181	walkfile: int(), <lockmanager/release.c 71>
+182		committ_trans : 2
+183		lock_file : 6
+184		lock_page : 7
+185		m_release_file : 60
+186		m_release_page : 61

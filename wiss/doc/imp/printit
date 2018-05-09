@@ -1,0 +1,6 @@
+tbl storage.l > storage.l.nr
+tbl storage.fi > storage.fi.nr
+tbl storage.i > storage.i.nr
+tbl storage.r > storage.r.nr
+tbl storage.u > storage.u.nr
+ditroff -me -P7364 imp.nr 

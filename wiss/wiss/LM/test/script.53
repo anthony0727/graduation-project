@@ -1,0 +1,41 @@
+O 0
+l 0 0 0 3 c f
+
+C 0
+Q
+
+
+
+--------------------------- script.53 ---------------------------
+
+The main actions here are:
+  a) transaction 0 asks for a lock on a page, while the file 
+     containing this page is unlocked.
+
+
+
+The detailed description of each command line is:
+
+ open_trans(trans 0)
+ lock_page(trans 0, file 0, page 0, mode S, duration COMMIT, cond False)
+ 
+ commit(trans 0)
+ quit
+
+
+
+The expected output (so as to perform a "diff" with the next 
+execution output) is:
+
+-------------------------------------------------
+O 0
+--> 1
+
+l 0 0 0 3 c f
+(lock_page) error: file not locked
+
+--> -1950
+
+C 0
+Q
+-------------------------------------------------

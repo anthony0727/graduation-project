@@ -1,0 +1,518 @@
+
+/********************************************************/
+/*                                                      */
+/*               WiSS Storage System                    */
+/*          Version SystemV-4.0, September 1990	        */
+/*                                                      */
+/*              COPYRIGHT (C) 1990                      */
+/*                David J. DeWitt 		        */
+/*               Madison, WI U.S.A.                     */
+/*                                                      */
+/*	         ALL RIGHTS RESERVED                    */
+/*                                                      */
+/********************************************************/
+
+
+
+/**************************************/
+/*     Multimark benchmark: queries   */
+/**************************************/
+
+#include "build.h"	/* constants used to build the database */
+#include "queries.h"	/* specific constants for queries */
+
+#include <sys/time.h>
+#include <sys/resource.h>
+
+RID rootrids[NB_TREE];  /* array of oids of object roots */
+
+int transId;
+
+t_rid 	a_rid[MAX_READ_NODES]; /* buffer to derecursive tree covering */
+
+/*
+
+	Usage:	queries <deviceName> <fileName> <mode> <server> <verboseflag>
+
+	<fileName> is the name of the wiss file to use
+	<mode> is a 3-bit mask with the following interpretation
+		1 - file of objects is scanned
+		2 - a set of randomly selected objects is read
+		4 - a set of randomly chosen objects is updated
+
+	Any combination of bits can be set
+
+
+	The database consists of two files:  a file of objects
+	in the file <fileName> and a file of object-ids in the
+	file <fileName.rids>.  Query type 1 is executed by scanning
+	the file <fileName.rid), using the objectids in this file
+	to fetch the actual objects.  In either query type 2 or
+	4 is executed,  this file is first read into the array
+	rootrids and then the query is executed.  The cost
+	of reading this file is not included in the execution
+	of query types 2 and 3.  The cost of fetching the objectids
+	is however included in the cost of query 1, though this
+	could be easily modified.
+
+
+*/
+
+long time();
+char *server;
+
+/******************************/
+/* cover a tree breadth first */
+/******************************/
+breadth_first(ofn, rid, depth)
+     int	ofn;		/* open file number */
+     RID	rid;     	/* physical record id */
+     int	depth;		/* depth to cover */
+{
+  register int	i_rid =0;	/* index on the last element of a_rid[] */
+  register int 	i;		/* index on a_rid[] */
+  t_rec 	rec;		/* buffer to describe one level of an object */
+  int		e;		/* for returned error code */
+
+  /* initialize a_rid[] with the root rid of the tree to cover */
+  a_rid[i_rid++].rid = rid;
+
+  /* for the number of nodes to read, according to the depth ... */
+  for (i = 0; i < NB_NODES(depth); i++) {
+
+/*
+    DUMPRID(a_rid[i].rid);
+*/
+
+    /* read the record of the first rid of a_rid[] not yet read */
+    e = wiss_readrecord(ofn, &a_rid[i].rid , &rec, sizeof(rec), 
+	transId, TRUE, l_S, FALSE);
+    WISSERROR("build/wiss_readrecord", e);
+
+    /* append the node children to a_rid[] if the node is not a leaf */
+    if (i_rid < NB_NODES(depth)) {
+      a_rid[i_rid++].rid = rec.left;
+      a_rid[i_rid++].rid = rec.right;
+    }
+
+  } /* end for */
+} /* end breadth_first */
+
+/*************************/
+/* read a part of a tree */
+/*************************/
+read_part(ofn, rid, depth)
+     int	ofn;		/* open file number */
+     RID	rid;     	/* physical record id */
+     int	depth;		/* depth to cover */
+{
+  register int	i =0;		/* index on a_rid[] */
+  t_rec 	rec;		/* buffer to describe one level of an object */
+  int		e;		/* for returned error code */
+  char		left =FALSE;	/* true if the left child has already */
+  				/* been covered */
+  int 		d;		/* current depth */
+  char		cover;		/* TRUE if at least 1 subtree is to be cover */
+
+  a_rid[i].d = 0;
+  a_rid[i].rid = rid;
+
+  /* while the stack is not empty ... */
+  while (i >= 0) {
+
+/*
+    DUMPRID(a_rid[i].rid);
+*/
+
+    /* read record according to the last rid of the stack */
+    e = wiss_readrecord(ofn, &a_rid[i].rid, &rec, sizeof(rec),
+     transId, TRUE, l_S, FALSE);
+    WISSERROR("build/wiss_readrecord", e);
+
+    /* if the current record is not a leaf*/
+    if (a_rid[i].d < depth) {
+      /* erase the last rid of the stack and append the */
+      /* left and/or right children rids, with the depth */
+      d = a_rid[i].d +1;
+      /* if the right subtree is to be covered ... */
+      if (cover = RANDOM_80P) {
+	a_rid[i].d = d;
+	a_rid[i].rid = rec.right;
+      }
+      /* if the left subtree is to be covered ... */
+      if (RANDOM_80P) {
+	(cover) ? (i++) : (cover=TRUE);
+	a_rid[i].d = d;
+	a_rid[i].rid = rec.left;
+      }
+      /* if neither left nor right child are to be covered ... */
+      if(!cover) i--;
+    }
+    else 
+      /* erase the last rid of the stack */
+      i--;
+
+  } /* end while */
+} /* end read_part */
+
+/***********************************************/
+/* read a part of a tree and update the leaves */
+/***********************************************/
+update_part(ofn, rid, depth)
+     int	ofn;		/* open file number */
+     RID	rid;     	/* physical record id */
+     int	depth;		/* depth to cover */
+{
+  register int	i =0;		/* index on a_rid[] */
+  t_rec 	rec;		/* buffer to describe one level of an object */
+  int		e;		/* for returned error code */
+  char		left =FALSE;	/* true if the left child has already */
+  				/* been covered */
+  int 		d;		/* current depth */
+  char		cover;		/* TRUE if at least 1 subtree is to be cover */
+
+  a_rid[i].d = 0;
+  a_rid[i].rid = rid;
+
+  /* while the stack is not empty ... */
+  while (i >= 0) {
+
+/*
+    DUMPRID(a_rid[i].rid);
+*/
+
+    /* read record according to the last rid of the stack */
+    e = wiss_readrecord(ofn, &a_rid[i].rid, &rec, sizeof(rec),
+	transId, TRUE, l_X, FALSE);
+    WISSERROR("build/wiss_readrecord", e);
+
+    /* if the current record is not a leaf */
+    if (a_rid[i].d < depth) {
+      /* erase the last rid of the stack and append the */
+      /* left and/or right children rids, with the depth */
+      d = a_rid[i].d +1;
+      cover = FALSE;
+      /* if the right subtree is to be covered ... */
+      if (cover = RANDOM_80P) {
+	a_rid[i].d = d;
+	a_rid[i].rid = rec.right;
+      }
+      /* if the left subtree is to be covered ... */
+      if (RANDOM_80P) {
+	(cover) ? (i++) : (cover=TRUE);
+	a_rid[i].d = d;
+	a_rid[i].rid = rec.left;
+      }
+      /* if neither left nor right child are to be covered ... */
+      if(!cover) i--;
+    }
+    else {
+      /* if it is a whole tree leaf ... */
+      if (a_rid[i].d == depth) {
+	/* rewrite the record to simulate an update */
+/*
+	printf("<-(w)");
+*/
+
+	e = wiss_writerecord(ofn, &a_rid[i].rid, &rec, sizeof(rec),
+		transId, TRUE, FALSE);
+	WISSERROR("build/wiss_writerecord", e);
+      }
+      
+      /* erase the last rid of the stack */
+      i--;
+
+    }
+  } /* end while */
+} /* end update_part */
+
+/**************************************************************/
+/* bf_scan: Read sequentialy all the trees in storage order.  */
+/*          This simulates reading a class. Trees are covered */
+/*          breadth first. This scan is accomplished by first */
+/*	    reading the objectid of the root record of the tree  */
+/*	    from the openrids file
+/**************************************************************/
+bf_scan(ofn, ofnrids)
+     int ofn;		/* open file number */
+     int ofnrids;	/* open file number of rids */
+{
+
+     RID rid;		/* physical record id (for the current volid) */
+     RID rootrid;	/* physical record id (for the current volid) */
+     int e;
+     int i;
+     int cnt;
+
+    cnt = 0;
+
+/*
+  printf("\nread %d objects until depth %d (breadth first):\n", 
+	 NB_TREE, TREE_DEPTH);
+*/
+    /* get root of first objectid*/
+    e = wiss_firstfile (ofnrids, &rootrid, transId, TRUE, l_S, FALSE); 
+    WISSERROR("build/wiss_firstfile", e);
+
+    for (i=0; (i<NB_TREE) && (e == 0) ; i++)  /* for all trees in the file */
+    {
+/*
+	printf("i=%d, next root rid",i); PRINTRID(rootrid); printf("\n");
+*/
+	/* read the object id of the root record from ofnrids file */ 
+        e = wiss_readrecord(ofnrids, &rootrid, &rid, sizeof(RID),
+		transId, TRUE, l_S, FALSE);
+	if (e < eNOERROR) printf("read record=%d ofnrids=%d error=%d\n",
+		i,ofnrids,e);
+    	WISSERROR("build/wiss_readrecord", e);
+
+/*
+	printf("i=%d, about to call breadth_first on object\n",i);
+	PRINTRID(rid); printf("\n");
+*/
+
+	/* now read the tree object itself breadth first */
+	breadth_first(ofn, rid, TREE_DEPTH); 
+	cnt++;
+    	e = wiss_nextfile (ofnrids, &rootrid, &rootrid,
+		transId, TRUE, l_S, FALSE);
+    }
+    return(cnt);
+} /* end bf_scan() */
+
+/**************************************************************/
+/* rnd_read: Randomly pick up trees, and cover a part of the  */
+/*           tree. This simulates reading objects. 	      */
+/**************************************************************/
+rnd_read(ofn)
+     int ofn;		/* open file number */
+{
+  int i;
+  RID rid;		/* physical record id (for the current volid) */
+  int	cnt;
+
+/*
+  printf("\nread partially %d objects (depth first - max depth %d) \n", 
+	 NB_TREE/5, READ_DEPTH);
+*/
+  cnt = 0;
+
+  for(i = 0; i < NB_TREE/5; i++) 
+  {
+	/* pick an object at random */
+        rid = rootrids[random() % NB_TREE];
+        /* read a part of the object of root 'rid' */
+        read_part(ofn, rid, READ_DEPTH); 
+	cnt++;
+   }
+   return(cnt);
+
+} /* end read_part() */
+
+/****************************************************************/
+/* rnd_update: Randomly pick up trees, and cover a part of the  */
+/*             tree. read leaves are rewritten. This simulates  */
+/*             updating objects. 	      			*/
+/****************************************************************/
+rnd_update(ofn)
+     int ofn;		/* open file number */
+{
+    int i;
+    RID rid;		/* physical record id (for the current volid) */
+    int cnt;
+
+    cnt = 0;
+
+/*
+    printf("\nread partially and update read leaves of %d objects (depth first - max depth %d)\n", NB_TREE/5, UPDATE_DEPTH);
+*/
+
+  for(i = 0; i < NB_TREE/5; i++) 
+  {
+	/* pick an object at random */
+        rid = rootrids[random() % NB_TREE];
+
+    	/* read a part of the object of root 'rid' and update the read leaves */
+    	update_part(ofn, rid, UPDATE_DEPTH); 
+	cnt++;
+    }
+
+/*
+  printf("\n^^^ rnd_update() ==> read %d trees partially and updated the read leaves \n    = read %d records and updated %d of them \n",
+	 NB_TREE/5, nb_read, nb_updated);
+*/
+    return(cnt);
+
+} /* end update_part() */
+
+main(argc, argv)
+int	argc;	
+char	**argv;
+{
+  	int	vol;		/* volume id */
+	int	vix;		/* internal volume index */
+	int	vh_size;  	/* volume header size (number of pages) */
+	int	ofn;		/* open file number */
+	int	ofnrids;
+	RID	rid;		/* physical record id */
+  	int	e;		/* for returned flags */
+	int	i;
+	char    *fileName;
+
+	long	startScan, endScan;
+	long	startRand, endRand;
+	long	startUpdate, endUpdate;
+
+	RID	rootrid;
+	char	ridfile[256];
+	int	mode;
+	int	cnt;
+	char    *deviceName;
+	struct rusage ru;
+	int status;
+	int	verboseFlag;
+
+	if (argc < 5) {
+		printf("usage: queries deviceName fileName mode(1-7) verboseFlag\n");
+		exit();
+	}
+
+	deviceName = argv[1];
+	fileName = argv[2];
+	mode = atoi(argv[3]);
+	if (strcmp(argv[4],"TRUE") == 0) verboseFlag = TRUE;
+	 else verboseFlag = FALSE;
+
+	printf("DevName = %s  FileName = %s Mode = %d \n",
+		deviceName, fileName, mode);
+
+	strcpy (ridfile, fileName);
+	strcat(ridfile,".rids");
+
+	/* warm up */
+	(void) wiss_init();
+
+	transId = begin_trans();
+/*
+	printf("new transaction id = %d\n",transId);
+*/
+
+	/* mount the device called deviceName */
+	vol = wiss_mount(deviceName);	
+	WISSERROR("build/wiss_mount", vol);
+
+	/* open the file where the trees are stored */
+	ofn = wiss_openfile(vol, fileName, WRITE);
+	WISSERROR("build/wiss_openfile", ofn);
+
+
+	if (mode & 4) /* update mode is indicated */
+	{
+	    e = wiss_lock_file(transId, ofn, l_IX,  COMMIT,  FALSE);
+	    WISSERROR ("build/wiss_lock_file", e);
+	}
+	else 
+	{
+	    e = wiss_lock_file(transId, ofn, l_IS,  COMMIT,  FALSE);
+	    WISSERROR ("build/wiss_lock_file", e);
+	}
+
+	/* open the file where the root rids are stored */
+	ofnrids = wiss_openfile(vol, ridfile, READ);
+	WISSERROR("build/wiss_openfile", ofnrids);
+
+	e = wiss_lock_file(transId, ofnrids, l_IS,  COMMIT,  FALSE);
+	WISSERROR ("build/wiss_lock_file", e);
+
+  
+	/* read a class: the database is scaned sequentialy. */
+	/* trees are read breadth first. */
+	if (mode & 1) 
+	{
+		printf ("scan invoked\n");
+		startScan = time(NULL);
+		cnt = bf_scan(ofn, ofnrids);
+		endScan = time(NULL);
+		if (verboseFlag)
+		{
+			printf("Time to scan %d objects = %d seconds\n", 
+				cnt, endScan - startScan);
+		}
+	}
+
+	if (mode & 6) {
+	    /* mode 2 and/or mode 4 was specified */
+	    /* read in the array of root object object ids */
+
+	    printf("reading oids of root objects into array\n");
+
+	    e = wiss_firstfile (ofnrids, &rid, transId, TRUE, l_S, FALSE); 
+		/* get root of first objectid*/
+	    WISSERROR("build/wiss_firstfile", e);
+	    cnt = 0;
+	    for (i=0;(i<NB_TREE)&&(e==0); i++)
+	    {
+	        e = wiss_readrecord(ofnrids, &rid, &rootrids[i], sizeof(RID),
+			transId, TRUE, l_S, FALSE);
+	    	WISSERROR("build/wiss_readrecord", e);
+	    	e = wiss_nextfile (ofnrids, &rid, &rid,
+			transId, TRUE, l_S, FALSE);
+		cnt++;
+	    }
+	    if (cnt != NB_TREE) {
+		printf("Error.  Was only able to read %d roots\n",cnt);
+		exit();
+	    }
+	}
+
+	/* read objects: some tree roots are picked randomly, and */
+	/* the object is partially read */
+	if (mode & 2) 
+	{
+		printf ("random read invoked\n");
+		startRand = time(NULL);
+	        cnt = rnd_read(ofn);
+		endRand = time(NULL);
+		if (verboseFlag)
+		{
+		   printf("Time to do randomly read %d objects = %d seconds\n", 
+			cnt, endRand-startRand);
+		}
+	}
+
+	/* read and update objects: some tree roots are picked randomly, the */
+	/* object is partially read, and the read leaves are rewritten. */
+	if (mode & 4) 
+	{
+	    printf ("random update invoked\n");
+	    startUpdate = time(NULL);
+	    cnt = rnd_update(ofn);
+	    endUpdate = time(NULL);
+	    if (verboseFlag)
+	    {
+	        printf("Time to do randomly update %d objects = %d seconds\n", 
+			cnt, endUpdate-startUpdate);
+	    }
+	}
+	/* now commit the transaction */
+	e = commit_trans(transId);
+	if (e != 1) 
+	  printf("error status return from commit_trans = %d\n", e);
+	else printf("commit ok\n");
+
+	/* close the file */
+	e = wiss_closefile(ofn);
+	WISSERROR("test1/wiss_closefile", e);
+
+	e = wiss_closefile(ofnrids);
+	WISSERROR("test1/wiss_closefile", e);
+
+	/* dismount the device */
+	e = wiss_dismount(deviceName);  
+	WISSERROR("build/wiss_dismount", e);
+
+	/* end Wiss */
+	(void) wiss_final();
+
+} /* end main */
+

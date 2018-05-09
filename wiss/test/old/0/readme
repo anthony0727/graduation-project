@@ -1,0 +1,6 @@
+
+test1 - io_mount, io_dismount, io_volid
+test2 - io_createfile, io_destroyfile, io_allocpages 
+test3 - io_createfile, io_destroyfile, io_allocpages, io_freepage 
+test4 - io_readpage, io_writepage
+test5 - io_allocpages (auto extension of file)

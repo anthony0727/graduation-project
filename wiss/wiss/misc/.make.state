@@ -1,0 +1,6 @@
+.MAKE_VERSION:	VERSION-1.0
+clean:
+	/bin/rm *.o
+format:	/lib/libg.a /usr/lib/crt0.o 
+format.o:	../io.h ../page.h ../io_error.h ../latch.h ../st_h.h ../st_d.h ../d_error.h ../st_macro.h ../st_fd.h ../filed.h ../locktype.h ../resource.h ../lockdefs.h ../graph.h /usr/include/sys/file.h /usr/include/sys/types.h /usr/include/sys/stdtypes.h /usr/include/wchar.h /usr/include/sys/sysmacros.h /usr/include/sys/fcntlcom.h /usr/include/sys/stat.h 
+	cc -g -I..    -target sun4 -c  format.c

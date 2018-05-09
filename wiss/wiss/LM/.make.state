@@ -1,0 +1,32 @@
+.MAKE_VERSION:	VERSION-1.0
+.BUILT_LAST_MAKE_RUN:
+libWiSSlm.a:
+	rm -rf tmplib
+	rm -f libWiSSlm.a
+	mkdir tmplib
+	set -x; \
+	(cd tmplib; for i in lockmanager/libWiSSlockmanager.a  deadlock/libWiSSdeadlock.a; do (ar x ../$i); done)
+	(cd tmplib; rm -f __.SYMDEF; ar cr ../libWiSSlm.a `lorder * | tsort`)
+	rm -rf tmplib
+lm.o:	/lib/libm.a 
+	ld -r lockmanager/LockManager.o deadlock/DLockDetect.o  -lm -o lm.o
+.BUILT_LAST_MAKE_RUN:
+deadlock/libWiSSdeadlock.a:.RECURSIVE deadlock libWiSSdeadlock.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+deadlock/libWiSSdeadlock.a:
+	(cd deadlock; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' LM='../.' HIER='' PIC='')
+clean:.RECURSIVE lockmanager clean Makefile
+clean:.RECURSIVE deadlock clean Makefile
+clean:.RECURSIVE test clean Makefile
+clean:
+	/bin/rm -f *.o lm EXECS CFLOW TAGS
+	for i in lockmanager deadlock test; do (cd $i; echo `pwd`; make clean); done;
+lockmanager/LockManager.o:
+	(cd lockmanager; make TRACEFLAG='' DEBUGFLAG='' PROF='-O' LM='../.' HIER='')
+.BUILT_LAST_MAKE_RUN:
+lockmanager/libWiSSlockmanager.a:.RECURSIVE lockmanager libWiSSlockmanager.a Makefile.lib
+.BUILT_LAST_MAKE_RUN:
+lockmanager/libWiSSlockmanager.a:
+	(cd lockmanager; make -f Makefile.lib TRACEFLAG='-DLMTRACE' DEBUGFLAG='' PROF='-g' LM='../.' HIER='' PIC='')
+deadlock/DLockDetect.o:
+	(cd deadlock; make TRACEFLAG='' DEBUGFLAG='' PROF='-O' LM='../.' HIER='')

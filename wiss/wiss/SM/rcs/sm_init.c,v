@@ -1,0 +1,423 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.2
+date	93.03.28.17.50.16;	author bolo;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	93.03.28.17.14.37;	author bolo;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@use lockf if flock not available
+@
+text
+@
+/********************************************************/
+/*                                                      */
+/*               WiSS Storage System                    */
+/*          Version SystemV-4.0, September 1990	        */
+/*                                                      */
+/*              COPYRIGHT (C) 1990                      */
+/*                David J. DeWitt 		        */
+/*               Madison, WI U.S.A.                     */
+/*                                                      */
+/*	         ALL RIGHTS RESERVED                    */
+/*                                                      */
+/********************************************************/
+
+
+#
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/mman.h>
+#include <sys/file.h>
+#include <signal.h>
+#include <assert.h>
+#include <stdio.h>
+
+#ifndef LOCK_EX
+#define	USE_LOCKF
+#include <unistd.h>
+extern int errno;
+#endif
+
+/* 
+
+   This module initializes the shared data structures that are
+   stored in virtual memory
+
+*/
+
+#include	<wiss.h>
+#include	<page.h>
+#include 	<sm.h>
+
+#ifndef ultrix
+#define	sm_count	shm_nattch
+#endif
+
+extern	char	*shmAlloc();
+extern  char    *getenv();
+extern	char	*shmat();
+
+SMDESC		*smPtr;   /* pointer to shared memory segment */
+int		procNum;  /* index of this process in smPtr->users[] table */
+static int 	shmid;    /* unique id of shared memory segment */
+int 		keyFd;    /* file descriptor for keyfile */
+
+#define	FREEHEAPSPACE 2*1024*1024  /* amount of free shared memory space
+	left after allocating space for the buffer pool and buffer table.
+	This is a total guess and perhaps may prove to be too small */
+
+static
+LockFile(fd)
+	int fd;
+{
+	int e;
+#ifdef USE_LOCKF
+	lseek(fd, 0L, 0);
+	e = lockf(fd,F_LOCK,0);
+	if (e < 0)
+		printf("error return %d,errno=%d from lockf\n", e, errno);
+#else
+    	e = flock(fd,LOCK_EX);
+    	if (e < 0) printf("error return %d from flock\n",e);
+#endif
+}
+
+static
+UnlockFile(fd)
+	int fd;
+{
+	int e;
+#ifdef USE_LOCKF
+	lseek(fd, 0L, 0);
+	e = lockf(fd,F_ULOCK,0);
+	if (e < 0)
+		printf("error return %d,errno=%d from lockf\n", e, errno);
+#else
+    	e = flock(fd,LOCK_UN);
+    	if (e < 0) printf("error return %d from flock\n",e);
+#endif
+}
+
+wiss_init()
+{
+    sm_init();
+    am_init();
+}
+
+wiss_final()
+{
+	int pid, i, e;
+        struct shmid_ds shmbuf;
+	int	lastProc;
+
+	am_final();
+	pid = getpid();
+	i = 0;
+	/* first lock the key file in exclusive mode */
+	/* in order to make sure that that if another process starts */
+	/*  at the same time this process is flushing things to disk */
+	/*  that the processing starting will block.  */
+
+	LockFile(keyFd);
+
+	/* look for the process in the users table */
+	while ((smPtr->users[i].pid != pid) && (i < MAXPROCS)) i++;
+	if (i == MAXPROCS) 
+	{
+	    printf("pid %d NOT in users table. error!!!\n",pid);
+	    exit();
+	}
+	else
+	{
+	    smPtr->userCnt--;
+	    smPtr->users[i].pid = -1;  /* mark entry free */
+	    /* perhaps should add a commit/abort transaction call here ??? */
+	    /* if the transaction is still active */
+	    smPtr->users[i].transId = -1; /* no active trans */
+	}
+
+        /* get status of shared memory segment */
+        shmctl (shmid, IPC_STAT, &shmbuf);
+
+        printf("number of attached processes at wiss_final = %d\n",
+		shmbuf.sm_count);
+
+	/* remove the process's semaphore */
+	semctl (smPtr->users[procNum].sem.semid, 0, IPC_RMID, 0);
+
+        /* check the number of attached processes */
+        /* if this process is the last, flush the shared memory */
+
+	if (shmbuf.sm_count  == 1)
+        {
+	    /* current process is the last one, flush shared structures */
+	    /* to disk and then delete shared memory segment */
+
+	    sm_final();
+	    /* detach this process */
+	    if (shmdt(smPtr) < 0)
+		perror("shmdt detach error in wiss_final\n");
+
+	    /* finally delete the actual shared memory segment */;
+	    if (shmctl (shmid, IPC_RMID, 0) != 0) 
+		perror("shmctl remove error in wiss_final\n");
+	    lastProc = TRUE;
+	}
+	else  /* not last user, detach the process from the memory segment */
+	{
+		if (shmdt(smPtr) < 0)
+			perror("shmdt detach error in wiss_final\n");
+		lastProc = FALSE;
+	}
+/*
+	if (lastProc) unlink(SHM_KEYFILE);
+*/
+
+    	/* unlock the keyfile so other processes may start */
+	UnlockFile(keyFd);
+
+	close(keyFd);
+	return(0);
+}
+
+sm_init()
+{
+
+    register int	i;		/* for going along VolDev */
+    int		NumBuffers, heapsize;
+    key_t 	smKey;  /* key for use with shared memory calls */
+    int 	oum;
+    struct shmid_ds shmbuf;
+    key_t	semKey; /* key for getting a semaphore */
+    int		e;
+    int		hashSize, hashBucketCnt, totalSMsize;
+
+/*
+    oum = umask(0);
+*/
+    if ((keyFd=open(SHM_KEYFILE, O_CREAT, 0777)) < 0)
+    {
+	printf("shmsbrk: cannot access key file");
+	exit();
+    }
+/*
+    umask(oum);
+*/
+
+    /* the first process in locks the file in exclusive mode in case
+       two processes start simultaneously. This will insure that
+       only one process executes sm_init simultaneously */
+
+    LockFile(keyFd);
+
+    /* next generate a key for the shared-memory file */
+    smKey = ftok(SHM_KEYFILE, ' ');
+    if (smKey == -1)
+    {
+	printf("ftok returned NULL\n");
+	UnlockFile(keyFd);
+	exit();
+    }
+
+    /* then generate a unique semKey for this process */
+    semKey = smKey + getpid();  
+	
+    /* calculate size of shared memory segment to get */
+    NumBuffers = MAXBUFS;  /* number of buffers in buffer pool */
+
+    /* calculate total heapsize (in bytes) */
+    hashSize = (NumBuffers*3)-1;  
+    hashBucketCnt = hashSize; /* taken from BF_hashinit */
+
+    heapsize = (NumBuffers*PAGESIZE) + (NumBuffers*sizeof(BUFTAB))
+	+ (hashBucketCnt*sizeof(HASHBUCKET)) + FREEHEAPSPACE;
+    
+    totalSMsize = heapsize + sizeof(SMDESC);
+
+/*
+    printf("size of SMDESC = %d\n", sizeof(SMDESC));
+    printf("size of heap = %d\n", heapsize);
+    printf("total size of shared segment requested = %d\n", totalSMsize);
+*/
+
+    /* get the shared memory segment */
+    shmid = shmget(smKey, totalSMsize, IPC_CREAT | 0777);
+    if (shmid < 0)
+    {
+	printf("shmget of shared memory block of size %dreturned error %d\n",
+		totalSMsize, shmid);
+	UnlockFile(keyFd);
+	exit();
+    }
+
+    /* finally attach the shared memory segment to the process */
+    smPtr = (SMDESC *) shmat(shmid, (char *)0, 0);
+/*
+    printf("shmid returned was %d\n",shmid);
+    printf("value of smPtr = %x, addr of heap = %x\n",smPtr, smPtr->heap);
+*/
+
+    /* get status of shared memory segment */
+    shmctl (shmid, IPC_STAT, &shmbuf);
+    printf("number of attached processes = %d\n",shmbuf.sm_count);
+
+    /* check the number of attached processes */
+    /* if this process is the first, initialize the shared memory */
+    if (shmbuf.sm_count  == 1)
+    {
+        /* second, initialize the heap in shared memory for shmAlloc to use */
+        smPtr->search_ptr = NULL;
+        smPtr->heap_top = NULL;
+        /* heap is allocated in terms of heapword units */
+        smPtr->heapSize = heapsize/(sizeof(union heapWord)); 
+
+        /* next initialize all the shared-memory data structures relating */
+        /* to the buffer pool */
+
+        smPtr->clock_hand = -1;
+        smPtr->hash_size = hashSize;
+        smPtr->bf_num_free = NumBuffers;
+        smPtr->bf_num_bufs = NumBuffers;
+
+        /* initialize the transaction counter */
+        smPtr->transCounter = 1;
+
+        /* now malloc the buffer pool and the buffer 
+	   table out of shared memory */
+
+        smPtr->bufferpool = (PAGE *) shmAlloc (NumBuffers * PAGESIZE);
+        if (smPtr->bufferpool == NULL) 
+        {
+ 	    printf("malloc of buffer pool with %d pages failed !!! \n",
+		NumBuffers);
+	    UnlockFile(keyFd);
+	    exit();
+        }
+        smPtr->buftable =(BUFTAB *) shmAlloc (NumBuffers * sizeof(BUFTAB));
+        if (smPtr->buftable == NULL) 
+        {
+	    printf("malloc of buffer table with %d entries failed !!! \n",
+		NumBuffers);
+	    UnlockFile(keyFd);
+	    exit();
+        }
+/*
+        printf("addr of bufpool = %x, addr of buftab=%x\n",smPtr->bufferpool,
+		smPtr->buftable);
+*/
+
+        for(i = 0; i < NumBuffers; i++)
+        {
+	    smPtr->buftable[i].Bvalid = FALSE;
+	    smPtr->buftable[i].Bdirty = FALSE;
+	    smPtr->buftable[i].busy = FALSE;
+	    InitLatch(&smPtr->buftable[i].latch);
+        }
+        /* initialize the level 0 data structures in shared memory */
+        io_init();
+        /* initialize the level 1 data structures in shared memory */
+	bf_init();
+        /* initialize the level 2 data structures in shared memory */
+        st_init();
+        /* initialize the lock manager */
+        lm_initialize_resources();  
+	/* initialize the user table */
+	smPtr->userCnt = 1;
+	smPtr->users[0].pid = getpid();
+	smPtr->users[0].transId = -1; /* no active trans */
+	procNum = 0;   /* this process got the first slot */
+	/* mark all others free */
+	for (i=1;i<MAXPROCS;i++) smPtr->users[i].pid = -1;
+    }
+    else
+    {
+	/* another process was already active so no need to initialize */
+	/* the shared data structures */
+	/* look for a free spot */
+	i = 0;
+	while ((smPtr->users[i].pid != -1) && (i < MAXPROCS)) i++;
+	if (i == MAXPROCS) 
+	{
+	    printf("TOO MANY SIMULTANEOUS USERS. MAXPROCS = %d\n",MAXPROCS);
+	    UnlockFile(keyFd);
+	    exit();
+	}
+	else
+	{
+	    (smPtr->userCnt)++;
+	    smPtr->users[i].pid = getpid();
+	    smPtr->users[i].transId = -1; /* no active trans */
+	    procNum = i;   /* this process got the ith slot */
+	}
+    }
+    /* now initialize the process's semaphore */
+    InitSem(&smPtr->users[procNum].sem.semid, 0, semKey);
+/*
+    printf("proc %d got semid = %d\n",procNum, 
+	smPtr->users[procNum].sem.semid);
+*/
+    
+    /* unlock the keyfile so other processes may start */
+    UnlockFile(keyFd);
+}
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d26 6
+d60 32
+d112 1
+a112 2
+    	e = flock(keyFd,LOCK_EX);
+    	if (e < 0) printf("error return %d from flock\n",e);
+d168 2
+a169 2
+    	e = flock(keyFd,LOCK_UN);
+    	if (e < 0) printf("error return %d from flock\n",e);
+d202 1
+a202 2
+    e = flock(keyFd,LOCK_EX);
+    if (e < 0) printf("error return %d from flock\n",e);
+d209 1
+a209 1
+	flock(keyFd,LOCK_UN);
+d240 1
+a240 1
+	flock(keyFd,LOCK_UN);
+d284 1
+a284 1
+	    flock(keyFd,LOCK_UN);
+d292 1
+a292 1
+	    flock(keyFd,LOCK_UN);
+d333 1
+a333 1
+	    flock(keyFd,LOCK_UN);
+d352 1
+a352 2
+    e = flock(keyFd,LOCK_UN);
+    if (e < 0) printf("error return %d from flock\n",e);
+@
