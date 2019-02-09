@@ -15,8 +15,8 @@ A social network is a typical example of real-world graphs following the power-l
 We propose a graph engine that runs on a single machine and is intended to address two important issues in processing large-scale social networks. Our graph engine consists of four layers as fig:archi: a storage management layer, a buffer management layer, an object management layer, and a thread management layer. On top of them, we also provide a web-based user interface1.
 
 <p align="center">
-![Figure2](./Pics/architecture.jpg)
-Figure 1: Architecture of our graph engine.
+    ![Figure2](./Pics/architecture.jpg)
+    Figure 1: Architecture of our graph engine.
 </p>
 
 ![Figure2](./Pics/performance.jpg?style=centerme)
