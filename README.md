@@ -1,4 +1,4 @@
-# graduation-project
+# graduation project
 
 demo web service:
 
