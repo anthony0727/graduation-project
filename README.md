@@ -14,13 +14,15 @@ A social network is a typical example of real-world graphs following the power-l
 
 We propose a graph engine that runs on a single machine and is intended to address two important issues in processing large-scale social networks. Our graph engine consists of four layers as fig:archi: a storage management layer, a buffer management layer, an object management layer, and a thread management layer. On top of them, we also provide a web-based user interface1.
 
-![Figure1](./Pics/architecture.jpg)
-
+<p align="center">
+![Figure2](./Pics/architecture.jpg)
 Figure 1: Architecture of our graph engine.
+</p>
 
-![Figure2](./Pics/performance.jpg)
+![Figure2](./Pics/performance.jpg?style=centerme)
 
 Figure 2: Performance comparison of graph engines.
+
 In our graph engine, three layers except for the thread management layer use the design concepts adopted in existing storage systems such as WiSS for managing memory and storage space. The storage space is partitioned to blocks (e.g., pages) which are aligned with the I/O unit. A block contains a number of objects (e.g., records), each of which represents an adjacency list of a node (i.e., a node with its adjacent nodes). If an object cannot fit a given block, it could be stored across multiple blocks. We also store graphs by considering data locality for efficient access to the secondary storage following our method in. The thread management layer manages a pool of threads and accesses/processes graph data using thread pooling. In addition, we propose two techniques leveraging the power-law degree distribution to achieve high the performance as follows.
 
 Block-based workload distribution: for a uniform distribution of workloads, we determine to use the block-based approach for the workload distribution where each thread processes a fixed-size block instead of a variable-size object. The block has multiple objects or a part of an object. However, the total size of objects in each block is almost identical regardless of each object size. This distribution policy could achieve the uniform distribution of workloads, which helps achieve great performance improvement.
@@ -32,6 +34,7 @@ Block-based workload distribution: for a uniform distribution of workloads, we d
 We compared the performance and scalability of our graph engine (i.e., OurGE) with those of five state-of-the-art graph engines. TuboGraph, GridGraph, and GraphChi follow a vertex-centric programming model and an external memory model. Since FlashGraph adopts a semi-external-memory model, it is infeasible if a dataset cannot reside in memory. X-Stream adopts an edge-centric model and thus reads all graph data at every iteration. For evaluation, we used a PC equipped with i7-7700K, 64GiB memory, and 1TB SSD. We used six real-world datasets 2 in tab:ge-data. We conducted the experiments with three graph algorithms commonly provided by all graph engines such as BFS, PageRank, and WCC.
 
 Table 1: Real-world social networks
+
 
 | Datasets        | Wiki | UK   | Twit | SK  | Friend | Yahoo |
 |-----------------|------|------|------|-----|--------|-------|
