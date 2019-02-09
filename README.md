@@ -14,9 +14,12 @@ A social network is a typical example of real-world graphs following the power-l
 
 We propose a graph engine that runs on a single machine and is intended to address two important issues in processing large-scale social networks. Our graph engine consists of four layers as fig:archi: a storage management layer, a buffer management layer, an object management layer, and a thread management layer. On top of them, we also provide a web-based user interface1.
 
-![Figure1](../Pics/architecture.jpg)
+![Figure1](./Pics/architecture.jpg)
+
 Figure 1: Architecture of our graph engine.
-![Figure2](../Pics/performance.jpg)
+
+![Figure2](./Pics/performance.jpg)
+
 Figure 2: Performance comparison of graph engines.
 In our graph engine, three layers except for the thread management layer use the design concepts adopted in existing storage systems such as WiSS for managing memory and storage space. The storage space is partitioned to blocks (e.g., pages) which are aligned with the I/O unit. A block contains a number of objects (e.g., records), each of which represents an adjacency list of a node (i.e., a node with its adjacent nodes). If an object cannot fit a given block, it could be stored across multiple blocks. We also store graphs by considering data locality for efficient access to the secondary storage following our method in. The thread management layer manages a pool of threads and accesses/processes graph data using thread pooling. In addition, we propose two techniques leveraging the power-law degree distribution to achieve high the performance as follows.
 
