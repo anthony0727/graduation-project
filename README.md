@@ -14,6 +14,7 @@ A social network is a typical example of real-world graphs following the power-l
 
 We propose a graph engine that runs on a single machine and is intended to address two important issues in processing large-scale social networks. Our graph engine consists of four layers as fig:archi: a storage management layer, a buffer management layer, an object management layer, and a thread management layer. On top of them, we also provide a web-based user interface1.
 
+
 <p align="center">
     <img src="./Pics/architecture.jpg">
 </p>
@@ -26,6 +27,7 @@ We propose a graph engine that runs on a single machine and is intended to addre
 
 <p align="center">Figure 2: Performance comparison of graph engines.</p>
 
+
 In our graph engine, three layers except for the thread management layer use the design concepts adopted in existing storage systems such as WiSS for managing memory and storage space. The storage space is partitioned to blocks (e.g., pages) which are aligned with the I/O unit. A block contains a number of objects (e.g., records), each of which represents an adjacency list of a node (i.e., a node with its adjacent nodes). If an object cannot fit a given block, it could be stored across multiple blocks. We also store graphs by considering data locality for efficient access to the secondary storage following our method in. The thread management layer manages a pool of threads and accesses/processes graph data using thread pooling. In addition, we propose two techniques leveraging the power-law degree distribution to achieve high the performance as follows.
 
 Block-based workload distribution: for a uniform distribution of workloads, we determine to use the block-based approach for the workload distribution where each thread processes a fixed-size block instead of a variable-size object. The block has multiple objects or a part of an object. However, the total size of objects in each block is almost identical regardless of each object size. This distribution policy could achieve the uniform distribution of workloads, which helps achieve great performance improvement.
@@ -36,13 +38,15 @@ Block-based workload distribution: for a uniform distribution of workloads, we d
 
 We compared the performance and scalability of our graph engine (i.e., OurGE) with those of five state-of-the-art graph engines. TuboGraph, GridGraph, and GraphChi follow a vertex-centric programming model and an external memory model. Since FlashGraph adopts a semi-external-memory model, it is infeasible if a dataset cannot reside in memory. X-Stream adopts an edge-centric model and thus reads all graph data at every iteration. For evaluation, we used a PC equipped with i7-7700K, 64GiB memory, and 1TB SSD. We used six real-world datasets 2 in tab:ge-data. We conducted the experiments with three graph algorithms commonly provided by all graph engines such as BFS, PageRank, and WCC.
 
-Table 1: Real-world social networks
 
 | Datasets        | Wiki | UK   | Twit | SK  | Friend | Yahoo |
 |-----------------|------|------|------|-----|--------|-------|
 | num of nodes(M) | 12   | 39   | 61   | 50  | 68     | 1413  |
 | num of edges(B) | 0.37 | 0.93 | 1.4  | 1.9 | 2.5    | 6.6   |
 | Graph size(GiB) | 5.7  | 16   | 24   | 32  | 44     | 114   |
+
+Table 1: Real-world social networks
+
 
 fig:performance shows the performance of graph engines for each algorithm. We measured the execution times in log-scale, changing the datasets. We observed that OurGE outperforms all other graph engines significantly. As the size of datasets gets larger, the execution times of all graph engines increase, and the performance gaps between OurGE and others are widening. In the case of GraphChi and X-Stream, BFS and WCC on the largest dataset (i.e., Yahoo dataset), are not completed within 24 hours (i.e., O.O.T). FlashGraph could not perform PageRank and WCC on the Yahoo dataset in limited memory (i.e., O.O.M). TurboGraph does not work on WCC of the Wikipedia dataset.
 
