@@ -19,9 +19,7 @@ We propose a graph engine that runs on a single machine and is intended to addre
     <img src="./Pics/architecture.jpg">
 </p>
 <p align="center"><b>Figure 1: Architecture of our graph engine.</b></p>
-
-
-
+<br></br>
 <p align="center">
     <img src="./Pics/performance.jpg?style=centerme">
 </p>
