@@ -1,6 +1,6 @@
 # graduation-project
 
-1. Motivation
+## Motivation
 
 In order to respond the growing demand to handle big graphs such as social networks, recent years have seen many proposals [4] that offered the state-of-the-art graph engines aiming at efficient graph processing. Among many graph engines, we focus on the engines to process and analyze large-scale social networks efficiently on a single machine [1, 3].
 
@@ -10,7 +10,7 @@ A social network is a typical example of real-world graphs following the power-l
 
 **Indicator scanning** : When performing any type of graph algorithms, graph engines generally use an indicator consisting of a big bit vector with bits corresponding to all nodes, to identify a group of nodes to be processed in each iteration (e.g., in the case of BFS, it is necessary to identify nodes to be visited in each iteration). These nodes are identified by linearly scanning the big indicator. When processing real-world graphs, a large majority of nodes with low degree are accessed in most iterations, while a few hub nodes with high degree are accessed in only a few iterations. This skewed degree distribution surely makes an indicator extremely sparse in most iterations, which causes linear scan for the sparse indicator to be extremely inefficient. Therefore, designing an efficient way of scanning the indicator is crucial.
 
-2. Proposed Graph Engine
+## Proposed Graph Engine
 
 We propose a graph engine that runs on a single machine and is intended to address two important issues in processing large-scale social networks. Our graph engine consists of four layers as fig:archi: a storage management layer, a buffer management layer, an object management layer, and a thread management layer. On top of them, we also provide a web-based user interface1.
 
@@ -24,7 +24,7 @@ Block-based workload distribution: for a uniform distribution of workloads, we d
 
 **Hierarchical indicator** : To alleviate this overhead of indicator scanning, we use a hierarchical indicator. Its lowest-level indicator has the same bit vector as existing one. A higher-level indicator consists of a bit vector where each bit compresses a range of a lower-level indicator which is divided into fixed ranges. Here, a bit set in the higher-level indicator implies that a range of the lower-level indicator corresponding to the bit is necessary to be scanned. Otherwise, the range does not need to be scanned. A scan operation with this hierarchical indicator starts from the highest-level indicator (i.e., root) and moves down to a lower-level indicator only if a bit in the higher-level indicator is set. As a result, most of ranges in the sparse lowest-level indicator are skipped, which reduces unnecessary scanning of the indicator.
 
-3. Evaluation
+## Evaluation
 
 We compared the performance and scalability of our graph engine (i.e., OurGE) with those of five state-of-the-art graph engines [1, 3, 4]. TuboGraph, GridGraph, and GraphChi follow a vertex-centric programming model and an external memory model. Since FlashGraph adopts a semi-external-memory model, it is infeasible if a dataset cannot reside in memory. X-Stream adopts an edge-centric model and thus reads all graph data at every iteration. For evaluation, we used a PC equipped with i7-7700K, 64GiB memory, and 1TB SSD. We used six real-world datasets 2 in tab:ge-data. We conducted the experiments with three graph algorithms commonly provided by all graph engines such as BFS, PageRank, and WCC.
 
