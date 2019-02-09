@@ -19,6 +19,7 @@ We propose a graph engine that runs on a single machine and is intended to addre
 </p>
 <p align="center">Figure 1: Architecture of our graph engine.</p>
 
+
 <p align="center">
     <img src="./Pics/performance.jpg?style=centerme">
 </p>
@@ -37,12 +38,13 @@ We compared the performance and scalability of our graph engine (i.e., OurGE) wi
 
 Table 1: Real-world social networks
 
-
+<p align="center">
 | Datasets        | Wiki | UK   | Twit | SK  | Friend | Yahoo |
 |-----------------|------|------|------|-----|--------|-------|
 | num of nodes(M) | 12   | 39   | 61   | 50  | 68     | 1413  |
 | num of edges(B) | 0.37 | 0.93 | 1.4  | 1.9 | 2.5    | 6.6   |
 | Graph size(GiB) | 5.7  | 16   | 24   | 32  | 44     | 114   |
+</p>
 
 fig:performance shows the performance of graph engines for each algorithm. We measured the execution times in log-scale, changing the datasets. We observed that OurGE outperforms all other graph engines significantly. As the size of datasets gets larger, the execution times of all graph engines increase, and the performance gaps between OurGE and others are widening. In the case of GraphChi and X-Stream, BFS and WCC on the largest dataset (i.e., Yahoo dataset), are not completed within 24 hours (i.e., O.O.T). FlashGraph could not perform PageRank and WCC on the Yahoo dataset in limited memory (i.e., O.O.M). TurboGraph does not work on WCC of the Wikipedia dataset.
 
