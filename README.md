@@ -25,6 +25,8 @@ We propose a graph engine that runs on a single machine and is intended to addre
 
 <p align="center">Figure 1: Architecture of our graph engine.</p>
 
+![Figure1](./Pics/architecture.jpg?style=centerme)
+
 ![Figure2](./Pics/performance.jpg?style=centerme)
 
 Figure 2: Performance comparison of graph engines.
