@@ -18,14 +18,14 @@ We propose a graph engine that runs on a single machine and is intended to addre
 <p align="center">
     <img src="./Pics/architecture.jpg">
 </p>
-<p align="center">Figure 1: Architecture of our graph engine.</p>
+<p align="center"><b>Figure 1: Architecture of our graph engine.</b></p>
 
 
 <p align="center">
     <img src="./Pics/performance.jpg?style=centerme">
 </p>
 
-<p align="center">Figure 2: Performance comparison of graph engines.</p>
+<p align="center"><b>Figure 2: Performance comparison of graph engines.</b></p>
 
 
 In our graph engine, three layers except for the thread management layer use the design concepts adopted in existing storage systems such as WiSS for managing memory and storage space. The storage space is partitioned to blocks (e.g., pages) which are aligned with the I/O unit. A block contains a number of objects (e.g., records), each of which represents an adjacency list of a node (i.e., a node with its adjacent nodes). If an object cannot fit a given block, it could be stored across multiple blocks. We also store graphs by considering data locality for efficient access to the secondary storage following our method in. The thread management layer manages a pool of threads and accesses/processes graph data using thread pooling. In addition, we propose two techniques leveraging the power-law degree distribution to achieve high the performance as follows.
@@ -45,7 +45,7 @@ We compared the performance and scalability of our graph engine (i.e., OurGE) wi
 | num of edges(B) | 0.37 | 0.93 | 1.4  | 1.9 | 2.5    | 6.6   |
 | Graph size(GiB) | 5.7  | 16   | 24   | 32  | 44     | 114   |
 
-Table 1: Real-world social networks
+<b>Table 1: Real-world social networks</b>
 
 
 fig:performance shows the performance of graph engines for each algorithm. We measured the execution times in log-scale, changing the datasets. We observed that OurGE outperforms all other graph engines significantly. As the size of datasets gets larger, the execution times of all graph engines increase, and the performance gaps between OurGE and others are widening. In the case of GraphChi and X-Stream, BFS and WCC on the largest dataset (i.e., Yahoo dataset), are not completed within 24 hours (i.e., O.O.T). FlashGraph could not perform PageRank and WCC on the Yahoo dataset in limited memory (i.e., O.O.M). TurboGraph does not work on WCC of the Wikipedia dataset.
