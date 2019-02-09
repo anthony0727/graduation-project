@@ -20,16 +20,10 @@ We propose a graph engine that runs on a single machine and is intended to addre
 <p align="center">Figure 1: Architecture of our graph engine.</p>
 
 <p align="center">
-    <img src="./Pics/architecture.jpg">
+    <img src="./Pics/performance.jpg?style=centerme">
 </p>
 
-<p align="center">Figure 1: Architecture of our graph engine.</p>
-
-![Figure1](./Pics/architecture.jpg?style=centerme)
-
-![Figure2](./Pics/performance.jpg?style=centerme)
-
-Figure 2: Performance comparison of graph engines.
+<p align="center">Figure 2: Performance comparison of graph engines.</p>
 
 In our graph engine, three layers except for the thread management layer use the design concepts adopted in existing storage systems such as WiSS for managing memory and storage space. The storage space is partitioned to blocks (e.g., pages) which are aligned with the I/O unit. A block contains a number of objects (e.g., records), each of which represents an adjacency list of a node (i.e., a node with its adjacent nodes). If an object cannot fit a given block, it could be stored across multiple blocks. We also store graphs by considering data locality for efficient access to the secondary storage following our method in. The thread management layer manages a pool of threads and accesses/processes graph data using thread pooling. In addition, we propose two techniques leveraging the power-law degree distribution to achieve high the performance as follows.
 
